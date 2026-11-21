@@ -2,7 +2,9 @@
 
 Last updated: 21 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
 
-PR #1 follow-up: inactive-currency approval bug fixed and tested with 38 approval checks (72 logical database checks total). Migration 006 preserves prior migration checksums. Foundation scope and future gaps are explicitly classified in PR_1_SCOPE.md. New GitHub Actions run 44920102845 passed its database/unit/build, Git-safety and 12 foundation Chromium checks at code/workflow head 4fb1fd3; a documentation-only synchronization will be checked again on its own head. MCP re-review completed for the change; original finding resolved; PR ready for independent review, not approved or merged.
+PR #1 merged by the user: GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`. Final pre-merge head `0c8456e` passed GitHub Actions run 44920501262 (18 unit tests, 72 logical PostgreSQL checks and 12 foundation Chromium tests) and received an MCP comment review. The agent did not approve or merge the PR. Local main is synchronized; next module branch is `feature/authentication-team-access`, created from origin/main. No authentication implementation or additional test execution is claimed by this documentation handoff.
+
+The inactive-currency approval fix and migration 006 are included in the merged foundation. Foundation acceptance and future application gaps remain classified in PR_1_SCOPE.md. Full business E2E and production acceptance remain outstanding.
 
 QA update: actual Chromium execution completed. Final result: 12 passed / 14 failed, 0 skipped; 45 additional dependent business E2E scenarios blocked. Fixed and retested label contrast, stalled health loading and external font dependency. Unit suite 18/18 and all five instrumented regression suites pass (76 assertion records). Business E2E is not accepted; see project-root QA_EXECUTION_REPORT.md and BUG_REPORT.md.
 

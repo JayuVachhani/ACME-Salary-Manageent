@@ -30,7 +30,9 @@ The workflow improvement above was separately committed and pushed after its tes
 
 ## Current delivery state
 
-The feature branch is published and [PR #1](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1) is OPEN, READY FOR INDEPENDENT REVIEW and NOT MERGED, targeting `main`. The agent has not approved it. Known future application gaps are disclosed and scoped in `acme-salary-app/docs/PR_1_SCOPE.md`. PR-test Actions is explicitly authorized and implemented; deployment/production infrastructure remain separate. Protected `main` still contains only the authorized empty bootstrap commit.
+[PR #1](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1) is MERGED. GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`, following the user's merge notification. The agent did not approve or merge it. Local `main` was fast-forwarded to this commit and `feature/authentication-team-access` was created from `origin/main`. Known future application gaps remain disclosed in `acme-salary-app/docs/PR_1_SCOPE.md`; this foundation merge is not production acceptance.
+
+The merge-handoff documentation commit is identified by `git log -- GIT_CHANGELOG.md`; it updates this ledger, project instructions and development progress only. Verification: documentation diff review, whitespace check and staged-file safety scan; no new application tests are claimed. Branch publication is confirmed separately against the remote head after pushing.
 
 ## MCP PR review checkpoint — 21 November 2026
 
