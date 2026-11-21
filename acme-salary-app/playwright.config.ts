@@ -3,7 +3,9 @@ import path from 'node:path';
 process.env.PLAYWRIGHT_BROWSERS_PATH = path.resolve('.local/browsers');
 const run = process.env.QA_RUN || 'final';
 export default defineConfig({
-  testDir: './e2e', timeout: 20000, expect: { timeout: 3000 },
+  // Cold Chromium context creation on Windows is included in the test budget.
+  // Application loading still has its own separately asserted 8-second deadline.
+  testDir: './e2e', timeout: 60000, expect: { timeout: 3000 },
   fullyParallel: false, workers: 1, retries: 0,
   outputDir: `qa-artifacts/${run}/test-results`,
   reporter: [['list'], ['json', { outputFile: `qa-artifacts/${run}/results.json` }],

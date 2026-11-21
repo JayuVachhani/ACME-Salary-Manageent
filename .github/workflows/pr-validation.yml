@@ -1,0 +1,75 @@
+name: ACME PR validation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: acme-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  foundation-integrity:
+    name: Foundation integrity
+    runs-on: windows-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: acme-salary-app
+    env:
+      CI: 'true'
+      QA_RUN: ci
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/acme-salary-app/.local/browsers
+    steps:
+      - name: Check out the exact PR head without persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Enforce allowed branch prefixes
+        env:
+          PR_BRANCH: ${{ github.head_ref }}
+        run: |
+          if ($env:PR_BRANCH -notmatch '^(feature|bugfix|chore)/.+$') {
+            throw 'PR branch must start with feature/, bugfix/, or chore/.'
+          }
+      - name: Set up the project Node runtime
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          package-manager-cache: false
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --no-fund --no-audit
+      - name: Initialize isolated synthetic PostgreSQL
+        id: database
+        run: npm run db:local:start
+      - name: Verify migrations, unit tests, real database integrity and builds
+        run: npm run verify:database
+      - name: Type-check browser tests
+        run: npm run qa:typecheck
+      - name: Test Git staging safety with synthetic credentials
+        working-directory: .
+        run: node acme-salary-app/scripts/test-git-safety.mjs
+      - name: Scan tracked source for prohibited runtime data and credentials
+        working-directory: .
+        run: node acme-salary-app/scripts/verify-staged.mjs
+      - name: Install project-local Chromium
+        run: node node_modules/@playwright/test/cli.js install chromium
+      - name: Test delivered foundation in Chromium
+        run: npm run qa:e2e -- e2e/foundation.spec.ts
+      - name: Retain foundation browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: foundation-chromium-${{ github.event.pull_request.head.sha }}
+          path: acme-salary-app/qa-artifacts/ci/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop isolated PostgreSQL
+        if: always() && steps.database.outcome == 'success'
+        run: npm run db:local:stop

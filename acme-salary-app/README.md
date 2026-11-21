@@ -39,6 +39,8 @@ The authoritative progress plan is `../DEVELOPMENT_PLAN.md`; approved decision d
 
 ## Chromium QA
 
+PR #1's delivered-scope check is **Foundation integrity** in `.github/workflows/pr-validation.yml`, triggered on new/updated PRs to main. It uses isolated Windows PostgreSQL, the full current database/unit/build gate, QA typing, staging safety and `foundation.spec.ts` Chromium tests. No production secrets are needed. Full business E2E remains a separate readiness assessment; see `docs/PR_1_SCOPE.md` for blocking versus future gaps. CI success does not certify unimplemented application modules.
+
 The first actual browser audit is documented in `QA_TEST_PLAN.md`, `TEST_CASES.md`, `QA_EXECUTION_REPORT.md` and `BUG_REPORT.md` in this directory. It found the foundation usable but the business application incomplete: final Chromium results are 12 passed and 14 failed, with 45 dependent scenarios blocked. Missing-feature failures are retained intentionally; they are not expected-failure annotations or skipped passes.
 
 Run `npm run build`, then `npm run qa:e2e`. Playwright starts isolated API/web instances on ports 4318/4317 and stops them after testing. Chromium is installed in `.local/browsers`; to install on another machine, set `PLAYWRIGHT_BROWSERS_PATH` to that absolute directory and run `node node_modules/@playwright/test/cli.js install chromium`. Do not reuse production data or a production connection for QA.
