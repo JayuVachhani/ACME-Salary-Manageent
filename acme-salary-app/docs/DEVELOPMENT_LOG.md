@@ -31,3 +31,12 @@
 - Fourteen unmet workflow/API checks remain failed. Forty-five dependent scenarios are explicitly blocked. Login/session/permission/approval/report user journeys cannot run until modules exist. No fake forms/accounts/endpoints were added to make QA green.
 - Reran 18 unit tests and five real service/database/API regression suites; 76 assertion records passed. Existing suites include different synthetic approval actors and data isolation. Added Windows file-URL preload fix to QA harness; initial failed harness logs retained. Lint/type/build and QA type-check passed. Dependency audit reports zero known advisories.
 - Created all four requested QA reports, with per-case execution records and open/closed defect register. See QA_EXECUTION_REPORT.md for limitations and reproduction.
+
+## 21 November 2026 — PR #1 currency regression and automated PR checks
+
+- Synchronized remote MCP policy updates using a fast-forward before editing. Kept all fixes on the existing PR branch as explicitly requested.
+- Executed the new inactive-currency regression on old code: failed with Missing expected rejection. Added service FOR SHARE validation and forward-only DB migration 006; 38 real approval checks now pass, including direct SQL, atomic no-change state, concurrent deactivation and rejection/reactivation behavior.
+- Full local gate passed: 18 unit, 72 logical PostgreSQL checks, Prisma/health, lint/type/build and QA typing. Browser preflight exposed cold context setup budget and transient database unavailability; retained artifacts, confirmed DB runtime login and reran 12/12 foundation Chromium cases successfully without retry/expectation weakening.
+- Added SHA-pinned read-only GitHub Actions using Windows hosted runner and generated local-only DB credentials. The complete delivered-foundation check runs on PR open/synchronize/reopen/ready events. CI tests no production data, uploads only browser diagnostics, and stops its isolated database.
+- Actual Actions run 44920102845/job 136894051358 completed SUCCESS at 4fb1fd3, verified via GitHub MCP status/logs. MCP re-review 6006336494 inspected actual changed code/config; original currency thread resolved. PR marked ready for independent review through MCP. No self-approval or merge.
+- Classified gaps in PR_1_SCOPE.md. Future full-application requirements remain visible and unpassed. Final documentation-only commit triggers a new check on its own head; no inherited CI-success claim.

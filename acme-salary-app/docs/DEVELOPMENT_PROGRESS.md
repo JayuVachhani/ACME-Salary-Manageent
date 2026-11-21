@@ -2,6 +2,8 @@
 
 Last updated: 21 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
 
+PR #1 follow-up: inactive-currency approval bug fixed and tested with 38 approval checks (72 logical database checks total). Migration 006 preserves prior migration checksums. Foundation scope and future gaps are explicitly classified in PR_1_SCOPE.md. New GitHub Actions run 44920102845 passed its database/unit/build, Git-safety and 12 foundation Chromium checks at code/workflow head 4fb1fd3; a documentation-only synchronization will be checked again on its own head. MCP re-review completed for the change; original finding resolved; PR ready for independent review, not approved or merged.
+
 QA update: actual Chromium execution completed. Final result: 12 passed / 14 failed, 0 skipped; 45 additional dependent business E2E scenarios blocked. Fixed and retested label contrast, stalled health loading and external font dependency. Unit suite 18/18 and all five instrumented regression suites pass (76 assertion records). Business E2E is not accepted; see project-root QA_EXECUTION_REPORT.md and BUG_REPORT.md.
 
 | Area | Current status | Evidence / next work |

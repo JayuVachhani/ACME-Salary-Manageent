@@ -255,3 +255,13 @@ The pre-Git implementation is imported honestly as an in-progress baseline (`469
 Re-ran `verify:database` and `qa:typecheck` successfully before import. Tested and scanned the full Git index for runtime paths, actual local credential values and high-confidence token patterns; none were included. No new Chromium pass is claimed at this Git-only checkpoint: known QA failures remain disclosed and the PR stays draft. `.env.example` is a template; actual secrets, local database and browser data, dependencies and QA runtime artifacts remain ignored.
 
 New development branches still originate from main. Until the baseline PR is reviewed/merged, a new module depending on it must explicitly track that dependency rather than silently rebasing policy or merging. No automatic merge, force-push, branch deletion, CI deployment or production operation was performed.
+
+## 16. PR #1 current-feature remediation and CI
+
+Fixed approval-time currency deactivation in the service and database via forward-only migration 006. Regression failed on old code, then passed alongside 38 real approval checks (72 logical PostgreSQL checks across the database gate) and 18 unit tests. Shared currency locks serialize approval with deactivation; failed approvals preserve all financial/history/audit/version state; rejection remains possible.
+
+Explicit current-foundation versus future-application scope: `acme-salary-app/docs/PR_1_SCOPE.md`. Missing authentication/business API/UI, reports and full system qualification remain future work; their requirement tests and QA records remain intact. No current foundation success is represented as full application readiness.
+
+GitHub Actions is now explicitly authorized for PR testing. `.github/workflows/pr-validation.yml` validates exact PR heads with read-only permissions, pinned actions, isolated synthetic PostgreSQL, the current full database/unit/build gate, browser typing/Git safety and foundation Chromium. The first GitHub run [44920102845](https://github.com/JayuVachhani/ACME-Salary-Manageent/actions/runs/44920102845) passed all steps at `4fb1fd3`; actual status/logs checked through MCP. No production infrastructure or secrets are required.
+
+MCP re-review posted and original finding resolved. PR #1 is ready for an independent reviewer, not approved or merged. The documentation synchronization triggers another current-head run; check the latest PR result before approval. Current client's instruction: do not self-approve or merge; an authorized independent review and passing required checks are necessary.
