@@ -2,9 +2,11 @@
 
 Date: 21 November 2026. Environment: real Playwright Chromium, local React/NestJS, synthetic PostgreSQL fixtures only. These are release-assessment priorities; missing features were previously documented as unfinished, not regressions falsely claimed to be complete.
 
+Login increment update: QA-001's absent-login implementation is resolved for the delivered login scope: 5 SMTP/Chromium cases passed, including logout, origin/DTO checks, resend/attempt limits, failed delivery and IP throttling. REQ-LOGIN/REQ-OTP now pass. Team/permission UI and domain workflows below remain open. Initial duplicate-server and shared-port test-harness failures were fixed and the isolated suite rerun successfully. This update does not certify production SMTP/TLS deployment or full application security.
+
 | ID | Severity | Finding | Status | Evidence / reproduction | Required fix / retest |
 |---|---|---|---|---|---|
-| QA-001 | Critical | Login form, OTP request/delivery/verification/session workflow absent | OPEN — incomplete implementation | Open `/`: no email input. Browser POST `/api/v1/auth/otp/request` with `qa.synthetic@acme.test` returns 404 instead of 202. REQ-LOGIN and REQ-OTP fail. | Implement real bootstrap/session/SMTP vertical slice; test code lifecycle with capture SMTP and different accounts. |
+| QA-001 | Critical (original) | Login/OTP/session implementation was absent | RESOLVED for delivered login scope | Five actual SMTP/Chromium cases and REQ-LOGIN/REQ-OTP pass; see login increment report | Production SMTP/TLS deployment and full team/security acceptance remain release gates |
 | QA-002 | High | Team invites, roles and user offboarding not available | OPEN — incomplete implementation | REQ-TEAM: no reachable Team action; no logged-in accounts possible. | Implement session-protected team API/UI and permission-matrix E2E. |
 | QA-003 | High | Employee management UI/API unavailable | OPEN — incomplete implementation | REQ-EMP fails; GET `/api/v1/employees` returns 404. | Implement directory/create/edit/removal, confirmations, validation and browser tests. |
 | QA-004 | High | Salary/history/approval/transfer user workflows unavailable | OPEN — incomplete integration | REQ-SAL/HISTORY/APPROVAL/TRANSFER fail. Internal approval services pass separate tests but no browser controls exist. | Integrate tested domain services behind real sessions, add forms/history/approval UI and dual-account E2E. Do not expose test-only unsecured endpoints. |

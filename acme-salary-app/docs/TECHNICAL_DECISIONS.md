@@ -4,6 +4,8 @@ Authoritative decisions are recorded in [DECISIONS.md](DECISIONS.md), including 
 
 ## Implementation choices
 
+- Email login increment: see LOGIN_MODULE.md. Use pinned Nodemailer SMTP transport with production TLS and disabled message logging/file/URL access. Delivery is outside the public response path and failures invalidate the issued challenge. PostgreSQL-backed rate events and a short global advisory lock implement atomic email/pair/IP limits across processes; denied attempts count toward the IP throttle. No proxy headers are trusted implicitly. Auth rate-event retention/operational sizing requires a release policy; this increment does not silently delete audit or employee records.
+
 - Keep PostgreSQL-specific integrity in forward-only, checksummed SQL migrations. Prisma schema is introspected from the migrated database and Prisma Client provides typed access. Never run `prisma db push` against application data: it cannot preserve all triggers, checks and derived objects.
 - Pin stable Prisma 7.10.1; npm's current Prisma CLI `latest` resolves to an 8.x release candidate. Use the matched stable client/adapter/CLI instead of adopting a release candidate without need.
 - Override Prisma config's transitive Effect dependency to 3.22.1 for [GHSA-7589-6fvf-x4pw](https://github.com/advisories/GHSA-7589-6fvf-x4pw). Final dependency audit is clean and Prisma generation passes with the override. Remove the override only after upstream adopts a patched version and compatibility checks pass.

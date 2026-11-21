@@ -6,6 +6,7 @@ import type { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import { Pool } from 'pg';
 import { loadConfig } from './config.js';
+import { authController } from './auth-controller.js';
 
 async function bootstrap() {
   const config = loadConfig(process.env);
@@ -26,10 +27,14 @@ async function bootstrap() {
       }
     }
   }
-  @Module({ controllers: [HealthController] })
+  const authentication = authController(pool, config);
+  @Module({ controllers: [HealthController, authentication.controller] })
   class AppModule {}
   const app = await NestFactory.create(AppModule, { logger: false });
   app.use(helmet());
+  app.use('/api/v1/auth', (_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Cache-Control', 'no-store'); next();
+  });
   app.use((req: Request, res: Response, next: NextFunction) => {
     const requestId = randomUUID();
     res.setHeader('X-Request-Id', requestId);
@@ -43,7 +48,7 @@ async function bootstrap() {
   });
   app.enableShutdownHooks();
   const close = app.close.bind(app);
-  app.close = async () => { await close(); await pool.end(); };
+  app.close = async () => { await close(); await authentication.drain(); await pool.end(); };
   await app.listen(config.PORT, '127.0.0.1');
   process.stdout.write(JSON.stringify({ event: 'started', port: config.PORT }) + '\n');
 }

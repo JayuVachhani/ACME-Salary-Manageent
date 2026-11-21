@@ -220,3 +220,14 @@ These are not skipped Playwright passes. The corresponding entry-point requireme
 | BLOCK-043 | RETENTION: Hold employee then attempt UI/API removal | Protected employee/history cannot be removed | Not executed end to end: authentication and/or required domain screen/API is not implemented. Internal regression coverage, where present, is reported separately. | BLOCKED | Missing module/authentication; QA-001–008 |
 | BLOCK-044 | UX: Business forms loading/empty/error/success and confirmations | Consistent accessible states and functional actions | Not executed end to end: authentication and/or required domain screen/API is not implemented. Internal regression coverage, where present, is reported separately. | BLOCKED | Missing module/authentication; QA-001–008 |
 | BLOCK-045 | SCALE: 10k synthetic employees and 15k load profile | NFR search/report p95 targets measured and met | Not executed end to end: authentication and/or required domain screen/API is not implemented. Internal regression coverage, where present, is reported separately. | BLOCKED | Missing module/authentication; QA-001–008 |
+# Login increment — actually executed Chromium cases
+
+| ID | Module/scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|
+| AUTH-E2E-01 | SMTP login, reload, session cookie and logout | Actual delivered code authenticates; cookie HttpOnly; session restores; CSRF required; logout revokes | SMTP received; Chromium signed in/reloaded; JS could not read session cookie; missing CSRF rejected; logout left me endpoint 401 | PASS | None |
+| AUTH-E2E-02 | Invalid origin/email and unknown account | Invalid origin 403, invalid email 400, unknown request generic 202 and verification 401 | Expected statuses and response shape observed | PASS | None |
+| AUTH-E2E-03 | Resend and incorrect codes | Old code invalidated; three wrong attempts prevent valid-code use | Old code and locked challenge rejected with 401 | PASS | None |
+| AUTH-E2E-04 | SMTP unavailable | Generic 202; undelivered challenge consumed and failure audited | Capture stopped; request 202; consumption and audit row observed | PASS | None |
+| AUTH-E2E-05 | Verification throttle and spoofed IP header | IP limit yields 429; X-Forwarded-For does not evade limit | Final request 429 despite changing forwarded headers | PASS | None |
+
+Existing requirement-entry retest: REQ-LOGIN and REQ-OTP now PASS; REQ-TEAM, REQ-EMP, REQ-SAL, REQ-HISTORY, REQ-APPROVAL, REQ-TRANSFER, REQ-COUNTRY, REQ-FX, REQ-REPORT, REQ-AUDIT, REQ-DASH and REQ-API still FAIL because modules/domain routes are missing. Historical case records below remain evidence of earlier executions.

@@ -14,7 +14,7 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     { command: 'node --env-file=.env apps/api/dist/main.js', url: 'http://127.0.0.1:4318/healthz',
-      env: { PORT: '4318' }, reuseExistingServer: false, timeout: 60000 },
+      env: { PORT: '4318', APP_ORIGIN: 'http://127.0.0.1:4317' }, reuseExistingServer: false, timeout: 60000 },
     { command: 'npm run dev -w @acme/web -- --port 4317', url: 'http://127.0.0.1:4317',
       env: { QA_API_PORT: '4318' }, reuseExistingServer: false, timeout: 60000 }
   ]

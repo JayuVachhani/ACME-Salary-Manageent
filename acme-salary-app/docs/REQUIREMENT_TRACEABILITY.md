@@ -4,6 +4,8 @@ Status reflects verified scope, not planned completeness. Full module acceptance
 
 | Requirement | Implementation | Verification | Status |
 |---|---|---|---|
+| FR-AUTH-01..06, OD-01 | SMTP adapter, auth controller, Login form and persistent challenge/session service | `e2e-auth/authentication.spec.ts`, `test-authentication.mjs` | Login increment tested; broader team module pending |
+| FR-AUTH-12/14/17/18 | DB rate events, identity revocation trigger, bootstrap CLI, invitation eligibility | Concurrent rate/OTP tests, current-permission checks, CLI repeat rejection, expired/first-login invite checks | Implemented; deployment/proxy policy and full team workflow acceptance pending |
 | FR-AUTH-08/09, approved OD-03/04 | `src/policy.ts` permission primitives | `policy.test.ts` | Internal logic tested; endpoint integration pending |
 | NFR-04/06 | `config.ts`, `main.ts` metadata logging/health | `config.test.ts`, `test-health.mjs` | Foundation tested; full security acceptance pending |
 | FR-CTRY-01/05 | Migration 002 country rules; migration 003 salary snapshots | SQL checks and approval fixtures | Schema implemented; administration API/UI pending |

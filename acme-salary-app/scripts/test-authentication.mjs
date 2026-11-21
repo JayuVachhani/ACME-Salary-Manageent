@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { Client, Pool } from 'pg';
 import { AuthenticationService } from '../apps/api/dist/authentication.js';
+import { allowAuthAttempt } from '../apps/api/dist/auth-rate.js';
 const name = `acme_test_${randomUUID().replaceAll('-', '')}`;
 const ownerUrl = new URL(process.env.MIGRATION_DATABASE_URL);
 const runtimeUrl = new URL(process.env.DATABASE_URL);
@@ -37,7 +38,10 @@ try {
   assert.equal((await service.authenticate(session.token)).id, id);
   assert.equal(await service.authenticate(session.token, 'wrong-csrf'), null);
   assert.equal((await service.authenticate(session.token, session.csrf)).id, id);
+  await owner.query("UPDATE users SET permissions=ARRAY['read','salary:view'] WHERE id=$1", [id]);
+  assert.deepEqual((await service.authenticate(session.token)).permissions, ['read','salary:view']);
   await owner.query("UPDATE users SET status='DELETED',deleted_at=now() WHERE id=$1", [id]);
+  assert.notEqual((await owner.query('SELECT revoked_at FROM user_sessions')).rows[0].revoked_at, null);
   assert.equal(await service.authenticate(session.token), null);
   await owner.query("UPDATE users SET status='ACTIVE',deleted_at=NULL WHERE id=$1", [id]);
   now = new Date(+now + 30 * 60_000);
@@ -61,6 +65,31 @@ try {
     now = new Date(+now + 15 * 60_000);
   } finally { await owner.query('COMMIT'); }
   assert.equal(await pending, null, 'expiry must be evaluated after acquiring locks');
+  const rateKey = 'synthetic-rate-limit-key-at-least-32-characters';
+  const concurrent = await Promise.all(Array.from({length: 8}, () => allowAuthAttempt(pool, rateKey, 'limited@acme.test', '127.0.0.2', 'ISSUE')));
+  assert.equal(concurrent.filter(Boolean).length, 5);
+  assert.equal(await allowAuthAttempt(pool, rateKey, 'limited@acme.test', '127.0.0.3', 'ISSUE'), true);
+  for (let i = 0; i < 20; i++) assert.equal(await allowAuthAttempt(pool, rateKey, '', '127.0.0.4', 'VERIFY'), true);
+  assert.equal(await allowAuthAttempt(pool, rateKey, '', '127.0.0.4', 'VERIFY'), false);
+  for (let i = 0; i < 20; i++) assert.equal(await allowAuthAttempt(pool, rateKey, 'global@acme.test', `192.0.2.${i+1}`, 'ISSUE'), true);
+  assert.equal(await allowAuthAttempt(pool, rateKey, 'global@acme.test', '192.0.2.100', 'ISSUE'), false);
+  assert.equal((await owner.query("SELECT count(*)::int n FROM auth_rate_events WHERE email_hash LIKE '%@%'")).rows[0].n, 0);
+  const bootstrapArgs = ['scripts/bootstrap-manager.mjs', 'bootstrap@acme.test', 'Synthetic Bootstrap Manager', '--confirm'];
+  const bootstrapOptions = { env: { ...process.env, MIGRATION_DATABASE_URL: ownerUrl.href }, windowsHide: true, stdio: 'pipe', timeout: 30000 };
+  execFileSync(process.execPath, bootstrapArgs, bootstrapOptions);
+  assert.equal((await owner.query("SELECT count(*)::int n FROM users WHERE is_hr_manager AND status='ACTIVE'")).rows[0].n, 1);
+  assert.throws(() => execFileSync(process.execPath, bootstrapArgs, bootstrapOptions));
+  assert.equal((await owner.query("SELECT actor_id::text FROM audit_logs WHERE change_type='BOOTSTRAPPED'")).rows[0].actor_id, '00000000-0000-4000-8000-000000000001');
+  await owner.query(`INSERT INTO users(email,full_name,status,invite_expires_at) VALUES
+    ('invited@acme.test','Synthetic Invitee','INVITED',$1),
+    ('expired@acme.test','Synthetic Expired Invitee','INVITED',$2)`, [new Date(+now+60_000), now]);
+  assert.equal((await service.issue('expired@acme.test')).code, undefined);
+  const invitation = await service.issue('invited@acme.test');
+  const invitedSession = await service.verify(invitation.challengeId, invitation.code);
+  assert.ok(invitedSession);
+  assert.equal((await owner.query("SELECT status FROM users WHERE email='invited@acme.test'")).rows[0].status, 'ACTIVE');
+  await Promise.all([...Array.from({length: 8}, () => service.authenticate(invitedSession.token)), service.revoke(invitedSession.token)]);
+  assert.equal(await service.authenticate(invitedSession.token), null);
   console.log('PASS authentication: unknown/system identity, resend, three attempts, concurrent replay, session/CSRF, disabled identity and exact expiry boundaries');
 } finally {
   await pool?.end(); await owner?.end();
