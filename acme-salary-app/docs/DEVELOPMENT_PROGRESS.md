@@ -1,0 +1,33 @@
+# Development progress
+
+Last updated: 21 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
+
+QA update: actual Chromium execution completed. Final result: 12 passed / 14 failed, 0 skipped; 45 additional dependent business E2E scenarios blocked. Fixed and retested label contrast, stalled health loading and external font dependency. Unit suite 18/18 and all five instrumented regression suites pass (76 assertion records). Business E2E is not accepted; see project-root QA_EXECUTION_REPORT.md and BUG_REPORT.md.
+
+| Area | Current status | Evidence / next work |
+|---|---|---|
+| Plan/decisions | Approved; updated | ADR-002 and all five source-document addenda record client changes |
+| Project foundation | Tested internally | React/NestJS builds, config/policy tests, lint, TypeScript and health smoke pass; browser QA pending |
+| PostgreSQL foundation | Tested | Five checksummed migrations, local runtime/owner separation, immutable audit/ledger, dated assignments, holds and snapshot invalidation |
+| Money/FX domain | Tested internally | Exact money input validation, generated cases, rounding, historical direct/inverse/USD valuation and stale-rate rejection |
+| Prisma | Tested internally | Introspection, client generation and runtime restricted-role queries pass; SQL migrations retain unsupported constraints/triggers |
+| Backdated salary approvals | Backend/database tested | Request/decision service, atomic ledger/history/audit, pending/rejected exclusion, no self-approval, duplicate/stale handling. API/UI/lease/idempotency integration pending |
+| Retention and snapshots | Guard/database tested | Holds block removal; every snapshot read checks current identity/permissions/owner/version/expiry. Generation/export/admin UI pending |
+| Authentication/team | Not started | Next full vertical slice after database foundation acceptance; SMTP/session/bootstrap/permission API/UI tests required |
+| Remaining product modules | Not started | Reference administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
+| Production readiness | Not achieved | Infrastructure/legal/migration gates and full security/performance/UAT remain pending |
+
+## Latest verification
+
+`npm run verify:database` passed:
+
+- Five migrations applied/checksummed; repeat migration safe.
+- Prisma Client generation passed.
+- Lint, TypeScript, 18 unit tests and API/web builds passed.
+- 11 identity/audit PostgreSQL checks passed.
+- 23 country/FX/retention/snapshot PostgreSQL checks passed.
+- 28 approval PostgreSQL checks passed, including parallel requests and fault-injected audit rollback.
+- Prisma runtime adapter checks and API health smoke checks passed.
+- Approval tests create a unique synthetic database and drop only that database; other fixture suites roll back their synthetic rows.
+
+After this gate, npm audit identified an Effect advisory in Prisma tooling. Scoped override to patched `effect@3.22.1` applied; Prisma generation rechecked successfully and final npm audit reports zero known advisories. This does not replace full application security testing.

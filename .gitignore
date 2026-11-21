@@ -1,0 +1,18 @@
+# Runtime data, credentials and dependencies are never source artifacts.
+**/node_modules/
+**/dist/
+**/coverage/
+**/.local/
+**/qa-artifacts/
+**/playwright-report/
+**/test-results/
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+.DS_Store
+Thumbs.db

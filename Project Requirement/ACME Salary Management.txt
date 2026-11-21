@@ -1,0 +1,639 @@
+ACME Salary Management Platform
+Product Requirements & Technical Architecture Blueprint
+
+Document Type: Product & Engineering Design
+Version: 1.0
+Status: Proposed MVP
+Target Users: HR Managers
+Organization Size: 10,000+ employees
+Architecture: Modular Monolith
+
+1. Executive Summary
+
+ACME currently manages salary information for 10,000 employees across multiple countries using Excel spreadsheets.
+
+This creates challenges around:
+
+Data consistency and accuracy.
+Employee salary updates.
+Historical salary tracking.
+Compensation analysis.
+Reporting and visibility.
+Data security and accountability.
+
+The proposed Salary Management Platform will centralize employee compensation information through a secure web application.
+
+The platform will allow HR managers to manage employee salary information, track historical changes, generate reports, and understand how the organization compensates its workforce.
+
+2. Product Goals
+Centralize employee and salary information.
+Replace manual spreadsheet-based salary management.
+Provide accurate and searchable employee records.
+Maintain salary history and audit trails.
+Enable compensation analytics across countries and departments.
+Provide secure access to confidential salary information.
+Success Metrics
+Support at least 10,000 employee records.
+Employee search and filtering work efficiently.
+Salary updates preserve historical records.
+All salary changes are auditable.
+Dashboard metrics reconcile with database records.
+Reports can be exported using selected filters.
+3. User Persona
+
+Primary Persona: HR Manager
+
+Responsibilities:
+
+Manage employee records.
+Maintain compensation information.
+Review salary changes.
+Analyze salary distribution.
+Generate compensation reports.
+Maintain data accuracy.
+4. Functional Requirements
+4.1 Authentication and Authorization
+HR manager login and logout.
+Role-based access control.
+Secure password storage.
+Protected backend endpoints.
+Restricted access to compensation information.
+4.2 Employee Management
+Create employee records.
+View employee profiles.
+Update employee information.
+Search by employee ID, name, and email.
+Filter by country, department, and status.
+Sort and paginate employee records.
+Support active and inactive employees.
+4.3 Salary Management
+Create salary records.
+Update employee compensation.
+Store salary currency.
+Maintain effective dates.
+Preserve historical salary records.
+Record salary change reasons.
+Track the user responsible for changes.
+4.4 Dashboard and Analytics
+
+Display:
+
+Total employees.
+Employee distribution by country.
+Employee distribution by department.
+Average salary by department.
+Median salary by country.
+Salary distribution by salary bands.
+Payroll summaries by currency.
+Historical salary trends.
+4.5 Reporting
+Employee reports.
+Salary reports.
+Country-based reports.
+Department-based reports.
+Filtered CSV exports.
+4.6 Audit Logging
+
+Track:
+
+Previous salary.
+New salary.
+Employee ID.
+Changed by.
+Timestamp.
+Reason for change.
+5. Non-Functional Requirements
+
+Performance
+
+Support 10,000+ employee records.
+Server-side pagination.
+Indexed database queries.
+Efficient analytical aggregations.
+
+Security
+
+Role-based authorization.
+Secure authentication.
+Input validation.
+HTTPS.
+Restricted exports.
+Audit logging.
+
+Reliability
+
+Transactional salary updates.
+Database constraints.
+Automated testing.
+Consistent salary history.
+
+Maintainability
+
+Modular backend architecture.
+Reusable frontend components.
+Documented APIs.
+Automated deployment checks.
+6. Out of Scope
+
+The following features are deliberately excluded from the MVP:
+
+Payroll processing and salary disbursement.
+Tax calculations.
+Attendance and leave management.
+Insurance and employee benefits.
+Automated salary recommendations.
+Complex approval workflows.
+External HRMS integrations.
+
+Reason: These features introduce additional business complexity. The initial objective is to establish a reliable source of truth for employee compensation.
+
+7. Technology Stack
+Layer	Technology
+Frontend	React + TypeScript
+Build Tool	Vite
+UI	Tailwind CSS + shadcn/ui
+Backend	NestJS
+Language	TypeScript
+ORM	Prisma
+Database	PostgreSQL
+Authentication	Secure session/JWT strategy
+Validation	class-validator
+Unit Testing	Jest
+Frontend Testing	Vitest
+API Testing	Supertest
+E2E Testing	Playwright
+API Documentation	Swagger
+Containerization	Docker
+CI/CD	GitHub Actions
+Hosting	Vercel + Render/Railway + Managed PostgreSQL
+8. System Architecture
+
+Architecture pattern: Modular Monolith.
+
+The backend will contain independent business modules within a single deployable application.
+
+Main modules:
+
+Authentication
+Employee Management
+Salary Management
+Analytics
+Reporting
+Audit Logging
+High-Level Architecture
+
+HR Manager | v React Web Application | v REST API | +---- Authentication | +---- Employee Module | +---- Salary Module | +---- Analytics Module | +---- Reporting Module | +---- Audit Module | v PostgreSQL Database
+
+9. Database Design
+Core Entities
+Users
+id
+email
+password_hash
+role
+created_at
+Employees
+id
+employee_code
+first_name
+last_name
+email
+country_id
+department_id
+designation_id
+joining_date
+status
+created_at
+updated_at
+Salary Records
+id
+employee_id
+base_salary
+currency
+effective_from
+effective_to
+created_at
+Salary History
+id
+employee_id
+old_salary
+new_salary
+currency
+changed_by
+reason
+changed_at
+Countries
+id
+name
+country_code
+currency_code
+Departments
+id
+name
+Designations
+id
+name
+Audit Logs
+id
+user_id
+entity_type
+entity_id
+action
+changes
+created_at
+Database Design Decisions
+Employee and salary data are separated.
+Salary history is maintained using effective dates.
+Monetary values use PostgreSQL DECIMAL.
+Salary currency is explicitly stored.
+Previous salary records are not overwritten during normal salary changes.
+Salary changes and audit events are written transactionally.
+Employee search and filtering columns are indexed.
+Currency Consideration
+
+ACME operates across multiple countries.
+
+INR, USD, GBP, and EUR must not be added directly.
+
+For consolidated reporting:
+
+Maintain exchange rates.
+Select a reporting currency.
+Define an exchange-rate date.
+Store or reproduce the conversion basis.
+Clearly distinguish converted payroll from local payroll.
+10. API Design
+
+Base URL: /api
+
+Authentication
+
+POST /auth/login
+POST /auth/logout
+GET /auth/me
+
+Employees
+
+GET /employees
+GET /employees/:id
+POST /employees
+PATCH /employees/:id
+GET /employees/:id/salaries
+
+Salaries
+
+POST /salaries
+PATCH /salaries/:id
+GET /salaries/:id/history
+
+Analytics
+
+GET /analytics/overview
+GET /analytics/by-country
+GET /analytics/by-department
+GET /analytics/salary-distribution
+
+Reports
+
+GET /reports/employees
+GET /reports/salaries
+GET /reports/salaries/export
+
+Example Employee Search
+
+GET /api/employees?page=1&limit=25&country=IN&department=Engineering&search=John
+
+All endpoints must enforce server-side authentication and authorization.
+
+11. End-to-End User Journey
+HR manager logs in.
+Application displays the HR dashboard.
+HR manager reviews employee and salary statistics.
+HR manager navigates to employee directory.
+Searches using employee ID, name, or department.
+Opens an employee profile.
+Reviews current salary and historical salary records.
+Updates salary and enters an effective date and reason.
+Backend validates the request.
+Backend closes the previous effective salary period.
+Backend creates the new salary record.
+Backend creates the salary history and audit events.
+Database transaction commits.
+Frontend refreshes the employee profile.
+HR manager can view the change in audit history.
+12. Dashboard Business Questions
+
+The platform should answer:
+
+How many employees work in the organization?
+What is the average salary in each country?
+Which department has the highest average salary?
+How many employees fall into each salary band?
+What is the median salary across departments?
+How has compensation changed over time?
+What is the payroll distribution by currency?
+
+All dashboard metrics should be computed from authoritative database records.
+
+13. Seed Data Strategy
+
+Generate 10,000 deterministic synthetic employee records.
+
+Suggested distribution:
+
+10,000 employees.
+10–15 countries.
+15–20 departments.
+30–50 designations.
+Multiple currencies.
+Active and inactive employees.
+Different joining dates.
+One to three salary history records per employee.
+
+Requirements:
+
+Fixed random seed.
+Unique employee codes.
+Unique email addresses.
+Valid foreign keys.
+Bulk insertion.
+Reproducible results.
+No real employee information.
+14. Testing Strategy
+Unit Tests
+Salary validation.
+Salary effective-date rules.
+Currency handling.
+Compensation calculations.
+Authorization rules.
+Integration Tests
+Employee CRUD.
+Salary update transaction.
+Salary history creation.
+Audit event creation.
+Analytics aggregation.
+CSV export.
+E2E Tests
+HR manager login.
+Employee search.
+Employee profile navigation.
+Salary update.
+Audit history verification.
+Report export.
+Critical Edge Cases
+Duplicate employee code.
+Negative salary.
+Invalid currency.
+Overlapping salary periods.
+Unauthorized salary access.
+Failed audit transaction.
+Invalid employee reference.
+Empty search results.
+Large CSV exports.
+Concurrent salary updates.
+15. Security and Performance
+
+Security:
+
+Argon2id or bcrypt password hashing.
+Role-based access.
+Secure sessions.
+HTTPS.
+Input validation.
+Restricted exports.
+No salary information in application logs.
+Audit trail protection.
+
+Performance:
+
+Database indexes.
+Server-side pagination.
+Efficient SQL aggregations.
+Avoid N+1 queries.
+CSV streaming for larger exports.
+Query-plan inspection.
+
+Avoid introducing Redis, Kafka, Elasticsearch, or microservices without a demonstrated requirement.
+
+16. Development Roadmap
+Phase	Deliverable
+1	Requirements and architecture
+2	Backend and database setup
+3	Authentication and authorization
+4	Employee management
+5	Salary management
+6	Audit logging
+7	React frontend
+8	Dashboard and analytics
+9	CSV reporting
+10	10,000 employee seed script
+11	Unit, integration and E2E testing
+12	Deployment and documentation
+
+Estimated duration: 8–10 working days for a focused MVP.
+
+17. Git Commit Strategy
+
+Use incremental commits.
+
+Suggested sequence:
+
+docs: add product requirements and MVP scope
+docs: define system architecture
+docs: add database design
+chore: initialize frontend and backend
+feat: add database schema and migrations
+feat: implement authentication
+feat: implement employee management
+feat: implement salary management
+feat: add salary history and audit logging
+feat: implement analytics APIs
+feat: build HR dashboard
+feat: add employee directory and profile
+feat: implement salary management UI
+feat: add reports and CSV export
+chore: add deterministic seed script
+test: add business logic and integration tests
+test: add E2E coverage
+chore: configure deployment
+docs: finalize README and demo instructions
+
+Commit only completed and verified work.
+
+18. AI-Assisted Development Strategy
+
+Use AI as an engineering assistant.
+
+Product Analyst
+
+Requirement clarification.
+Acceptance criteria.
+Scope analysis.
+
+Solution Architect
+
+Architecture review.
+Database modeling.
+Trade-off analysis.
+
+Backend Engineer
+
+API implementation.
+Business logic.
+Validation.
+
+Frontend Engineer
+
+UI components.
+Dashboard.
+User workflows.
+
+QA Engineer
+
+Test scenarios.
+Edge cases.
+Regression testing.
+
+Code Reviewer
+
+Security review.
+Query optimization.
+Maintainability.
+Error handling.
+
+Maintain an AI development log containing:
+
+Prompts used.
+AI-generated implementation.
+Changes made after review.
+Issues discovered.
+Tests used to verify correctness.
+
+AI-generated code must be reviewed and tested before merging.
+
+19. Deployment Architecture
+
+Frontend:
+
+Vercel.
+
+Backend:
+
+Render or Railway.
+
+Database:
+
+Managed PostgreSQL.
+
+Source control:
+
+GitHub.
+
+CI/CD:
+
+GitHub Actions.
+
+Deployment requirements:
+
+Environment variable management.
+Production database migrations.
+HTTPS.
+Health checks.
+Logging and error monitoring.
+Smoke tests.
+Secure demo credentials.
+20. Demo Video Plan
+
+Target duration: 5–7 minutes.
+
+Product introduction.
+HR dashboard.
+Employee directory.
+Employee profile.
+Salary update.
+Salary history and audit logs.
+Compensation analytics.
+CSV export.
+Automated tests.
+Architecture and deployment.
+
+Use synthetic data only.
+
+21. Final Submission Checklist
+
+Product:
+
+Requirements document.
+Architecture documentation.
+Database ERD.
+API documentation.
+Trade-off explanations.
+
+Backend:
+
+Authentication.
+Employee APIs.
+Salary APIs.
+Salary history.
+Audit logs.
+Analytics.
+Reports.
+
+Frontend:
+
+Login.
+Dashboard.
+Employee directory.
+Employee profile.
+Salary update.
+Analytics.
+Reporting.
+
+Quality:
+
+10,000 employee seed script.
+Unit tests.
+Integration tests.
+E2E tests.
+Security review.
+Performance validation.
+
+Submission:
+
+GitHub repository.
+Incremental commits.
+README.
+AI development log.
+Deployed application.
+Demo video.
+22. Key Architectural Decisions
+Use a modular monolith instead of microservices.
+Separate employee data from compensation data.
+Maintain effective-dated salary history.
+Store monetary amounts using DECIMAL.
+Preserve currency information.
+Make salary changes transactional.
+Maintain immutable audit events.
+Enforce authorization at the backend.
+Use server-side pagination and aggregation.
+Prioritize business correctness over unnecessary infrastructure complexity.
+Conclusion
+
+The ACME Salary Management Platform should be designed as a secure, maintainable compensation management system rather than a basic employee CRUD application.
+
+The most important engineering priorities are:
+
+Correct salary domain modeling.
+Accurate historical salary tracking.
+Multi-currency support.
+Secure compensation data access.
+Transactional salary changes.
+Meaningful HR analytics.
+Reliable reporting.
+Automated testing.
+
+The recommended MVP architecture provides a strong foundation for future expansion into payroll integrations, approval workflows, compensation planning, and broader HR operations.
+
+Primary Engineering Principle:
+
+Treat employee compensation as sensitive, historically significant business data. Every salary change must be validated, traceable, and consistent.
