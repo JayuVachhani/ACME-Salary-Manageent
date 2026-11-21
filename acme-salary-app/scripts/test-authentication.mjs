@@ -22,6 +22,7 @@ try {
   await owner.query("INSERT INTO users(id,email,full_name,status) VALUES($1,'login@acme.test','Synthetic Login','ACTIVE')", [id]);
   assert.equal((await service.issue('unknown@acme.test')).code, undefined);
   assert.equal((await service.issue('system@acme.invalid')).code, undefined);
+  assert.equal(await service.verify('-'.repeat(36), '123456'), null);
   const first = await service.issue('login@acme.test');
   const next = await service.issue('login@acme.test');
   assert.equal(await service.verify(first.challengeId, first.code), null);
@@ -45,6 +46,21 @@ try {
   now = new Date(+now + 15 * 60_000);
   assert.equal(await service.verify(expired.challengeId, expired.code), null);
   assert.equal((await owner.query('SELECT count(*)::int n FROM user_sessions')).rows[0].n, 1);
+  const waiting = await service.issue('login@acme.test');
+  await owner.query('BEGIN');
+  await owner.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [id]);
+  const pending = service.verify(waiting.challengeId, waiting.code);
+  try {
+    let blocked = false;
+    for (let i = 0; i < 100; i++) {
+      blocked = (await owner.query("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND pid<>pg_backend_pid()) AS blocked")).rows[0].blocked;
+      if (blocked) break;
+      await new Promise(resolve => setTimeout(resolve, 20));
+    }
+    assert.equal(blocked, true, 'verification must actually wait on the identity lock');
+    now = new Date(+now + 15 * 60_000);
+  } finally { await owner.query('COMMIT'); }
+  assert.equal(await pending, null, 'expiry must be evaluated after acquiring locks');
   console.log('PASS authentication: unknown/system identity, resend, three attempts, concurrent replay, session/CSRF, disabled identity and exact expiry boundaries');
 } finally {
   await pool?.end(); await owner?.end();

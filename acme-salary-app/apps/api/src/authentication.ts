@@ -34,14 +34,14 @@ export class AuthenticationService {
   }
 
   async verify(challengeId: string, code: string): Promise<{ token: string; csrf: string } | null> {
-    if (!/^[a-f0-9-]{36}$/i.test(challengeId) || !/^\d{6}$/.test(code)) return null;
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(challengeId) || !/^\d{6}$/.test(code)) return null;
     return this.transaction(async client => {
-      const now = this.clock();
       // Always lock the identity first, matching resend/session lock order.
       const user = (await client.query(`SELECT u.* FROM users u JOIN login_challenges c ON c.user_id=u.id
         WHERE c.id=$1 FOR UPDATE OF u`, [challengeId])).rows[0];
-      if (!user || user.is_system || (user.status !== 'ACTIVE' && !(user.status === 'INVITED' && user.invite_expires_at > now))) return null;
       const challenge = (await client.query('SELECT * FROM login_challenges WHERE id=$1 FOR UPDATE', [challengeId])).rows[0];
+      const now = this.clock();
+      if (!user || user.is_system || (user.status !== 'ACTIVE' && !(user.status === 'INVITED' && user.invite_expires_at > now))) return null;
       if (challenge.consumed_at || challenge.attempts >= 3 || challenge.expires_at <= now) return null;
       const valid = matchesSecret(this.key, `otp:${challengeId}`, code, challenge.secret_hash);
       await client.query(`UPDATE login_challenges SET attempts=attempts+1,
@@ -60,9 +60,9 @@ export class AuthenticationService {
   async authenticate(token: string, csrf?: string) {
     if (!/^[\w-]{43}$/.test(token)) return null;
     return this.transaction(async client => {
-      const now = this.clock();
       const session = (await client.query(`SELECT s.*,u.status,u.is_system,u.is_hr_manager,u.permissions FROM user_sessions s
         JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 FOR UPDATE OF u,s`, [secretDigest(this.key, 'session', token)])).rows[0];
+      const now = this.clock();
       if (!session || session.revoked_at || session.status !== 'ACTIVE' || session.is_system ||
         sessionExpired(session.created_at, session.last_seen_at, now) ||
         (csrf !== undefined && !matchesSecret(this.key, 'csrf', csrf, session.csrf_hash))) return null;
