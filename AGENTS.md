@@ -7,7 +7,7 @@ Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Pres
 ## Git delivery
 
 - Fetch and inspect the remote before starting work. New development branches start from `origin/main` and must begin with `feature/`, `bugfix/` or `chore/`.
-- Existing bootstrap/import work is on `feature/acme-initial-baseline`, draft PR #1. If a new module needs dependencies only present in that unmerged PR, identify that dependency rather than silently merging or changing the agreed PR base.
+- Foundation PR #1 was merged by the user on 21 November 2026; merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea`. New modules start from the updated `origin/main`; preserve the original feature branch.
 - Commit completed features, logical bug fixes, refactors and important test improvements separately, using clear conventional messages. Include relevant documentation and progress updates.
 - Run appropriate tests and `node acme-salary-app/scripts/verify-staged.mjs` before commits/pushes. Test the safety checker with `node acme-salary-app/scripts/test-git-safety.mjs` when changing it.
 - Push tested logical changes incrementally, then confirm the remote branch head. Update `GIT_CHANGELOG.md` with hashes, branch, verification and actual push result. Never claim a local commit is pushed without confirmation.

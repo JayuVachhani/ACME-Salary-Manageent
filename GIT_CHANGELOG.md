@@ -5,6 +5,8 @@ Started: 21 November 2026 (Asia/Calcutta).
 
 ## Confirmed history
 
+Authentication work on `feature/authentication-team-access`: helper commit `009931c` was pushed successfully after lint/type/build and 21 unit tests passed. The next persistence increment adds migration 007, internal OTP/session service and isolated PostgreSQL regressions. Two SQL parameter-type errors found during regression execution were fixed before publication; the complete authentication regression then passed. No SMTP, login UI or complete authentication acceptance is claimed. Exact increment hashes are available through `git log` for these files; push outcomes are verified after committing.
+
 | Change | Commit | Branch | Verification | Remote status |
 |---|---|---|---|---|
 | One-time empty bootstrap, explicitly approved by client | `d7da0c84e10ef4f3aa961c97ddc532a679957f0d` | `main` | Empty tree; authorized remote previously had no branches | Pushed successfully |
@@ -30,7 +32,11 @@ The workflow improvement above was separately committed and pushed after its tes
 
 ## Current delivery state
 
-The feature branch is published and [PR #1](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1) is OPEN, READY FOR INDEPENDENT REVIEW and NOT MERGED, targeting `main`. The agent has not approved it. Known future application gaps are disclosed and scoped in `acme-salary-app/docs/PR_1_SCOPE.md`. PR-test Actions is explicitly authorized and implemented; deployment/production infrastructure remain separate. Protected `main` still contains only the authorized empty bootstrap commit.
+PR #2: https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/2 targets main from feature/authentication-team-access. Persistence commit `04648e2` was pushed and verified against the remote head. GitHub MCP actual-diff review identified malformed UUID handling and expiry timestamps sampled before lock waits. Both corrected with malformed-input and real lock-wait expiry regressions; foundation gate (21 unit, lint, types, builds) and isolated authentication tests passed. Review-fix commit is recorded in file history. CI and independent approval are still required; no self-approval or merge performed. SMTP/rate-limit/HTTP/team/UI work remains outside this internal-persistence increment.
+
+[PR #1](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1) is MERGED. GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`, following the user's merge notification. The agent did not approve or merge it. Local `main` was fast-forwarded to this commit and `feature/authentication-team-access` was created from `origin/main`. Known future application gaps remain disclosed in `acme-salary-app/docs/PR_1_SCOPE.md`; this foundation merge is not production acceptance.
+
+The merge-handoff documentation commit is identified by `git log -- GIT_CHANGELOG.md`; it updates this ledger, project instructions and development progress only. Verification: documentation diff review, whitespace check and staged-file safety scan; no new application tests are claimed. Branch publication is confirmed separately against the remote head after pushing.
 
 ## MCP PR review checkpoint — 21 November 2026
 

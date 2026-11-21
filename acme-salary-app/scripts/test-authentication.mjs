@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { Client, Pool } from 'pg';
+import { AuthenticationService } from '../apps/api/dist/authentication.js';
+const name = `acme_test_${randomUUID().replaceAll('-', '')}`;
+const ownerUrl = new URL(process.env.MIGRATION_DATABASE_URL);
+const runtimeUrl = new URL(process.env.DATABASE_URL);
+const admin = new Client({ connectionString: ownerUrl.href });
+await admin.connect();
+let pool;
+let owner;
+try {
+  await admin.query(`CREATE DATABASE ${name}`);
+  ownerUrl.pathname = runtimeUrl.pathname = `/${name}`;
+  execFileSync(process.execPath, ['scripts/migrate.mjs'], { env: { ...process.env, MIGRATION_DATABASE_URL: ownerUrl.href }, windowsHide: true, stdio: 'pipe' });
+  owner = new Client({ connectionString: ownerUrl.href }); await owner.connect();
+  pool = new Pool({ connectionString: runtimeUrl.href });
+  let now = new Date('2026-11-21T12:00:00Z');
+  const service = new AuthenticationService(pool, 'synthetic-auth-test-key-at-least-32-characters', () => now);
+  const id = randomUUID();
+  await owner.query("INSERT INTO users(id,email,full_name,status) VALUES($1,'login@acme.test','Synthetic Login','ACTIVE')", [id]);
+  assert.equal((await service.issue('unknown@acme.test')).code, undefined);
+  assert.equal((await service.issue('system@acme.invalid')).code, undefined);
+  assert.equal(await service.verify('-'.repeat(36), '123456'), null);
+  const first = await service.issue('login@acme.test');
+  const next = await service.issue('login@acme.test');
+  assert.equal(await service.verify(first.challengeId, first.code), null);
+  const wrong = next.code === '000000' ? '000001' : '000000';
+  for (let i = 0; i < 3; i++) assert.equal(await service.verify(next.challengeId, wrong), null);
+  assert.equal(await service.verify(next.challengeId, next.code), null);
+  assert.equal((await owner.query('SELECT attempts FROM login_challenges WHERE id=$1', [next.challengeId])).rows[0].attempts, 3);
+  const active = await service.issue('login@acme.test');
+  const results = await Promise.all([service.verify(active.challengeId, active.code), service.verify(active.challengeId, active.code)]);
+  assert.equal(results.filter(Boolean).length, 1);
+  const session = results.find(Boolean);
+  assert.equal((await service.authenticate(session.token)).id, id);
+  assert.equal(await service.authenticate(session.token, 'wrong-csrf'), null);
+  assert.equal((await service.authenticate(session.token, session.csrf)).id, id);
+  await owner.query("UPDATE users SET status='DELETED',deleted_at=now() WHERE id=$1", [id]);
+  assert.equal(await service.authenticate(session.token), null);
+  await owner.query("UPDATE users SET status='ACTIVE',deleted_at=NULL WHERE id=$1", [id]);
+  now = new Date(+now + 30 * 60_000);
+  assert.equal(await service.authenticate(session.token), null);
+  const expired = await service.issue('login@acme.test');
+  now = new Date(+now + 15 * 60_000);
+  assert.equal(await service.verify(expired.challengeId, expired.code), null);
+  assert.equal((await owner.query('SELECT count(*)::int n FROM user_sessions')).rows[0].n, 1);
+  const waiting = await service.issue('login@acme.test');
+  await owner.query('BEGIN');
+  await owner.query('SELECT id FROM users WHERE id=$1 FOR UPDATE', [id]);
+  const pending = service.verify(waiting.challengeId, waiting.code);
+  try {
+    let blocked = false;
+    for (let i = 0; i < 100; i++) {
+      blocked = (await owner.query("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND pid<>pg_backend_pid()) AS blocked")).rows[0].blocked;
+      if (blocked) break;
+      await new Promise(resolve => setTimeout(resolve, 20));
+    }
+    assert.equal(blocked, true, 'verification must actually wait on the identity lock');
+    now = new Date(+now + 15 * 60_000);
+  } finally { await owner.query('COMMIT'); }
+  assert.equal(await pending, null, 'expiry must be evaluated after acquiring locks');
+  console.log('PASS authentication: unknown/system identity, resend, three attempts, concurrent replay, session/CSRF, disabled identity and exact expiry boundaries');
+} finally {
+  await pool?.end(); await owner?.end();
+  await admin.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
+  await admin.end();
+}
