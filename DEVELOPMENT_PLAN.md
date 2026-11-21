@@ -245,3 +245,13 @@ Fourteen requirement checks still fail because login/OTP, business navigation/sc
 Reran all 18 unit tests and five existing real PostgreSQL/service/API suites; 76 individual assertion records pass. Lint, application type-check/build, QA type-check and dependency audit passed. QA automation was added; no production or existing employee data reset occurred.
 
 Reports under `acme-salary-app`: `QA_TEST_PLAN.md`, `TEST_CASES.md`, `QA_EXECUTION_REPORT.md`, `BUG_REPORT.md`. Retained initial/final JSON, HTML, screenshots and traces are under `qa-artifacts`. Next implementation priority remains real authentication/bootstrap/session/team functionality, followed by the approved domain vertical slices. Re-run the explicit unmet-requirement tests as each module becomes usable; do not suppress them to claim success.
+
+## 15. Git/GitHub management initialized — 21 November 2026
+
+Authorized remote is exclusively `JayuVachhani/ACME-Salary-Manageent`. The remote was empty and the client explicitly approved one empty bootstrap commit on `main`; `d7da0c84e10ef4f3aa961c97ddc532a679957f0d` was created and pushed. All application changes are on `feature/acme-initial-baseline`, branched from that main. Draft [PR #1](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1) targets main and is not merged.
+
+The pre-Git implementation is imported honestly as an in-progress baseline (`4696cf4`), not retroactively fabricated feature commits. Git safety tooling, its isolated tests, PR template and initial change ledger are a separate pushed improvement (`8015e93`). Commit details and synchronization rules are maintained in `GIT_CHANGELOG.md`; future completed features, fixes and tests receive separate verified commits and pushes on policy-compliant branches.
+
+Re-ran `verify:database` and `qa:typecheck` successfully before import. Tested and scanned the full Git index for runtime paths, actual local credential values and high-confidence token patterns; none were included. No new Chromium pass is claimed at this Git-only checkpoint: known QA failures remain disclosed and the PR stays draft. `.env.example` is a template; actual secrets, local database and browser data, dependencies and QA runtime artifacts remain ignored.
+
+New development branches still originate from main. Until the baseline PR is reviewed/merged, a new module depending on it must explicitly track that dependency rather than silently rebasing policy or merging. No automatic merge, force-push, branch deletion, CI deployment or production operation was performed.
