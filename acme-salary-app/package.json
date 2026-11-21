@@ -1,0 +1,54 @@
+{
+  "name": "acme-salary-management",
+  "version": "0.1.0",
+  "private": true,
+  "overrides": {
+    "@prisma/config": {
+      "effect": "3.22.1"
+    }
+  },
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "qa:e2e": "node --env-file=.env node_modules/@playwright/test/cli.js test",
+    "qa:regression": "node scripts/qa-regression.mjs",
+    "qa:typecheck": "tsc -p tsconfig.qa.json",
+    "qa:report": "node scripts/qa-report.mjs",
+    "db:local:start": "node scripts/local-postgres.mjs start",
+    "db:local:stop": "node scripts/local-postgres.mjs stop",
+    "db:migrate": "node --env-file=.env scripts/migrate.mjs",
+    "test:database": "node --env-file=.env scripts/test-database.mjs",
+    "test:health": "node --env-file=.env scripts/test-health.mjs",
+    "test:rules": "node --env-file=.env scripts/test-country-fx-retention.mjs",
+    "test:approvals": "node --env-file=.env scripts/test-approvals.mjs",
+    "test:prisma": "node --env-file=.env scripts/test-prisma.mjs",
+    "db:introspect": "node --env-file=.env node_modules/prisma/build/index.js db pull",
+    "db:generate": "node --env-file=.env node_modules/prisma/build/index.js generate",
+    "verify:database": "npm run db:migrate && npm run db:generate && npm run verify:foundation && npm run test:database && npm run test:rules && npm run test:approvals && npm run test:prisma && npm run test:health",
+    "dev": "concurrently -k -n api,web \"npm run dev -w @acme/api\" \"npm run dev -w @acme/web\"",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "eslint apps --max-warnings 0",
+    "test": "vitest run",
+    "verify:foundation": "npm run lint && npm run typecheck && npm test && npm run build",
+    "local:up": "docker compose up -d",
+    "local:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@embedded-postgres/windows-x64": "17.12.0-beta.19",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.6",
+    "concurrently": "10.0.7",
+    "eslint": "10.15.0",
+    "prisma": "7.10.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.73.0",
+    "vitest": "5.1.1"
+  }
+}
