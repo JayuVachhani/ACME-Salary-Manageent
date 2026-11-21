@@ -16,4 +16,12 @@ Authoritative decisions are recorded in [DECISIONS.md](DECISIONS.md), including 
 
 ## Remaining implementation work
 
+### Approval currency revalidation (PR #1 follow-up)
+
+Submission-time currency validation is insufficient: HR can deactivate a currency while a request is pending. Approval now reloads and shares-locks the requested currency inside its transaction, before inserting a decision. Migration 006 enforces the same rule in the database decision trigger. A deactivation already in flight blocks validation until its outcome is visible; deactivation that follows an acquired approval lock waits for that approval to finish. Earlier applied migrations/checksums are unchanged.
+
+An inactive currency blocks approval without changing the request, salary, history, decision audit or employee version. Rejection remains permitted because it cannot apply compensation. Reactivating the currency permits a fresh approval attempt of the pending request, subject to all other checks. Existing historical salary rows are never rewritten by currency lifecycle changes.
+
+Regression was first executed against the old code and failed with "Missing expected rejection". The service, direct SQL, rollback, concurrent-deactivation, rejection and reactivation paths pass against real isolated PostgreSQL after the fix (38 approval checks total).
+
 Session guards and APIs/UI are not delivered yet. The internal approval service receives its actor from the future trusted session boundary, not a client-supplied body field. Retry/idempotency, lease integration, complete input DTOs, reference administration and approval UI/E2E belong to later vertical slices. Do not advertise the approval module as complete based on backend/database tests alone.

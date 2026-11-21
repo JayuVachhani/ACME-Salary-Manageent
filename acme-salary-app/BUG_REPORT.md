@@ -19,6 +19,8 @@ Date: 21 November 2026. Environment: real Playwright Chromium, local React/NestJ
 
 ## Retest disposition
 
+PR #1 review finding (approval-time currency validation): FIXED AND RETESTED. Added service shared-lock validation and forward-only SQL migration 006. Added 10 approval assertions covering inactive-currency rejection, unchanged pending/ledger/history/audit/version state, direct SQL bypass denial, a concurrent deactivation and permitted rejection after deactivation; reactivation still permits valid approval. The regression failed on old code and passed after the fix. Current foundation gate: 18 unit tests and 72 logical real PostgreSQL checks (11 identity + 23 rules + 38 approvals), plus Prisma/health. Historical browser audit results below remain the recorded whole-application result, not a claim of new functionality.
+
 Initial Chromium: 9 passed / 16 failed. Final Chromium: 12 passed / 14 failed (one added OTP route check). Three bounded defects/hardening issues were fixed and their unchanged regressions passed. Fourteen missing-requirement checks remain failed and are neither skipped nor annotated as expected failures. Full results, traces and screenshots are in the execution report.
 
 The API's intentional readiness 503 is recorded as an unfinished application readiness contract, not fixed by returning a fake success. Browser mutation/approval and form error tests remain blocked; there are no business buttons/forms to exercise yet. No existing data was erased to obtain passing results.

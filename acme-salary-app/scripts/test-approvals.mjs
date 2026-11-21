@@ -46,6 +46,53 @@ try {
   await owner.query('UPDATE users SET employee_id=$1 WHERE id=$2',[employee,approver]);
   await assert.rejects(service.decide(approver,request,'APPROVED','Cannot approve own salary'),e=>e.code==='42501'); passed++;
   await owner.query('UPDATE users SET employee_id=NULL WHERE id=$1',[approver]);
+  const approvalState = async () => ({
+    version: await version(), salary: await salary('2026-11-21'),
+    counts: (await owner.query(`SELECT
+      (SELECT count(*)::int FROM salary_records) AS ledger,
+      (SELECT count(*)::int FROM salary_history_events) AS history,
+      (SELECT count(*)::int FROM salary_approval_decisions) AS decisions,
+      (SELECT count(*)::int FROM audit_logs) AS audit`)).rows[0]
+  });
+  const beforeDeactivation = await approvalState();
+  await owner.query("UPDATE currencies SET is_active=false WHERE code='USD'");
+  await assert.rejects(service.decide(approver,request,'APPROVED','Currency was deactivated'), /INVALID_CURRENCY/); passed++;
+  assert.deepEqual(await approvalState(),beforeDeactivation); passed++;
+  assert.equal((await owner.query('SELECT status FROM salary_request_status WHERE id=$1',[request])).rows[0].status,'PENDING'); passed++;
+  await assert.rejects(owner.query(`INSERT INTO salary_approval_decisions(request_id,decision,decided_by,comment)
+    VALUES($1,'APPROVED',$2,'Direct SQL cannot bypass inactive currency')`,[request,approver]),
+    error=>error.code==='23514' && error.message==='Requested currency is inactive'); passed++;
+  assert.deepEqual(await approvalState(),beforeDeactivation); passed++;
+  await owner.query("UPDATE currencies SET is_active=true WHERE code='USD'");
+  // A deactivation that starts first must win, even when it is uncommitted at validation.
+  await owner.query('BEGIN');
+  let race;
+  try {
+    await owner.query("UPDATE currencies SET is_active=false WHERE code='USD'");
+    race = service.decide(approver,request,'APPROVED','Concurrent currency deactivation')
+      .then(value=>({value}),error=>({error}));
+    let blocked=false;
+    for(let attempt=0;attempt<100;attempt++) {
+      const waiting=await pool.query(`SELECT EXISTS(SELECT 1 FROM pg_stat_activity
+        WHERE datname=current_database() AND wait_event_type='Lock'
+        AND query LIKE 'SELECT 1 FROM currencies%') AS blocked`);
+      if(waiting.rows[0].blocked){blocked=true;break;}
+      await new Promise(resolve=>setTimeout(resolve,20));
+    }
+    assert.equal(blocked,true,'Approval must wait for the currency row, not read stale active status'); passed++;
+    await owner.query('COMMIT');
+  } finally { await owner.query('ROLLBACK'); }
+  const raceResult=await race;
+  assert.equal(raceResult.error?.message,'INVALID_CURRENCY'); passed++;
+  assert.deepEqual(await approvalState(),beforeDeactivation); passed++;
+  // Rejection must still be possible after deactivation; it never applies compensation.
+  await owner.query("UPDATE currencies SET is_active=true WHERE code='USD'");
+  const rejectInactive=await service.submit(manager,await input('2026-04-01','125'));
+  await owner.query("UPDATE currencies SET is_active=false WHERE code='USD'");
+  await service.decide(approver,rejectInactive,'REJECTED','Inactive currency request rejected');
+  assert.equal((await owner.query('SELECT status FROM salary_request_status WHERE id=$1',[rejectInactive])).rows[0].status,'REJECTED'); passed++;
+  assert.equal(await salary('2026-11-21'),'100.0000'); passed++;
+  await owner.query("UPDATE currencies SET is_active=true WHERE code='USD'");
   const applied=await service.decide(approver,request,'APPROVED','Verified historical adjustment');
   assert.ok(applied); assert.equal(await salary('2026-11-21'),'200.0000'); passed++;
   assert.equal(await salary('2026-09-30'),'100.0000'); passed++;
