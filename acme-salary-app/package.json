@@ -22,6 +22,7 @@
     "db:local:stop": "node scripts/local-postgres.mjs stop",
     "db:migrate": "node --env-file=.env scripts/migrate.mjs",
     "test:database": "node --env-file=.env scripts/test-database.mjs",
+    "test:authentication": "node --env-file=.env scripts/test-authentication.mjs",
     "test:health": "node --env-file=.env scripts/test-health.mjs",
     "test:rules": "node --env-file=.env scripts/test-country-fx-retention.mjs",
     "test:approvals": "node --env-file=.env scripts/test-approvals.mjs",

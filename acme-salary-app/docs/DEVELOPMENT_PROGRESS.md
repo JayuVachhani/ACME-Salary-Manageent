@@ -17,7 +17,7 @@ QA update: actual Chromium execution completed. Final result: 12 passed / 14 fai
 | Prisma | Tested internally | Introspection, client generation and runtime restricted-role queries pass; SQL migrations retain unsupported constraints/triggers |
 | Backdated salary approvals | Backend/database tested | Request/decision service, atomic ledger/history/audit, pending/rejected exclusion, no self-approval, duplicate/stale handling. API/UI/lease/idempotency integration pending |
 | Retention and snapshots | Guard/database tested | Holds block removal; every snapshot read checks current identity/permissions/owner/version/expiry. Generation/export/admin UI pending |
-| Authentication/team | In progress | Secret generation/digest and session-boundary helpers added with unit tests. SMTP/session persistence/bootstrap/permission API/UI and Chromium workflows remain pending; module is not complete |
+| Authentication/team | In progress | Secret helpers and transactional OTP/session persistence tested. Isolated PostgreSQL regressions cover resend, attempt limits, parallel replay, CSRF, disabled accounts and expiry. SMTP delivery, rate limiting, bootstrap, team API/UI and Chromium workflows remain pending; internal service is not exposed through HTTP |
 | Remaining product modules | Not started | Reference administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
 | Production readiness | Not achieved | Infrastructure/legal/migration gates and full security/performance/UAT remain pending |
 

@@ -5,6 +5,8 @@ Started: 21 November 2026 (Asia/Calcutta).
 
 ## Confirmed history
 
+Authentication work on `feature/authentication-team-access`: helper commit `009931c` was pushed successfully after lint/type/build and 21 unit tests passed. The next persistence increment adds migration 007, internal OTP/session service and isolated PostgreSQL regressions. Two SQL parameter-type errors found during regression execution were fixed before publication; the complete authentication regression then passed. No SMTP, login UI or complete authentication acceptance is claimed. Exact increment hashes are available through `git log` for these files; push outcomes are verified after committing.
+
 | Change | Commit | Branch | Verification | Remote status |
 |---|---|---|---|---|
 | One-time empty bootstrap, explicitly approved by client | `d7da0c84e10ef4f3aa961c97ddc532a679957f0d` | `main` | Empty tree; authorized remote previously had no branches | Pushed successfully |
