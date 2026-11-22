@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { migrationChecksum, matchesMigrationChecksum } from './migration-checksum.mjs';
 import { readdirSync, readFileSync } from 'node:fs';
 import { Client } from 'pg';
 const connectionString = process.env.MIGRATION_DATABASE_URL;
@@ -18,12 +18,12 @@ try {
     .filter((n) => n.endsWith('.sql'))
     .sort()) {
     const sql = readFileSync(new URL(`../database/migrations/${name}`, import.meta.url), 'utf8');
-    const checksum = createHash('sha256').update(sql).digest('hex');
+    const checksum = migrationChecksum(sql);
     const existing = await client.query('SELECT checksum FROM schema_migrations WHERE name=$1', [
       name,
     ]);
     if (existing.rowCount) {
-      if (existing.rows[0].checksum !== checksum)
+      if (!matchesMigrationChecksum(sql, existing.rows[0].checksum))
         throw new Error(`Applied migration changed: ${name}`);
       continue;
     }
