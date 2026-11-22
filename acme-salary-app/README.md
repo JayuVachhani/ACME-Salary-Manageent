@@ -1,5 +1,7 @@
 # ACME Salary Management
 
+Frontend architecture: apps/web/src/main.tsx mounts App; app/ composes the page and server-session feature gates; features/ owns typed APIs, workflow hooks and UI; shared/ owns transport, cancellation and native dialogs. Run `npm run test:web-architecture` for import/ownership/cycle checks. See [frontend audit](docs/FRONTEND_ARCHITECTURE_AUDIT.md) and [technical decisions](docs/TECHNICAL_DECISIONS.md). Existing missing salary/reporting workflows remain incomplete; this structural conversion does not change API/business rules.
+
 Fresh local implementation of the approved ACME plan. **Foundation stage, not a completed salary application.** No mock employee statistics, fake authentication or permissive data endpoints are supplied.
 
 ## Requirements

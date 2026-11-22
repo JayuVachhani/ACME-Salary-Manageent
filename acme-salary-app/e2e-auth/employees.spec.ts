@@ -40,6 +40,33 @@ test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibi
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await login(page);const panel=area(page);await expect(panel.getByText('27 employees. Page 1.',{exact:true})).toBeVisible();
  await panel.getByLabel('Search employees').fill('no synthetic match');await panel.getByRole('button',{name:'Apply employee filters'}).click();await expect(panel.getByText('No employees match these filters.')).toBeVisible();await panel.getByRole('button',{name:'Clear employee filters'}).click();await expect(panel.getByRole('table',{name:'Employee results'})).toBeVisible();
  await page.route('**/api/v1/employees?*',async route=>{await new Promise(r=>setTimeout(r,500));await route.fulfill({status:503,contentType:'application/json',body:'{"message":"Synthetic directory outage"}'});});await panel.getByRole('button',{name:'Refresh employees'}).click();await expect(panel.getByRole('status')).toHaveText('Loading employees…');await expect(panel.getByRole('alert')).toHaveText('Synthetic directory outage');await page.unroute('**/api/v1/employees?*');await panel.getByRole('button',{name:'Refresh employees'}).click();await expect(panel.getByRole('table')).toBeVisible();
+ // A profile request must be cancelled when another employee is selected.
+ const directory = await (await page.request.get('/api/v1/employees')).json() as { items: { id: string; employee_code: string }[] };
+ const first = directory.items.find(item => item.employee_code === 'SYN002')!;
+ let releaseFirst: () => void = () => {};
+ let finishFirst: () => void = () => {};
+ const gate = new Promise<void>(resolve => { releaseFirst = resolve; });
+ const finished = new Promise<void>(resolve => { finishFirst = resolve; });
+ let held = false, cancellations = 0;
+ const firstPath = `/api/v1/employees/${first.id}`;
+ const recordCancellation = (request: import('@playwright/test').Request) => { if (new URL(request.url()).pathname === firstPath) cancellations++; };
+ page.on('requestfailed', recordCancellation);
+ await page.route(`**${firstPath}`, async route => {
+   const response = await route.fetch(); held = true; await gate;
+   try { if (!cancellations) await route.fulfill({ response }); } finally { finishFirst(); }
+ });
+ await panel.getByRole('button', { name: 'View profile for employee SYN002', exact: true }).click();
+ await expect.poll(() => held).toBe(true);
+ const beforeSelection = cancellations;
+ await panel.getByRole('button', { name: 'View profile for employee SYN003', exact: true }).click();
+ const profile = panel.getByRole('region', { name: 'Employee profile' });
+ await expect(profile.getByText('SYN003', { exact: true })).toBeVisible();
+ await expect.poll(() => cancellations).toBeGreaterThan(beforeSelection);
+ releaseFirst(); await finished;
+ await expect(profile.getByText('SYN003', { exact: true })).toBeVisible();
+ await expect(profile.getByText('SYN002', { exact: true })).toHaveCount(0);
+ await panel.getByRole('button', { name: 'Close employee profile' }).click();
+ await page.unroute(`**${firstPath}`); page.off('requestfailed', recordCancellation);
  await page.route(/\/api\/v1\/employees\/[a-f0-9-]{36}$/,route=>route.fulfill({status:404,contentType:'application/json',body:'{"message":"Employee unavailable"}'}));await panel.getByRole('button',{name:'View profile for employee SYN002',exact:true}).click();await expect(panel.getByRole('region',{name:'Employee profile'}).getByRole('alert')).toHaveText('Employee unavailable');await panel.getByRole('button',{name:'Close employee profile'}).click();
  await page.setViewportSize({width:375,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);expect((await new AxeBuilder({page}).include('[aria-labelledby="employees-heading"]').analyze()).violations).toEqual([]);expect(errors).toEqual([]);await panel.screenshot({path:'qa-artifacts/employees/mobile.png'});
 });

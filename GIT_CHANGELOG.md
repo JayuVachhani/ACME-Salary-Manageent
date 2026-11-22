@@ -1,5 +1,9 @@
 # ACME Git change ledger
 
+## React frontend architecture — 22 November 2026
+
+Fetched approved origin and started chore/react-frontend-architecture from main1e0e65f, preserving chore/nestjs-backend-structure/PR #11, feature/backend-linkage/PR #10 and unrelated handoff-document-prompt.md. Audit identified mixed app/auth/feature ownership, repeated untyped transport and inconsistent asynchronous resource lifetimes. Full feature conversion is implemented; foundation lint/types/build and28unit tests passed, React architecture54source/6008checks and QA typing passed. Updated Chromium and final publication checks are in progress; no push/CI/approval/merge result inferred. Scope is frontend architecture and related lifecycle fixes, not full salary/reporting delivery or production acceptance.
+
 Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent
 Started: 21 November 2026 (Asia/Calcutta).
 
@@ -126,3 +130,5 @@ The merge-handoff documentation commit is identified by `git log -- GIT_CHANGELO
 - Before merge, an authorized independent reviewer must approve and GitHub's required checks/policies must be satisfied. The connected author account was not used to APPROVE, and no merge/protection change was performed. Adding a workflow does not configure required-check branch protection; administrators should verify **Foundation integrity** is enforced as intended.
 
 Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.
+
+Local React verification: all34 scoped Chromium checks PASS (12foundation +9auth/team +4references +3country/currency +3FX +3employees; zero retries). Includes no-CSRF-hint session restoration/one completed identity read and profile cancellation; focused strengthened-cancellation rerun also PASS3employee cases.28units,lint,workspace types/builds,QA typing and54source React architecture gate PASS. Existing CSS is byte-identical; no backend/schema/env/lockfile/runtime-dependency change. One moved-source Markdown link checked with no missing target; mobile employee screenshot inspected. Sandbox Vite EPERM was resolved through authorized test execution; no test failure is relabelled as a pass. Final push/current-head CI remains separately verified below.

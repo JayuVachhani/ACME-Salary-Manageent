@@ -1,5 +1,7 @@
 # ACME handoff — start here
 
+React architecture checkpoint (22 November 2026): the complete delivered UI is organized into app composition, feature-owned typed APIs/types/workflow hooks/UI, and shared request/cancellation/dialog infrastructure. SessionProvider owns server-verified identity; Login composes no business modules. Every feature follows the same boundaries, without Redux/router/query-library additions. Original root .tsx screen files are removed; source maps below follow features/. Existing API/SQL/permission/financial rules are preserved. Pending PR #11 backend and PR #10 linkage stay on separate branches. Current test/PR disposition is in GIT_CHANGELOG.md and docs/FRONTEND_ARCHITECTURE_AUDIT.md under acme-salary-app; older descriptions remain historical.
+
 **Purpose:** Onboard developers and coding agents without inventing functionality.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -42,7 +44,7 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 
 ### Frontend
 
-- React useState/useEffect, native fetch and ordinary CSS. No router, Redux, query framework, auth localStorage or generic shared API client exists.
+- React workflow hooks, typed feature APIs and shared same-origin transport with ordinary CSS. No router, Redux, query framework or auth localStorage. App owns feature composition; shared code must not import features, and features must not import one another.
 - Relative same-origin requests; Vite proxy is development-only. Do not invent VITE_API_URL. Use APP_ORIGIN on the server and QA_API_PORT only for the dev proxy.
 - acme_session is HttpOnly; acme_csrf is a readable hint/header source, not proof of authentication. Current /me and backend guards decide access.
 - Native modal confirmation must show actual target/access details; preserve optimistic versions. Do not auto-merge stale forms or remove checks to make a test pass. Refresh and reopen edits after conflict.
@@ -61,18 +63,18 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 
 ## Task-to-code map
 
-API filenames below are under acme-salary-app/apps/api/src; migration references are under acme-salary-app/database/migrations. Paths beginning apps/, scripts/, e2e/ or e2e-auth/ are relative to acme-salary-app/. The web reference component is apps/web/src/organization-references.tsx.
+API filenames below are under acme-salary-app/apps/api/src; migration references are under acme-salary-app/database/migrations. Paths beginning apps/, scripts/, e2e/ or e2e-auth/ are relative to acme-salary-app/. The web reference component is apps/web/src/features/organization-references/organization-references.tsx.
 
 | Task/symptom | Primary locations |
 |---|---|
 | API entry/health/headers | apps/api/src/main.ts, config.ts |
 | OTP/cookies/origin | auth-controller.ts, authentication.ts, auth-secrets.ts, auth-rate.ts |
-| Department/designation admin | organization-references-controller.ts, organization-references.ts, web organization-references.tsx, migrations 013/014 |
+| Department/designation admin | organization-references-controller.ts, organization-references.ts, web features/organization-references/organization-references.tsx, migrations 013/014 |
 | Email delivery | otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
 | Team access/conflicts | team-controller.ts, team.ts, migrations 011/012 |
-| Salary/FX | salary-approval.ts, money.ts, fx-rates-controller.ts, fx-rates.ts, migrations003..006/018, web fx-rates.tsx |
+| Salary/FX | salary-approval.ts, money.ts, fx-rates-controller.ts, fx-rates.ts, migrations003..006/018, web features/fx-rates/fx-rates.tsx |
 | Snapshot/holds | report-access.ts, migrations/002_country_employee_fx.sql |
-| UI state/confirmation | apps/web/src/main.tsx, login.tsx, team.tsx, styles.css |
+| UI state/confirmation | apps/web/src/app/workspace.tsx, features/auth/use-login.ts, features/team/use-team.ts, shared/ui/confirmation-dialog.tsx, app/styles.css |
 | Local DB/bootstrap | scripts/local-postgres.mjs, migrate.mjs, bootstrap-manager.mjs |
 | QA/CI | e2e/, e2e-auth/, scripts/test-*.mjs, ../.github/workflows/pr-validation.yml |
 
@@ -108,4 +110,4 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 30 concrete method/path API operations (27 controller patterns, with two organization-reference kinds); one React root screen; 23 Prisma tables / 178 scalar fields; 18 ordered SQL migrations; 28 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #8 is merged at the source SHA above. The employee feature branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.
 
-P5a adds read-only employee directory/profile (employees-controller.ts/employees.ts/web employees.tsx); no salary payload/mutation. ADR-005 linkage and initial salary approval are approved but not implemented by this slice. Read module contract and latest backlog before salary integration.
+P5a adds read-only employee directory/profile (employees-controller.ts/employees.ts/web features/employees/employees.tsx); no salary payload/mutation. ADR-005 linkage and initial salary approval are approved but not implemented by this slice. Read module contract and latest backlog before salary integration.

@@ -1,5 +1,7 @@
 # ACME Salary Management — Development Plan
 
+React architecture checkpoint (22 November 2026): the complete delivered UI is organized into app composition, feature-owned typed APIs/types/workflow hooks/UI, and shared request/cancellation/dialog infrastructure. SessionProvider owns server-verified identity; Login composes no business modules. Every feature follows the same boundaries, without Redux/router/query-library additions. Original root .tsx screen files are removed; source maps below follow features/. Existing API/SQL/permission/financial rules are preserved. Pending PR #11 backend and PR #10 linkage stay on separate branches. Current test/PR disposition is in GIT_CHANGELOG.md and docs/FRONTEND_ARCHITECTURE_AUDIT.md under acme-salary-app; older descriptions remain historical.
+
 Review date: 21 November 2026 (Asia/Calcutta)  
 Status: CORE DEVELOPMENT AUTHORIZED — FOUNDATION VERIFIED; DATABASE MODULE IN PROGRESS  
 Implementation progress: foundation and core database/domain safeguards implemented in `acme-salary-app`; backdated approval backend tested. Authenticated API/UI modules are not yet complete.

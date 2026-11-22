@@ -1,5 +1,7 @@
 # Requirement traceability
 
+React architecture checkpoint (22 November 2026): the complete delivered UI is organized into app composition, feature-owned typed APIs/types/workflow hooks/UI, and shared request/cancellation/dialog infrastructure. SessionProvider owns server-verified identity; Login composes no business modules. Every feature follows the same boundaries, without Redux/router/query-library additions. Original root .tsx screen files are removed; source maps below follow features/. Existing API/SQL/permission/financial rules are preserved. Pending PR #11 backend and PR #10 linkage stay on separate branches. Current test/PR disposition is in GIT_CHANGELOG.md and docs/FRONTEND_ARCHITECTURE_AUDIT.md under acme-salary-app; older descriptions remain historical.
+
 Status reflects verified scope, not planned completeness. Full module acceptance still requires authenticated API/UI/E2E evidence.
 
 | Requirement | Implementation | Verification | Status |

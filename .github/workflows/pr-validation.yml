@@ -50,6 +50,8 @@ jobs:
         run: npm run db:local:start
       - name: Verify migrations, unit tests, real database integrity and builds
         run: npm run verify:database
+      - name: Verify React feature boundaries
+        run: npm run test:web-architecture
       - name: Verify authentication persistence in isolated PostgreSQL
         run: npm run test:authentication
       - name: Verify team authorization and continuity in isolated PostgreSQL

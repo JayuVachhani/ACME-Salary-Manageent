@@ -23,3 +23,7 @@ Scope: SMTP delivery, login/resend/logout, current-session endpoint, first-manag
 ## Verification
 
 `npm run test:authentication` exercises PostgreSQL integrity, concurrency, rate limits and bootstrap in a uniquely named disposable synthetic database. `npm run test:login` builds the app and runs Chromium against a separate synthetic database and loopback-only SMTP capture; it requires no external mailbox and sends no external mail. Tests preserve traces/screenshots under ignored `qa-artifacts/login`. CI executes both along with the foundation regression suite. Production SMTP delivery, TLS termination, independent security review and full application/UAT remain release gates.
+
+## React ownership and session restoration — 22 November2026
+
+features/auth owns the typed auth API, identity contract, SessionProvider, useLogin workflow and Login view. app/workspace.tsx composes business features from the provider identity; Login imports none of them. Mount always checks /me, including a live HttpOnly session without a readable CSRF hint. A401 means anonymous; other failures are shown. Successful verification refreshes identity once; no second signedIn-driven fetch is used. CSRF remains required by the server for logout/mutations; this restoration fix does not weaken that requirement. AUTH-E2E-01 now tests no-hint restoration and one completed /me response, then restores the synthetic hint before checking normal logout.
