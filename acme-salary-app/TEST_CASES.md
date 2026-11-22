@@ -407,3 +407,24 @@ Initial19-case execution; final ordering/date refinement retest recorded separat
 | QA-WEB-04 | Test runtime | Backend unavailable | Generic502,no leaked details | HTTP assertions satisfied | PASS | None |
 
 Final Node-server default runner:22 authenticated Chromium cases PASS (9+4+3+3+3),foundation12PASS,zero retries.19 directory PostgreSQL cases passed after explicit ordering/date refinement. No complete employee CRUD/linkage/salary/production pass is inferred. Intermediate failures remain recorded separately.
+
+## Current requirement probe execution (P5a)
+
+| ID | Module | Scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|---|
+| REQ-LOGIN | Login | Email form reachable | Visible email input | Observed | PASS | None |
+| REQ-OTP | Auth | Synthetic unknown-account OTP request | Generic202 |202 observed | PASS | Does not prove email delivery; SMTP suites do |
+| REQ-TEAM | Team | Anonymous denied | Hidden UI and401 | Observed | PASS | Authorized workflows in SMTP suite |
+| REQ-EMP | Directory | Anonymous denied | Hidden directory and401/no-store | Observed | PASS | Does not certify employee mutation/linkage |
+| REQ-COUNTRY | References | Anonymous denied | Hidden private UI and401/no-store | Observed | PASS | Authorized workflow separately executed |
+| REQ-FX | FX | Anonymous denied | Hidden private UI and401/no-store | Observed | PASS | Authorized workflow separately executed |
+| REQ-SAL | Salary | Required workflow entry | Entry available | Missing | FAIL | Salary UI/API incomplete |
+| REQ-HISTORY | History | Required workflow entry | Entry available | Missing | FAIL | History UI incomplete |
+| REQ-APPROVAL | Approval | Required workflow entry | Entry available | Missing | FAIL | Approval API/UI incomplete |
+| REQ-TRANSFER | Transfer | Required workflow entry | Entry available | Missing | FAIL | Transfer API/UI incomplete |
+| REQ-REPORT | Reports | Required workflow entry | Entry available | Missing | FAIL | Generator/export incomplete |
+| REQ-AUDIT | Audit | Required workflow entry | Entry available | Missing | FAIL | Audit browsing incomplete |
+| REQ-DASH | Dashboard | Required workflow entry | Entry available | Missing | FAIL | Dashboard incomplete |
+| REQ-API | Business APIs | All named real domain endpoints deny anonymous |401/403 for actual endpoints | Reports/audit still404 | FAIL | Missing endpoints remain blockers |
+
+Current14-case probe:6PASS/8FAIL,zero skips,exit1. All IDs retained. Privacy-correct anonymous probes for delivered modules replace wrong public-control assumptions; actual authorized directory/country/FX browser cases run in the SMTP suites. Full-system acceptance remains open.
