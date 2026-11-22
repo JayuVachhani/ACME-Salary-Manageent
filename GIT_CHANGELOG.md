@@ -1,5 +1,11 @@
 # ACME Git change ledger
 
+## Confirmed NestJS publication — 22 November 2026
+
+Commit `89d4f03c97d27e46d7fee867908c183b5dee86af` pushed normally to `origin/chore/nestjs-backend-structure`; `git ls-remote` confirmed the exact SHA. [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11) remains open for independent review/user merge. Required local checks listed below and final 209-file indexed safety scan passed. Actual-head MCP code review inspected DTO/HTTP contracts, auth/transaction invariants, pool handling, invitation workflow and test changes; no new critical/high issue identified, no inline review threads present. This author review is not independent approval. GitHub returned no workflow runs for the new head on the first lookup; CI is pending/unverified, not passing. This documentation follow-up is published separately and the final remote head/checks will be confirmed after push. No approval or merge performed.
+
+## Earlier publication preparation
+
 ## NestJS publication preparation — 22 November 2026
 
 Existing PR #11 / chore/nestjs-backend-structure. Native DTO/global validation, OpenAPI response contracts, safe HTTP boundaries, typed database results, transaction cleanup and invitation delivery handling are ready for publication. Local lint/types/builds, 27 units, isolated database suites, architecture/OpenAPI/production-doc checks, HTTP health, QA typing, 12 foundation and 22 delivered browser cases passed. Initial FX email-capture timeout passed its isolated group rerun; no timeouts were increased. Indexed scan passed before final documentation refresh; final scan is required before commit. Commit, confirmed push and exact-head GitHub checks will be recorded after they occur. Independent review/user merge remains pending.
