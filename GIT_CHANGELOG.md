@@ -1,5 +1,11 @@
 # ACME Git change ledger
 
+## Confirmed combined architecture push — 22 November 2026
+
+Merge commit `ca7b6279d931d86e91c441c894eaeeb79c97d169` incorporates main8b8d7ed (merged PR #10/#11) into existing React PR #12. Normal push succeeded and git ls-remote confirmed the exact SHA. Backend source and database migrations have no diff from merged main. CI retains both architecture gates and linkage coverage. Local lint/types/builds,36 units,QA typing,React71/7550,Nest architecture/OpenAPI,isolated database suites,17 linkage SQL/HTTP and22 delivered Chromium cases passed across completed groups. Initial FX test synchronization failure and correction remain documented. Final279-file indexed safety and whitespace gates passed. Actual-head MCP patches inspected; no new critical/high issue identified; author review is not independent approval. Exact-head GitHub CI is pending. This ledger follow-up is published separately with remote-head confirmation; no self-approval/merge/deployment. Unrelated user prompt remains excluded.
+
+## Earlier reconciliation preparation
+
 ## Reconcile PR #12 after merged PR #11 — 22 November 2026
 
 Fetched approved origin and confirmed PR #11 merge8b8d7ed344d0eb1b6d05e5dd891786db0d9edc9a (including PR #10 linkage). Existing chore/react-frontend-architecture merges origin/main without rewriting history. Preserve both architecture CI gates, Swagger/Redux lockfile dependencies, complete native backend and React shared primitives/cache. Account type reflects nullable employee_id; no linkage UI added. Combined local lint/types/builds,36 units,QA typing,React architecture71/7550,Nest architecture/OpenAPI,serial isolated database suites,17 linkage SQL/HTTP and all22 delivered browser cases passed. FX first failed because the test matched the earlier retained success notification before the second write completed; trace showed the second POST201. The helper now waits for the current POST201 and dialog closure; all3 FX cases passed,QA typing passed again,then all3 employees passed. No application behavior or timeout/protection weakened. First279-file safety scan passed; final scan follows these records. Commit/push/MCP review/current-head CI pending; no self-approval/merge. Unrelated handoff-document-prompt.md excluded.
