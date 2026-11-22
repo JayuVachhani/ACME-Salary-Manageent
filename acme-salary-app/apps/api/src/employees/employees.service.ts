@@ -1,7 +1,7 @@
 import {HttpException} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import {z} from 'zod';
-import {AuthenticationService} from './authentication.js';
+import {AuthenticationService} from '../auth/authentication.service.js';
 export const employeeQuery=z.object({search:z.string().trim().max(200).default(''),country:z.string().regex(/^[A-Z]{2}$/).optional(),department:z.uuid().optional(),status:z.enum(['ACTIVE','INACTIVE']).optional(),sort:z.enum(['code','name','joiningDate','department','country']).default('code'),direction:z.enum(['asc','desc']).default('asc'),page:z.coerce.number().int().min(1).max(100000).default(1),pageSize:z.coerce.number().int().min(1).max(100).default(25)}).strict();
 export const employeeId=z.uuid();
 const projection=`e.id,e.employee_code,e.email::text,e.first_name,e.last_name,e.joining_date::text,e.version,a.country_code,c.country_name,a.department_id,d.name::text AS department,a.designation_id,g.name::text AS designation,a.employment_status`;

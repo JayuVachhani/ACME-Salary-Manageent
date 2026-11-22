@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {Client,Pool} from 'pg';
-import {AuthenticationService} from '../apps/api/dist/authentication.js';
-import {EmployeesService,employeeQuery} from '../apps/api/dist/employees.js';
+import {AuthenticationService} from '../apps/api/dist/auth/authentication.service.js';
+import {EmployeesService,employeeQuery} from '../apps/api/dist/employees/employees.service.js';
 const name=`acme_test_${randomUUID().replaceAll('-','')}`,ownerUrl=new URL(process.env.MIGRATION_DATABASE_URL),runtimeUrl=new URL(process.env.DATABASE_URL),admin=new Client({connectionString:ownerUrl.href});await admin.connect();let created=false,owner,pool,n=0;const ok=label=>console.log(`PASS EMP-DB-${String(++n).padStart(2,'0')} ${label}`);const denied=(p,status)=>assert.rejects(p,e=>e.getStatus?.()===status);
 try{
  await admin.query(`CREATE DATABASE ${name}`);created=true;ownerUrl.pathname=runtimeUrl.pathname=`/${name}`;execFileSync(process.execPath,['scripts/migrate.mjs'],{env:{...process.env,MIGRATION_DATABASE_URL:ownerUrl.href},stdio:'pipe',windowsHide:true});owner=new Client({connectionString:ownerUrl.href});await owner.connect();pool=new Pool({connectionString:runtimeUrl.href});

@@ -1,5 +1,5 @@
 import type { PoolClient } from 'pg';
-import { can, canExportSalary, type Permission, type Principal } from './policy.js';
+import { can, canExportSalary, type Permission, type Principal } from '../common/domain/policy.js';
 
 export class SnapshotAccessError extends Error {
   constructor(public readonly code: 'ACCESS_DENIED' | 'SNAPSHOT_UNAVAILABLE') { super(code); }

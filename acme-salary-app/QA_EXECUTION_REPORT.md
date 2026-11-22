@@ -1,5 +1,9 @@
 # ACME QA execution report
 
+## Nest structure verification — 22 November 2026
+
+The chore/nestjs-backend-structure refactor preserves existing HTTP/SQL contracts and moves sources into capability folders. verify:foundation passes (22 units, lint, both types/builds). Isolated authentication/team22/references23/country27/FX23/employees19 checks, approvals38, transactional rules23, Prisma/health and QA typing pass. Run `npm run build -w @acme/api` before the added `npm run test:architecture`; it boots real Nest modules, checks shared/private DI, six feature route rejections, headers and ordered OTP drain/pool shutdown without database access. This gate is included in PR validation. Exact final Chromium/lifecycle/CI results are recorded in GIT_CHANGELOG.md; pending runs are not passes. Historical full-system gaps remain open.
+
 Executed 21 November 2026, Asia/Calcutta. **Release decision: NOT READY. Login now has dedicated SMTP/Chromium evidence; complete business E2E acceptance remains blocked by team and domain APIs/screens. Historical execution rows below are preserved and do not represent a new full-system pass.**
 
 ## Actual execution
@@ -133,3 +137,5 @@ Old-runtime documentation headc378a3d independently passed run45015292588/job137
 Node24.20 final local gate:34 scoped Chromium PASS (22authenticated+12foundation),zero retries;19 directory +22team+23reference+27country+23FX PostgreSQL checks,authentication persistence,72 foundation DB,22units,4 QA-WEB HTTP groups,Prisma/health/lint/types/build/QA typing PASS. Full requirement probes executed6PASS/8FAIL,exit1; expected unfinished workflows remain disclosed. No native exit in this execution. Logs:employee-node24-*.log and node24-*.log; current-head CI must pass independently.
 
 Node24.20 GitHub confirmation:run45016285166/job137189184558 at7094e08923a0c444a3c4b983c871bcefa5de3c26 SUCCESS. MCP decoded logs show nodeVersion:v24.20.0 for every browser group,34 scoped Chromium,19 directory DB,4 QA-WEB and all lower-level gates/artifacts/cleanup passed. The native-failure run remains retained,not relabeled. Final evidence-only docs push must pass its own exact-head CI; see PR #9 latest checks/final MCP review. No independent approval or merge by the agent.
+
+Final local structure checkpoint: real Nest architecture/lifecycle test PASS after the composition-root cleanup change; final API build, workspace typecheck and lint PASS. All five delivered Chromium groups PASS (9 authentication/team +4 references +3 country/currency +3 FX +3 employee =22; zero retries). Existing future-requirement failures remain unchanged and are not a full-system acceptance pass. Script import and decorator inventories verified; no schema, environment, permission or route additions/removals. Staging safety and whitespace verified before commit. GitHub exact-head results remain separate from local execution.

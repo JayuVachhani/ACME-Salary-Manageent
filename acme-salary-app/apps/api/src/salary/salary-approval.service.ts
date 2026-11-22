@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
-import { businessDate, dateOrdinal, resolveFx, validateSalary, type FxRate, type RoundingMode } from './money.js';
+import { businessDate, dateOrdinal, resolveFx, validateSalary, type FxRate, type RoundingMode } from '../common/domain/money.js';
 
 export class SalaryApprovalError extends Error {}
 export interface BackdatedRequestInput {

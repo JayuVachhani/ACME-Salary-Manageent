@@ -30,7 +30,7 @@ Regression was first executed against the old code and failed with "Missing expe
 
 Session guards and APIs/UI are not delivered yet. The internal approval service receives its actor from the future trusted session boundary, not a client-supplied body field. Retry/idempotency, lease integration, complete input DTOs, reference administration and approval UI/E2E belong to later vertical slices. Do not advertise the approval module as complete based on backend/database tests alone.
 
-## P4c FX administration implementation — 22 November 2026
+## P4c FX administration implementation â€” 22 November 2026
 
 Implements the approved HR-maintained, immutable historical FX policy; this is not a new client business decision. Authenticated HR appends a revision with effective date, source and reason; non-HR needs read permission to view history/lookup. No per-entry override or third-party FX provider is added. Session identity supplies the actor; expectedRevision and pair/date advisory locking reject stale concurrent writes. Both currencies are revalidated under shared locks. Historical reads remain valid after deactivation.
 
@@ -43,3 +43,13 @@ Read-only directory uses explicit non-salary projection,validated sort whitelist
 ADR-005 is a newly approved business rule: verified independent HR linkage with audited reason/confirmation,one active account per employee,self/unauthorized relink denial,session/snapshot invalidation and no unlinked salary writes. Initial salary requires independent approval including backdated effective dates. These cannot be safely met by the current backdated-only request table and immediate initial ledger path; a forward migration and complete write slice are required. This directory PR does not expose those paths or claim them implemented. Existing internal salary tests remain scoped foundations.
 
 Windows CI runtime fix:minimum/pin24.20.0 replaces24.15.0 after a verified native child-process crash blocked PR #9. Upstream24.20.0 contains61999 libuv Windows fix (see BROWSER_TEST_RUNTIME.md); exact causal diagnosis remains provisional. No framework/dependency or business rule change; new-runtime full tests/current-head CI required,zero retries. Global runtime untouched.
+
+## NestJS structure refactor — 22 November 2026
+
+Capability folders now hold top-level controllers, application services and feature modules. AppModule composes AuthModule, TeamModule, OrganizationReferencesModule, CountryCurrencyModule, FxRatesModule, EmployeesModule and HealthModule. ConfigModule exports a validated APP_CONFIG token; DatabaseModule owns one pg Pool; MailModule supplies explicit mail tokens. AuthModule exports only AuthenticationService. Feature services stay private and use Nest useFactory providers to preserve their directly testable constructors. This is a modular monolith with transactional SQL services; it does not introduce CQRS, repositories or new domain rules.
+
+createApp() builds the real graph/middleware without listening. main.ts only starts the listener and handles startup failure. ApplicationLifecycle.onApplicationShutdown drains pending OTP work after the HTTP adapter closes, then ends the pool; this also covers signal-driven shutdown. No app.close monkey patch remains. Transactional authenticateWithin remains inside each business mutation; an HTTP guard cannot replace that check. Salary approval and report snapshot helpers remain internal and have no HTTP module/API.
+
+Zod request schemas remain co-located with their owning service in this increment; a separate DTO folder or class-validator dependency is not required for Nest. TypeScript compiles ESM/Node16 decorators; no CLI installation or package changes are needed. Existing fail-closed schema readiness is preserved. See BACKEND_STRUCTURE_AUDIT.md for findings and verification.
+
+This branch starts at merged main 1e0e65f. Pending PR #10 linkage and its migration019 remain on feature/backend-linkage; after independent merge the controller change must be reconciled into TeamController. This refactor does not claim PR #10 is merged or its linkage endpoint is present here.

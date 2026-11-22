@@ -1,5 +1,9 @@
 # ACME — handoff validation report
 
+## Nest structure verification — 22 November 2026
+
+The chore/nestjs-backend-structure refactor preserves existing HTTP/SQL contracts and moves sources into capability folders. verify:foundation passes (22 units, lint, both types/builds). Isolated authentication/team22/references23/country27/FX23/employees19 checks, approvals38, transactional rules23, Prisma/health and QA typing pass. Run `npm run build -w @acme/api` before the added `npm run test:architecture`; it boots real Nest modules, checks shared/private DI, six feature route rejections, headers and ordered OTP drain/pool shutdown without database access. This gate is included in PR validation. Exact final Chromium/lifecycle/CI results are recorded in GIT_CHANGELOG.md; pending runs are not passes. Historical full-system gaps remain open.
+
 **Purpose:** Record documentation coverage against the merged implementation and distinguish static verification from runtime tests.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -79,3 +83,5 @@ CI also runs `npm.cmd run test:qa-web` to verify real built-static path/MIME/HEA
 P5a fresh static verification:669 checks PASS,14 files,222 relative links/anchors,30 concrete routes,23 models/178 scalar fields,18 migrations/28 functions/two views,16 API settings unchanged. Scoped local execution19 employee DB,4 QA-WEB HTTP groups,22 units,72 foundation DB,Prisma/health/lint/types/build/QA typing,and34 Chromium checks PASS. Existing local runtime URL mismatch handled only in ignored test subprocess override; .env unchanged. Earlier native/axe/locator/startup failures remain retained; independent PR review and current-head CI still required.
 
 Runtime follow-up:CI4705f3b failed before FX/employee browser execution; c378a3d passed independently on old runtime. Both outcomes are retained. Minimum/CI runtime now24.20.0 for relevant upstream Windows libuv fix; exact crash match remains inference. Local official executable checksum verified in ignored tooling,global Node/.env unchanged. Current24.20-head CI/review required; static schema/route counts unchanged.
+
+Final local structure checkpoint: real Nest architecture/lifecycle test PASS after the composition-root cleanup change; final API build, workspace typecheck and lint PASS. All five delivered Chromium groups PASS (9 authentication/team +4 references +3 country/currency +3 FX +3 employee =22; zero retries). Existing future-requirement failures remain unchanged and are not a full-system acceptance pass. Script import and decorator inventories verified; no schema, environment, permission or route additions/removals. Staging safety and whitespace verified before commit. GitHub exact-head results remain separate from local execution.

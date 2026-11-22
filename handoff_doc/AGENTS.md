@@ -1,4 +1,4 @@
-# ACME handoff — start here
+# ACME handoff â€” start here
 
 **Purpose:** Onboard developers and coding agents without inventing functionality.
 
@@ -30,12 +30,12 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 - Read code before edits; flag wrong legacy docs rather than changing working code to fit them. The client-provided handoff brief governs the documentation structure. On 22 November 2026 the client explicitly requested updating and pushing this pack. This authorizes documentation delivery, not application changes or production deployment.
 - Future feature work follows root Git policy: fetch, branch from origin/main using feature/, bugfix/ or chore/, test, scan staged files, commit/push logically, use GitHub MCP exclusively for PR review/lifecycle. Never self-approve or bypass independent review/checks.
 - Preserve user work and synthetic-only fixtures. Never read/copy secrets into docs, commit .env/.local/qa-artifacts, reset databases, force-push or delete branches.
-- Use code-backed status keys: done · stub/partial · not started · blocked · cancelled · deferred. Component-level done never means system-wide readiness.
+- Use code-backed status keys: done Â· stub/partial Â· not started Â· blocked Â· cancelled Â· deferred. Component-level done never means system-wide readiness.
 
 ### Backend
 
 - NestJS 12 ESM/Node16 module resolution, TypeScript 6 strict checks, Zod 4 strict DTOs, pg parameterized SQL. UUIDs are strings; money is decimal text/Decimal, not JavaScript floating-point arithmetic.
-- There is no Passport/JWT/AuthGuard/@Roles implementation. Factories close over a shared pool. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
+- There is no Passport/JWT/AuthGuard/@Roles implementation. Feature modules register controllers and explicit factory providers; DatabaseModule owns the shared pool and AuthModule exports one AuthenticationService. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
 - Match current identity/session lock order and team advisory lock. Always commit/rollback/release; failed OTP attempts must commit. Notifications run after database commit.
 - SQL migrations are forward-only/checksummed. Prisma is an introspected client/schema, not a replacement for triggers/checks. Never use prisma db push.
 - Internal SalaryApprovalService/readSalarySnapshot are not HTTP endpoints. Employee linkage is incomplete; do not expose internal actor-parameter services directly.
@@ -65,13 +65,13 @@ API filenames below are under acme-salary-app/apps/api/src; migration references
 
 | Task/symptom | Primary locations |
 |---|---|
-| API entry/health/headers | apps/api/src/main.ts, config.ts |
-| OTP/cookies/origin | auth-controller.ts, authentication.ts, auth-secrets.ts, auth-rate.ts |
-| Department/designation admin | organization-references-controller.ts, organization-references.ts, web organization-references.tsx, migrations 013/014 |
-| Email delivery | otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
-| Team access/conflicts | team-controller.ts, team.ts, migrations 011/012 |
-| Salary/FX | salary-approval.ts, money.ts, fx-rates-controller.ts, fx-rates.ts, migrations003..006/018, web fx-rates.tsx |
-| Snapshot/holds | report-access.ts, migrations/002_country_employee_fx.sql |
+| API entry/health/headers | apps/api/src/main.ts, config/config.ts |
+| OTP/cookies/origin | auth/auth.controller.ts, auth/authentication.service.ts, auth/auth-secrets.ts, auth/auth-rate.ts |
+| Department/designation admin | organization-references/organization-references.controller.ts, organization-references/organization-references.service.ts, web organization-references.tsx, migrations 013/014 |
+| Email delivery | mail/otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
+| Team access/conflicts | team/team.controller.ts, team/team.service.ts, migrations 011/012 |
+| Salary/FX | salary/salary-approval.service.ts, common/domain/money.ts, fx-rates/fx-rates.controller.ts, fx-rates/fx-rates.service.ts, migrations003..006/018, web fx-rates.tsx |
+| Snapshot/holds | reports/report-access.ts, migrations/002_country_employee_fx.sql |
 | UI state/confirmation | apps/web/src/main.tsx, login.tsx, team.tsx, styles.css |
 | Local DB/bootstrap | scripts/local-postgres.mjs, migrate.mjs, bootstrap-manager.mjs |
 | QA/CI | e2e/, e2e-auth/, scripts/test-*.mjs, ../.github/workflows/pr-validation.yml |
@@ -82,7 +82,7 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 1. Confirm source requirements/decision precedence and update BACKLOG/ROADMAP scope.
 2. New domain: schema migration, transactional service, strict HTTP contract, current-session permission checks, functional UI, negative/parallel tests and smoke steps; update CONTEXT, DATA_MODEL, RBAC, WORKFLOW_RULES.
-3. New role/permission: update policy.ts, Zod permission enum, SQL permission checks/guards, UI, session/snapshot invalidation and multi-account tests; never infer roles from client flags.
+3. New role/permission: update common/domain/policy.ts, Zod permission enum, SQL permission checks/guards, UI, session/snapshot invalidation and multi-account tests; never infer roles from client flags.
 4. New status: migrate enums/checks and transition guards; update workflow diagrams, filters, ledger/report selection and tests.
 5. New document/provider/upload type: none exists currently; obtain scope, define storage/retention/validation/contracts before adding routes or packages; update integration/deployment docs and smoke tests.
 6. Update all affected handoff files in the same feature PR. Maintain the existing operational/QA docs too; do not erase historical failures.
@@ -108,4 +108,4 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 30 concrete method/path API operations (27 controller patterns, with two organization-reference kinds); one React root screen; 23 Prisma tables / 178 scalar fields; 18 ordered SQL migrations; 28 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #8 is merged at the source SHA above. The employee feature branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.
 
-P5a adds read-only employee directory/profile (employees-controller.ts/employees.ts/web employees.tsx); no salary payload/mutation. ADR-005 linkage and initial salary approval are approved but not implemented by this slice. Read module contract and latest backlog before salary integration.
+P5a adds read-only employee directory/profile (employees/employees.controller.ts/employees.ts/web employees.tsx); no salary payload/mutation. ADR-005 linkage and initial salary approval are approved but not implemented by this slice. Read module contract and latest backlog before salary integration.

@@ -1,5 +1,9 @@
 # ACME — prioritized product and engineering backlog
 
+## Backend structure checkpoint — 22 November 2026
+
+On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
+
 **Purpose:** Give the next agent ordered, evidence-backed work and explicit exclusions.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -17,7 +21,7 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 | A1a | Department/designation administration (P4a) | High | done | Merged PR #5; migrations 013/014, real API/UI, 23 PostgreSQL and 4 reference Chromium cases |
 | A1b | Country/currency administration (P4b) | Critical | done | PR #7 merged at0e0fb86; ADR-004, pinned catalogue and country-currency module |
 | A1c | Immutable historical FX administration (P4c) | High | done | Implemented;23 DB /3 FX Chromium and final-head CI passed; Merged PR #8 at2a3ee19. FX_MODULE.md, migration018, service/controller/UI |
-| A2 | Verify and administer employee/user linkage before public salary access | Critical | blocked | ADR-005 independent HR/reason/confirmation/session revocation approved,implementation pending; nullable mapping still permits incomplete self-subject protection; users, policy.ts, employee workflows |
+| A2 | Verify and administer employee/user linkage before public salary access | Critical | blocked | ADR-005 independent HR/reason/confirmation/session revocation approved,implementation pending; nullable mapping still permits incomplete self-subject protection; users, common/domain/policy.ts, employee workflows |
 | A3 | Employee create/directory/edit/removal with initial salary atomicity | Critical | stub/partial | P5a directory/profile locally verified19 DB /3 Chromium; PR pending. Dated assignments, validation, permissions, holds and unique keys; employee schemas/UI/API |
 | A4 | Expose backdated request/independent decision workflow safely | Critical | blocked | Depends on A2/A3; SalaryApprovalService, trusted session boundary, approver/requester browser accounts |
 | A5 | Ordinary salary/corrections/transfer and operational edit leases | High | stub/partial | Existing schemas are not complete workflow; clarify affected unresolved rules, record_locks, history |
@@ -26,7 +30,7 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 
 | ID | Item | Priority | Status | Notes / primary touchpoints |
 |---|---|---|---|---|
-| B1 | Historical report generator/preview/export with complete snapshot membership | High | not started | report-access.ts; owner/version/30-minute invalidation; FX provenance and CSV hardening |
+| B1 | Historical report generator/preview/export with complete snapshot membership | High | not started | reports/report-access.ts; owner/version/30-minute invalidation; FX provenance and CSV hardening |
 | B2 | Resolve aggregate rounding and wire FX staleness config | High | stub/partial | FX HTTP staleness now wired; sumConverted still hardcodes HALF_UP and future salary/report constructors need config |
 | B3 | HR audit browsing and metrics/dashboard | High | not started | Immutable tables exist; no read API/UI |
 | B4 | Deterministic 10k/15k synthetic data and full action/load/security matrix | High | not started | Replace missing-module blockers only with executed workflows, never synthetic pass labels |

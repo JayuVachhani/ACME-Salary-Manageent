@@ -1,7 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import {z} from 'zod';
-import {AuthenticationService} from './authentication.js';
+import {AuthenticationService} from '../auth/authentication.service.js';
 
 export const countryCode=z.string().regex(/^[A-Z]{2}$/);
 export const currencyCode=z.string().regex(/^[A-Z]{3}$/);

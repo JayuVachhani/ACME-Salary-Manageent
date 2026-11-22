@@ -1,5 +1,9 @@
 # ACME Salary Management — Development Plan
 
+## Backend structure checkpoint — 22 November 2026
+
+On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
+
 Review date: 21 November 2026 (Asia/Calcutta)  
 Status: CORE DEVELOPMENT AUTHORIZED — FOUNDATION VERIFIED; DATABASE MODULE IN PROGRESS  
 Implementation progress: foundation and core database/domain safeguards implemented in `acme-salary-app`; backdated approval backend tested. Authenticated API/UI modules are not yet complete.

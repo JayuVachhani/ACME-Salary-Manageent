@@ -1,5 +1,9 @@
 # ACME — technical context and handoff
 
+## Backend structure checkpoint — 22 November 2026
+
+On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
+
 **Purpose:** Describe implementation contracts, architecture, source evidence and pitfalls.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -45,17 +49,17 @@ Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Co
    ├─ e2e/                        Foundation and unmet-requirement Chromium probes
    ├─ e2e-auth/                   Real SMTP/login/team/reference Chromium workflows and capture server
    ├─ docs/                       Decisions, traceability, module docs and progress
-   ├─ playwright*.config.ts       Separate protected test server/fixture setups
+   ├─ playwright*.config/config.ts       Separate protected test server/fixture setups
    ├─ QA_*.md / TEST_CASES.md / BUG_REPORT.md   Historical and latest execution evidence
    ├─ .local/                     Ignored DB binaries/data/credentials/browser installation
    └─ qa-artifacts/               Ignored reports, traces and synthetic screenshots
 ~~~
 
-API src files by responsibility: main.ts registers HealthController and factory-produced auth/team/organization-reference controllers; config.ts validates env; authentication.ts owns transactions/session checks; auth-secrets.ts owns HMAC/CSPRNG and expiry; auth-rate.ts serializes abuse limits; otp-mail.ts provides mail adapters; team.ts contains admin transactions/DTOs; policy.ts contains reusable Principal predicates; salary-approval.ts and money.ts implement internal compensation rules; report-access.ts guards stored snapshots; database.ts constructs the Prisma pg adapter. Adjacent .test.ts files test config, policy, money and auth helpers.
+API src files by responsibility: app.module.ts composes health and capability modules; app.ts configures HTTP middleware; main.ts starts the listener; config/config.ts validates env; auth/authentication.service.ts owns transactions/session checks; auth/auth-secrets.ts owns HMAC/CSPRNG and expiry; auth/auth-rate.ts serializes abuse limits; mail/otp-mail.ts provides mail adapters; team/team.service.ts contains admin transactions/DTOs; common/domain/policy.ts contains reusable Principal predicates; salary/salary-approval.service.ts and common/domain/money.ts implement internal compensation rules; reports/report-access.ts guards stored snapshots; database/prisma.ts constructs the Prisma pg adapter. Adjacent .test.ts files test config, policy, money and auth helpers.
 
 ## 3. Backend architecture
 
-main.ts loads reflect-metadata and validated config, creates pg Pool(max 10, 3-second connect, 5-second statement and 10-second idle-transaction limits), declares health routes and registers controller factories through a local AppModule. Helmet precedes routes; auth/team/organization-reference responses set Cache-Control: no-store. Requests receive random X-Request-Id and allowlisted method/status/duration JSON logs; no request bodies/cookies/query text are logged. API binds loopback. app.enableShutdownHooks is enabled; explicit app.close wraps app close, OTP delivery drain and pool.end. Signal/drain behavior still needs production verification; no durable background-job guarantee follows from this wrapper.
+main.ts starts createApp() and listens using the validated APP_CONFIG provider. ConfigModule owns environment validation; DatabaseModule supplies pg Pool(max 10, 3-second connect, 5-second statement and 10-second idle-transaction limits). AppModule composes the feature controllers/providers. Helmet precedes routes; all /api/v1 responses set Cache-Control: no-store. Requests receive random X-Request-Id and allowlisted method/status/duration JSON logs; no bodies/cookies/query text are logged. API binds loopback. Nest shutdown hooks invoke ApplicationLifecycle after HTTP disposal: drain MailModule's pending OTP work, then pool.end. Real-container tests verify close/drain ordering; Windows OS-signal delivery and production operation are not separately certified. No durable background-job guarantee is claimed.
 
 Nest services use async pg queries and explicit BEGIN/COMMIT/ROLLBACK/finally-release. Team authorization calls AuthenticationService.authenticateWithin on the same client, retaining identity/session locks through the write. No JWT, Passport or decorator-based RBAC dependencies exist. SQL provides domain constraints and audit triggers; runtime account is acme_app. Prisma createDatabase uses restricted credentials and disabled query logging; runtime HTTP/domain paths currently use pg directly. IDs are UUID strings; counters/versions are integer; numeric values travel as decimal strings. See [DATA_MODEL.md](DATA_MODEL.md).
 
@@ -65,7 +69,7 @@ There are no uploads, file document types, transcription, queues, scheduler, aut
 
 ## 4. Authentication and security module
 
-Source: [auth-controller.ts](../acme-salary-app/apps/api/src/auth-controller.ts), [authentication.ts](../acme-salary-app/apps/api/src/authentication.ts), [auth-rate.ts](../acme-salary-app/apps/api/src/auth-rate.ts).
+Source: [auth/auth.controller.ts](../acme-salary-app/apps/api/src/auth/auth.controller.ts), [auth/authentication.service.ts](../acme-salary-app/apps/api/src/auth/authentication.service.ts), [auth/auth-rate.ts](../acme-salary-app/apps/api/src/auth/auth-rate.ts).
 
 A01/A02 validate strict email input and exact Origin, consume rate budget and return a fresh random challengeId plus the same generic message for unknown/ineligible/throttled recipients. Delivery runs outside the response path. AuthenticationService.issue locks an eligible non-system ACTIVE/INVITED user, checks invitation expiry after lock, consumes prior open challenges and inserts a HMAC of a cryptographic six-digit code. The raw code is only passed to SMTP. Mail failure invalidates its challenge and records a sanitized event.
 
@@ -75,7 +79,7 @@ A04 re-reads current ACTIVE non-system identity/permissions and checks revocatio
 
 ## 5. HR team module
 
-Source: [team-controller.ts](../acme-salary-app/apps/api/src/team-controller.ts), [team.ts](../acme-salary-app/apps/api/src/team.ts), SQL 011/012, [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md).
+Source: [team/team.controller.ts](../acme-salary-app/apps/api/src/team/team.controller.ts), [team/team.service.ts](../acme-salary-app/apps/api/src/team/team.service.ts), SQL 011/012, [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md).
 
 T01 returns live/invited accounts, excludes system/deleted identities, orders created_at/id and pages 20 rows. T02 creates a seven-day INVITED account and notifies after commit, returning delivery sent/failed. T03 changes fullName, isHrManager and permission array against expectedVersion. T04 soft-removes and revokes all access. T05 only renews INVITED records, increments version, invalidates open OTPs and resends mail. Rejoin is a new ID, not an activation endpoint for old DELETED rows.
 
@@ -87,7 +91,7 @@ Users may edit their own name but not permissions; self-removal is subject to an
 
 ### Organization reference administration — done for P4a
 
-Sources: [controller](../acme-salary-app/apps/api/src/organization-references-controller.ts), [service](../acme-salary-app/apps/api/src/organization-references.ts), [UI](../acme-salary-app/apps/web/src/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
+Sources: [controller](../acme-salary-app/apps/api/src/organization-references/organization-references.controller.ts), [service](../acme-salary-app/apps/api/src/organization-references/organization-references.service.ts), [UI](../acme-salary-app/apps/web/src/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
 
 OrganizationReferencesService.run holds the current HR identity/session through each transaction and sets local acme.reference_actor for atomic before/after audits. Only departments/designations are accepted by referenceKind before any table-name interpolation; all values are SQL parameters. list returns 20 rows ordered by name/id, including inactive records. create trims a 1..200-character name and returns version 1. change requires name, isActive and expectedVersion; stale or unavailable IDs return 409. Case-insensitive uniqueness reserves inactive names. IDs cannot change; there is no DELETE route.
 
@@ -99,7 +103,7 @@ SalaryApprovalService.submit(actorId,input) requires a backdated UTC date, manda
 
 SalaryApprovalService.decide(actorId,requestId,decision,comment) requires an independent active HR through SQL trigger checks. Rejection records only a decision. Approval locks the employee, checks current country policy version and shares-locks active currency, appends decision plus exact ledger row in one transaction. Deferred approval_salary_atomic prevents an approval committing without salary. record_salary_history creates before/after history/audit and advances employee version. Requester/subject checks rely on employee_id linkage, which is nullable and not yet verified end to end. **Block public salary exposure until linkage and trusted session-to-actor integration are implemented.**
 
-money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration is now exposed through FxRatesService; salary bands and employee mutation HTTP/UI remain absent; read-only directory/profile now exist.
+common/domain/money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration is now exposed through FxRatesService; salary bands and employee mutation HTTP/UI remain absent; read-only directory/profile now exist.
 
 Employee assignments are append-only dated organization/status records. SQL validates joining date, protects historical joining-date changes and increments employee version. Holds/releases are append-only HR-attributed records; active holds block employee removal. No user-facing transfer, hold or permanent purge workflow exists.
 
@@ -107,7 +111,7 @@ readSalarySnapshot(client,actorId,snapshotId,exportRequested,now) is an internal
 
 ### Country and currency administration — P4b
 
-Sources: country-currency.ts, country-currency-controller.ts, web country-currency.tsx, migrations 015..017 and [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md). Catalogue SELECT permits current HR or read member; configuration routes are HR-only. All writes authenticate in the same transaction, require Origin/CSRF and set local reference actor. Versioned updates and transactional before/after audits prevent silent lost updates.
+Sources: country-currency/country-currency.service.ts, country-currency/country-currency.controller.ts, web country-currency.tsx, migrations 015..017 and [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md). Catalogue SELECT permits current HR or read member; configuration routes are HR-only. All writes authenticate in the same transaction, require Origin/CSRF and set local reference actor. Versioned updates and transactional before/after audits prevent silent lost updates.
 
 Pinned SIX publication 2026-09-17 contains 178 codes (165 numeric and 13 N.A.). database/reference/iso4217.json records source/date/raw hash. Runtime catalogue is read-only, without network calls. HR activation inserts/updates configured currencies; version 0 means first activation. Codes/minor units are immutable through HTTP. N.A./unknown codes cannot activate, and mismatched legacy precision cannot silently reactivate. Separately reviewed precision corrections are rejected by SQL when referenced by country, ledger/request, FX or snapshot rows.
 
@@ -115,7 +119,7 @@ Country inputs configure name/default currency, 0..4 precision, HALF_UP/FLOOR/CE
 
 ### FX administration — P4c
 
-Sources: fx-rates-controller.ts, fx-rates.ts, web fx-rates.tsx and [FX module](../acme-salary-app/docs/FX_MODULE.md). HR or read members can list historical revisions/resolve as-of rates. Only HR can POST, using current-session transaction/Origin/CSRF and no actor override. A revision authoring form must load the current pair/date revision, require positive decimal rate/source/reason, show concrete confirmation, and handle stale409 without automatic merge/retry.
+Sources: fx-rates/fx-rates.controller.ts, fx-rates/fx-rates.service.ts, web fx-rates.tsx and [FX module](../acme-salary-app/docs/FX_MODULE.md). HR or read members can list historical revisions/resolve as-of rates. Only HR can POST, using current-session transaction/Origin/CSRF and no actor override. A revision authoring form must load the current pair/date revision, require positive decimal rate/source/reason, show concrete confirmation, and handle stale409 without automatic merge/retry.
 
 POST locks active pair currencies in code order and the existing advisory pair/date key, compares expectedRevision then appends current+1. SQL still enforces HR/sequence/active currencies/immutability. Migration018 writes before/after audit for NEW events while preserving all earlier audit rows. A failed audit undoes the append. Lookup is historically readable even after currency deactivation and returns exact unit factor plus IDs/dates/sources/inverse flags. It uses the existing direct/inverse/USD resolver and configured FX_MAX_STALENESS_DAYS. Future-effective quotes are excluded from earlier as-of selection; missing/stale paths422. This is rate preview/maintenance, not a completed salary or report generator.
 
@@ -143,7 +147,7 @@ The first is invite DTO; second is edit DTO; third is current-session identity r
 
 ## 8. API route map
 
-30 concrete method/path operations are listed below, registered by main.ts and the auth, team, organization-reference, country-currency,FX and employee controller factories. Organization references register three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary writes, employee mutations, audit browser, report generator, file or deployment endpoints are registered.
+30 concrete method/path operations are listed below, registered by AppModule through auth, team, organization-reference, country-currency, FX and employee feature modules. Organization references register three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary writes, employee mutations, audit browser, report generator, file or deployment endpoints are registered.
 
 No deprecated registered routes or redirect targets were found. Old SDD route proposals are planned/unimplemented contracts, not legacy endpoints with working redirects.
 
@@ -184,10 +188,10 @@ No deprecated registered routes or redirect targets were found. Old SDD route pr
 
 Each entry distinguishes code-backed protections from production incidents; no production incident history is asserted.
 
-1. **Inactive currency at approval:** submission validation could become stale → approval-time recheck/shared lock in salary-approval.ts and SQL 006 → never rely on an earlier eligibility check. Regression first failed before the fix and later passed.
+1. **Inactive currency at approval:** submission validation could become stale → approval-time recheck/shared lock in salary/salary-approval.service.ts and SQL 006 → never rely on an earlier eligibility check. Regression first failed before the fix and later passed.
 2. **Split ledger/history/audit writes:** partial history would corrupt attribution → SQL 004 after-insert trigger plus transaction rollback → insert ledger only through a complete transaction; do not manually duplicate history.
 3. **Assignment/joining history drift:** stale version/date changes could invalidate history → SQL 005 advances version and rejects joining dates after existing events → never rewrite historical assignments.
-4. **Malformed OTP UUIDs:** loose input could reach PostgreSQL errors → strict grouping in authentication.ts and Zod DTO boundary → validate UUIDs before SQL.
+4. **Malformed OTP UUIDs:** loose input could reach PostgreSQL errors → strict grouping in auth/authentication.service.ts and Zod DTO boundary → validate UUIDs before SQL.
 5. **Expiry sampled before locks:** waiting requests could use an old timestamp → read clock after user/challenge/session locks → concurrency tests must prove an actual lock wait.
 6. **Rollback of wrong-code attempts:** throwing inside the attempt transaction could undo limits → return null and commit the attempt → distinguish business denial from infrastructure failure.
 7. **Ambiguous SQL parameters:** CASE timestamp and UUID/text reuse caused real regression failures → explicit timestamptz/uuid/text casts → pg parameter inference is not a substitute for type-aware SQL.
@@ -221,7 +225,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 
 | Variable | Required/default | Consumer and caveat |
 |---|---|---|
-| NODE_ENV | development; development/test/production | config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
+| NODE_ENV | development; development/test/production | config/config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
 | PORT | 3001, positive integer | API listens on 127.0.0.1 only |
 | APP_ORIGIN | Required URL | Exact Origin equality for mutations; use browser origin without a path or trailing slash |
 | DATABASE_URL | Required PostgreSQL URL | Runtime pg pool and Prisma adapter; use restricted acme_app |
@@ -240,7 +244,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 | MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
 | QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428, references 4528, countries 4628 |
 | QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login or references |
-| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
+| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config/config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
 | ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team/reference browser fixtures verify URL database matches it |
 | QA_ASSERT_REPORT | Optional | qa-assert-observer.mjs output path, supplied by qa-regression.mjs |
 | CI | true in Actions | Test/tool noninteractive mode; not a business feature flag |
@@ -250,7 +254,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 | POSTGRES_DB | Compose sets acme | Container initialization only; does not create restricted runtime role |
 
 
-Sources: config.ts, .env.example, scripts/local-postgres.mjs, prisma.config.ts, scripts/test-*.mjs, scripts/qa-*.mjs, playwright*.config.ts, apps/web/vite.config.ts, compose.yaml and the workflow. No frontend VITE_* variable is consumed. See [README.md](README.md) and [DEPLOYMENT.md](DEPLOYMENT.md) for safe configuration.
+Sources: config/config.ts, .env.example, scripts/local-postgres.mjs, prisma.config/config.ts, scripts/test-*.mjs, scripts/qa-*.mjs, playwright*.config/config.ts, apps/web/vite.config/config.ts, compose.yaml and the workflow. No frontend VITE_* variable is consumed. See [README.md](README.md) and [DEPLOYMENT.md](DEPLOYMENT.md) for safe configuration.
 
 ## 13. Detailed HTTP contracts
 
@@ -315,26 +319,26 @@ acme-salary-app/QA_TEST_PLAN.md
 acme-salary-app/README.md
 acme-salary-app/TEST_CASES.md
 acme-salary-app/apps/api/package.json
-acme-salary-app/apps/api/src/auth-controller.ts
-acme-salary-app/apps/api/src/auth-rate.ts
+acme-salary-app/apps/api/src/auth/auth.controller.ts
+acme-salary-app/apps/api/src/auth/auth-rate.ts
 acme-salary-app/apps/api/src/auth-secrets.test.ts
-acme-salary-app/apps/api/src/auth-secrets.ts
-acme-salary-app/apps/api/src/authentication.ts
+acme-salary-app/apps/api/src/auth/auth-secrets.ts
+acme-salary-app/apps/api/src/auth/authentication.service.ts
 acme-salary-app/apps/api/src/config.test.ts
-acme-salary-app/apps/api/src/config.ts
-acme-salary-app/apps/api/src/database.ts
+acme-salary-app/apps/api/src/config/config.ts
+acme-salary-app/apps/api/src/database/prisma.ts
 acme-salary-app/apps/api/src/main.ts
 acme-salary-app/apps/api/src/money.test.ts
-acme-salary-app/apps/api/src/money.ts
-acme-salary-app/apps/api/src/organization-references-controller.ts
-acme-salary-app/apps/api/src/organization-references.ts
-acme-salary-app/apps/api/src/otp-mail.ts
+acme-salary-app/apps/api/src/common/domain/money.ts
+acme-salary-app/apps/api/src/organization-references/organization-references.controller.ts
+acme-salary-app/apps/api/src/organization-references/organization-references.service.ts
+acme-salary-app/apps/api/src/mail/otp-mail.ts
 acme-salary-app/apps/api/src/policy.test.ts
-acme-salary-app/apps/api/src/policy.ts
-acme-salary-app/apps/api/src/report-access.ts
-acme-salary-app/apps/api/src/salary-approval.ts
-acme-salary-app/apps/api/src/team-controller.ts
-acme-salary-app/apps/api/src/team.ts
+acme-salary-app/apps/api/src/common/domain/policy.ts
+acme-salary-app/apps/api/src/reports/report-access.ts
+acme-salary-app/apps/api/src/salary/salary-approval.service.ts
+acme-salary-app/apps/api/src/team/team.controller.ts
+acme-salary-app/apps/api/src/team/team.service.ts
 acme-salary-app/apps/api/tsconfig.json
 acme-salary-app/apps/web/index.html
 acme-salary-app/apps/web/package.json
@@ -345,7 +349,7 @@ acme-salary-app/apps/web/src/styles.css
 acme-salary-app/apps/web/src/team.tsx
 acme-salary-app/apps/web/src/vite-env.d.ts
 acme-salary-app/apps/web/tsconfig.json
-acme-salary-app/apps/web/vite.config.ts
+acme-salary-app/apps/web/vite.config/config.ts
 acme-salary-app/compose.yaml
 acme-salary-app/database/migrations/001_identity_audit.sql
 acme-salary-app/database/migrations/002_country_employee_fx.sql
@@ -381,9 +385,9 @@ acme-salary-app/e2e/requirements.spec.ts
 acme-salary-app/eslint.config.mjs
 acme-salary-app/package-lock.json
 acme-salary-app/package.json
-acme-salary-app/playwright.auth.config.ts
-acme-salary-app/playwright.config.ts
-acme-salary-app/prisma.config.ts
+acme-salary-app/playwright.auth.config/config.ts
+acme-salary-app/playwright.config/config.ts
+acme-salary-app/prisma.config/config.ts
 acme-salary-app/scripts/bootstrap-manager.mjs
 acme-salary-app/scripts/local-postgres.mjs
 acme-salary-app/scripts/migrate.mjs
@@ -404,14 +408,14 @@ acme-salary-app/scripts/test-team.mjs
 acme-salary-app/scripts/verify-staged.mjs
 acme-salary-app/tsconfig.base.json
 acme-salary-app/tsconfig.qa.json
-acme-salary-app/vitest.config.ts
+acme-salary-app/vitest.config/config.ts
 ~~~
 
 Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628, FX4727/4728; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
 
 ## P5a employee directory integration
 
-Sources employees-controller.ts,employees.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
+Sources employees/employees.controller.ts,employees/employees.service.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
 
 CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on4827/4828,SMTP4325 sequential; artifacts qa-artifacts/employees. Approved ADR-005 requires independently HR-verified linkage and pending initial salaries; both need future database/API/UI integration,not inferred from directory reads.
 

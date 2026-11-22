@@ -1,5 +1,9 @@
 # ACME — feature status matrix
 
+## Backend structure checkpoint — 22 November 2026
+
+On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
+
 **Purpose:** Record implementation status by scope without duplicating backlog priority.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -17,10 +21,10 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Infrastructure | Health liveness | done | main.ts H01 |
 | Infrastructure | Operational readiness | stub/partial | H02 always 503; compatibility contract not finalized |
 | Infrastructure | PR CI and synthetic test harness | done | .github/workflows/pr-validation.yml; 22 unit, 72 foundation DB, 22 team + 23 reference DB, 12+9+4 scoped Chromium evidence |
-| Auth | Email OTP/request/resend/login/logout/session checks | done | auth-controller.ts/authentication.ts; real loopback SMTP/Chromium |
-| Auth | Attempt/rate/expiry/replay and removal revocation | done | auth-rate.ts, migrations 007..010, tests |
+| Auth | Email OTP/request/resend/login/logout/session checks | done | auth/auth.controller.ts/authentication.ts; real loopback SMTP/Chromium |
+| Auth | Attempt/rate/expiry/replay and removal revocation | done | auth/auth-rate.ts, migrations 007..010, tests |
 | Admin | Bootstrap/system identity | done | bootstrap-manager.mjs, migrations 001/011 |
-| Admin | HR invites/renewals/permission edits/offboarding/pagination | done | team.ts/team-controller.ts/team.tsx, migrations 011/012; PR #4 observed merged |
+| Admin | HR invites/renewals/permission edits/offboarding/pagination | done | team/team.service.ts/team-controller.ts/team.tsx, migrations 011/012; PR #4 observed merged |
 | Auth | Verified user-to-employee association | not started | nullable users.employee_id exists; no delivered verification workflow |
 | Reference | Country/currency/reference/FX/hold data foundations | done | migration 002 and domain tests; no admin workflow implied |
 | Reference | Department/designation administration | done | P4a merged in PR #5; 23 DB / 4 reference Chromium cases and exact-head CI passed |
@@ -31,15 +35,15 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Employee | Schema and dated assignments/history guard | done | migrations 002/005 |
 | Employee | Directory/profile | stub/partial | P5a directory/profile locally verified19 DB /3 Chromium; PR pending; no salary payload/band filter |
 | Employee | Create/edit/remove/transfer workflow | not started | ADR-005 pending initial salary; linkage/approval/leases required; no10k seed |
-| Salary | Exact decimal/FX calculation helpers | done | money.ts and tests |
+| Salary | Exact decimal/FX calculation helpers | done | common/domain/money.ts and tests |
 | Salary | Append-only ledger/history/approval integrity | done | migrations 003..006 and 38 approval checks; internal scope |
 | Salary | Backdated submission/decision user workflow | stub/partial | SalaryApprovalService exists; no authenticated controller/UI; linkage gate missing |
 | Salary | Ordinary changes/correction/transfer/leases UI/API | stub/partial | Tables/checks only for some paths; record_locks has no service |
-| Reports | Snapshot ownership/version/expiry guard | done | report-access.ts and SQL invalidation; internal scope |
+| Reports | Snapshot ownership/version/expiry guard | done | reports/report-access.ts and SQL invalidation; internal scope |
 | Reports | Generation, preview, CSV and dashboard | not started | No public implementation |
 | Audit | Immutable transactional audit production in delivered flows | done | SQL audit and tested rollback |
 | Audit | Searchable HR audit screen/API | not started | No controller/UI |
-| Integrations | SMTP transport and local synthetic capture | done | otp-mail.ts, smtp-capture.ts; captured mail is not production delivery |
+| Integrations | SMTP transport and local synthetic capture | done | mail/otp-mail.ts, smtp-capture.ts; captured mail is not production delivery |
 | Integrations | Durable background delivery/worker | deferred | In-memory Promise set only; no queue |
 | Integrations | Runtime LLM, transcription, cloud storage/upload | deferred | No implementation or currently approved feature contract |
 | Scope | Full payroll, deductions, payslips/payroll runs | cancelled | Excluded salary-management baseline; reopening requires scope approval |

@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import type { loadConfig } from './config.js';
+import type { loadConfig } from '../config/config.js';
 
 function createMailSender(config: ReturnType<typeof loadConfig>) {
   const transport = nodemailer.createTransport({ host: config.SMTP_HOST, port: config.SMTP_PORT,

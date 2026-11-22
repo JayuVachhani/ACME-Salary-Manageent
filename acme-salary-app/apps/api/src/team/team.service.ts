@@ -1,7 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import type { Pool, PoolClient } from 'pg';
 import { z } from 'zod';
-import { AuthenticationService } from './authentication.js';
+import { AuthenticationService } from '../auth/authentication.service.js';
 
 const permissions = z.array(z.enum(['read','write','edit','delete','salary:view','export'])).max(6).refine(values => new Set(values).size === values.length, 'Duplicate permissions');
 export const inviteInput = z.object({ email: z.email().max(254).transform(value => value.toLowerCase()),

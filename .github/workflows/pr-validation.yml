@@ -50,6 +50,8 @@ jobs:
         run: npm run db:local:start
       - name: Verify migrations, unit tests, real database integrity and builds
         run: npm run verify:database
+      - name: Verify Nest module wiring and shutdown order
+        run: npm run test:architecture
       - name: Verify authentication persistence in isolated PostgreSQL
         run: npm run test:authentication
       - name: Verify team authorization and continuity in isolated PostgreSQL

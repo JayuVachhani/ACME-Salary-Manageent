@@ -1,5 +1,9 @@
 # ACME Git change ledger
 
+## Nest backend audit and refactor — 22 November 2026
+
+Fetched origin and started chore/nestjs-backend-structure from origin/main 1e0e65f. Preserved feature/backend-linkage/PR #10 and unrelated handoff-document-prompt.md. Audit confirmed medium hidden-DI/module composition and lifecycle-cleanup findings, repaired with capability modules/providers and ordered shutdown. Source references, script consumers, technical decisions, progress/roadmap and handoff updated. See docs/BACKEND_STRUCTURE_AUDIT.md under acme-salary-app for audit evidence and limitations. Current verification: foundation PASS22 units/lint/types/build; auth/team22/references23/country27/FX23/employees19 PASS; approvals38/rules23/Prisma/health/QA typing PASS. Final lifecycle, browser, commit/push and exact-head CI disposition will be recorded below after verification; no pushed/merged result inferred. No self-approval or merge authorized at this checkpoint.
+
 Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent
 Started: 21 November 2026 (Asia/Calcutta).
 
@@ -104,7 +108,7 @@ The merge-handoff documentation commit is identified by `git log -- GIT_CHANGELO
 
 - PR: [#1](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1), `feature/acme-initial-baseline` → `main`; OPEN / DRAFT / NOT APPROVED / NOT MERGED.
 - Actual code-review head: `275b352f01a80fba9b10af0973fb2357aaecb1ec`. GitHub MCP returned 75 changed paths. Inspected actual diff and pinned source for salary submission/decision, policy, snapshot access, money/FX, SQL migrations and approval tests, frontend and requirement-entry tests; also read the QA report. This is a checkpoint, not exhaustive approval of all files/lockfile.
-- [Review submission](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1#pullrequestreview-6006259975): COMMENT, review ID `6006259975`, including an inline finding on salary-approval.ts line 74. A comment is not an approving review or independent required review.
+- [Review submission](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/1#pullrequestreview-6006259975): COMMENT, review ID `6006259975`, including an inline finding on salary/salary-approval.service.ts line 74. A comment is not an approving review or independent required review.
 - Open P2 code finding: a currency active at request submission can be deactivated before approval. decide() checks the country version but not current currency activity, and SQL foreign keys do not enforce is_active. Add decision-time currency revalidation/locking and an atomic-no-change regression. This is a static code-path finding, not a newly executed reproduction. No untested code fix was published as completed.
 - Merge blockers: GitHub combined-status endpoint returned `statuses=[]`; PR-triggered workflow endpoint returned `workflow_runs=[]` for the reviewed head. Required-check configuration is not established by those responses. No passing CI claim is made. Existing QA report still records 14 failed business requirement checks and 45 blocked E2E scenarios; prior local test passes are not substituted for GitHub CI.
 - Connected login and PR author are both `JayuVachhani`. No APPROVE/REQUEST_CHANGES, ready-for-review transition, merge or bypass was attempted. An independent required approval cannot be represented by this account's review comment.
@@ -126,3 +130,5 @@ The merge-handoff documentation commit is identified by `git log -- GIT_CHANGELO
 - Before merge, an authorized independent reviewer must approve and GitHub's required checks/policies must be satisfied. The connected author account was not used to APPROVE, and no merge/protection change was performed. Adding a workflow does not configure required-check branch protection; administrators should verify **Foundation integrity** is enforced as intended.
 
 Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.
+
+Final local structure checkpoint: real Nest architecture/lifecycle test PASS after the composition-root cleanup change; final API build, workspace typecheck and lint PASS. All five delivered Chromium groups PASS (9 authentication/team +4 references +3 country/currency +3 FX +3 employee =22; zero retries). Existing future-requirement failures remain unchanged and are not a full-system acceptance pass. Script import and decorator inventories verified; no schema, environment, permission or route additions/removals. Staging safety and whitespace verified before commit. GitHub exact-head results remain separate from local execution.

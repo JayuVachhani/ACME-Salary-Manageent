@@ -1,8 +1,8 @@
 import {HttpException} from '@nestjs/common';
 import type {Pool,PoolClient} from 'pg';
 import {z} from 'zod';
-import {AuthenticationService} from './authentication.js';
-import {dateOrdinal,resolveFx,convertExact,type FxRate} from './money.js';
+import {AuthenticationService} from '../auth/authentication.service.js';
+import {dateOrdinal,resolveFx,convertExact,type FxRate} from '../common/domain/money.js';
 
 const code=z.string().regex(/^[A-Z]{3}$/);
 export const fxDate=z.string().refine(value=>{try{dateOrdinal(value);return value>='0001-01-01';}catch{return false;}},'Use a valid YYYY-MM-DD date');

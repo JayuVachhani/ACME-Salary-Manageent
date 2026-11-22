@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { Pool } from 'pg';
-import { readSalarySnapshot } from '../apps/api/dist/report-access.js';
+import { readSalarySnapshot } from '../apps/api/dist/reports/report-access.js';
 const pool = new Pool({ connectionString: process.env.MIGRATION_DATABASE_URL, connectionTimeoutMillis: 5000 });
 const client = await pool.connect();
 let passed = 0;
