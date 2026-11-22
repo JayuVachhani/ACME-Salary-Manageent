@@ -281,3 +281,45 @@ Final isolated browser run: 4/4 reference cases PASS, plus 9/9 existing auth/tea
 | REF-E2E-02 | Anonymous/member, Origin/CSRF, DTO/kind/ID, stale version and no-store | Unauthorized and invalid writes denied; stale edit 409 | Expected 401/403/400/409 responses and no-store observed | PASS | None |
 | REF-E2E-03 | Whitespace validation, injected outage/recovery, mobile, axe and console | Clear errors; recoverable; no overflow or axe/page errors | Assertions satisfied at 375px; screenshot inspected | PASS | None |
 | REF-E2E-04 | Two-way pagination and empty UI | 20 rows/page, all records retained, clear empty state | Actual pagination plus explicitly simulated empty response rendered correctly | PASS | Empty response simulation is UI-state coverage only |
+
+## P4b country/currency checks — 22 November 2026
+
+27/27 cases actually passed in a unique synthetic PostgreSQL database, including the final crafted-default guard.
+
+| ID | Module/scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|
+| CTRY-DB-01 | Country/currency: anonymous and member without read denied | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-02 | Country/currency: read member sees pinned full catalogue including N.A. | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-03 | Country/currency: all catalogue codes, names, precision and provenance match pinned source | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-04 | Country/currency: non-HR country and currency mutations denied | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-05 | Country/currency: missing and invalid CSRF denied | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-06 | Country/currency: N.A. entry cannot be activated | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-07 | Country/currency: HR activates numeric catalogue entry | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-08 | Country/currency: duplicate activation and stale version conflict | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-09 | Country/currency: crafted unknown legacy currency cannot become a new active country default | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-10 | Country/currency: country created with trimmed name and explicit policy | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-11 | Country/currency: duplicate country rejected | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-12 | Country/currency: referenced currency precision protected through SQL | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-13 | Country/currency: country and currency codes immutable | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-14 | Country/currency: delete and truncate blocked | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-15 | Country/currency: country edit advances version and rejects stale update | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-16 | Country/currency: editing notes preserves existing policy metadata | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-17 | Country/currency: inactive currency blocks new assignments | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-18 | Country/currency: deactivation with inactive currency preserves existing assignment | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-19 | Country/currency: country reactivation requires active default currency | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-20 | Country/currency: inactive country blocks new assignment even with active currency | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-21 | Country/currency: reactivation retains identifiers and restores new assignment eligibility | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-22 | Country/currency: new assignment waits on concurrent currency deactivation | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-23 | Country/currency: concurrent country edits have exactly one winner | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-24 | Country/currency: country edits and lifecycle changes preserve exact historical salary snapshot | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-25 | Country/currency: before and after country policy audited | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-26 | Country/currency: audit failure rolls back policy and version | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+| CTRY-DB-27 | Country/currency: runtime catalogue cannot be mutated | Stated permission/integrity contract holds | Executed assertions satisfied | PASS | None |
+
+| ID | Module/scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|
+| CTRY-E2E-01 | Catalogue/N.A., activation, country confirmed create/cancel/edit/deactivate/reactivate, inactive-default error | Only confirmed valid writes persist; history/code rules maintained | Actual SMTP login, UI and DB assertions satisfied | PASS | None |
+| CTRY-E2E-02 | Read-member catalogue, HR-only configuration, Origin/CSRF/DTO and stale writes | Expected 401/403/400/409 boundaries, no-store | Actual HTTP/browser assertions satisfied | PASS | None |
+| CTRY-E2E-03 | Paging, simulated catalogue outage/recovery, empty search, mobile/axe/console | Correct pages and states, no overflow/violations/page errors | Actual CRUD/paging and browser assertions satisfied; outage/empty-search UI state explicit | PASS | None |
+
+Earlier 9 auth/team + 4 organization-reference and 12 foundation Chromium cases also reran successfully. No full-system pass is inferred.

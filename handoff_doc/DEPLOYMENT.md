@@ -2,7 +2,7 @@
 
 **Purpose:** Separate reproducible development/test operations from unimplemented production deployment.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
@@ -21,8 +21,8 @@ Production deployment is blocked. The repository has a Windows GitHub Actions PR
 2. Make/test logically scoped changes and documentation, run staged safety scan, commit and push without secrets or force updates.
 3. Use GitHub MCP to create PR to main, inspect actual head/diff and check workflow jobs/logs. Fix/retest on the same branch.
 4. Foundation integrity runs on pull_request opened/synchronize/reopened/ready_for_review, with read-only contents permission and pinned checkout/setup-node/upload-artifact actions. Checkout is exact head with persist-credentials false.
-5. npm ci skips lifecycle scripts; local DB starts; database/unit/build/auth/team/reference gates execute, then typing/Git safety, Chromium install, foundation and isolated SMTP/auth/team and reference browser groups (separate disposable databases).
-6. Diagnostics under qa-artifacts/ci, qa-artifacts/login and qa-artifacts/references are uploaded for seven days even on failure; DB stop runs when initialization succeeded. Workflow concurrency cancels superseded runs.
+5. npm ci skips lifecycle scripts; local DB starts; database/unit/build/auth/team/reference/country-currency gates execute, then typing/Git safety, Chromium install, foundation and isolated SMTP/auth/team and reference browser groups (separate disposable databases).
+6. Diagnostics under qa-artifacts/ci, qa-artifacts/login and qa-artifacts/references and qa-artifacts/country-currency are uploaded for seven days even on failure; DB stop runs when initialization succeeded. Workflow concurrency cancels superseded runs.
 7. Merge only after required exact-head checks and an authorized independent review satisfy repository policies. Adding a workflow does not itself configure branch protection. Never self-approve or bypass review restrictions.
 
 The remote exists; the earlier one-time empty-main bootstrap exception is already used. A new hosting/repository wizard does not exist. Fresh developer checkout follows README, not a second bootstrap to protected main.

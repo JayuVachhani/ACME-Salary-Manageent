@@ -2,11 +2,11 @@
 
 **Purpose:** Inventory every stored table, relationship, field and integrity boundary.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
-PostgreSQL is authoritative through 14 forward SQL migrations plus the migrator-owned schema_migrations table. The introspected Prisma schema contains all 22 tables; it is not sufficient to recreate checks/triggers/expression indexes. Use decimal strings for numeric data and UUID strings for identifiers. No TTL deletion scheduler or application cascade purge exists. The per-entity appendix below is derived directly from the checked-in Prisma schema and SQL DDL, not from a live database or employee data.
+PostgreSQL is authoritative through 17 forward SQL migrations plus the migrator-owned schema_migrations table. The introspected Prisma schema contains all 23 tables; it is not sufficient to recreate checks/triggers/expression indexes. Use decimal strings for numeric data and UUID strings for identifiers. No TTL deletion scheduler or application cascade purge exists. The per-entity appendix below is derived directly from the checked-in Prisma schema and SQL DDL, not from a live database or employee data.
 
 Related: [CONTEXT.md](CONTEXT.md), [WORKFLOW_RULES.md](WORKFLOW_RULES.md), [RBAC.md](RBAC.md), [README.md](README.md).
 
@@ -42,6 +42,9 @@ Related: [CONTEXT.md](CONTEXT.md), [WORKFLOW_RULES.md](WORKFLOW_RULES.md), [RBAC
 | 012 | Complete before/after team audit snapshots |
 | 013 | Department/designation immutable IDs, versions, deletion/truncate protection, audit and active-assignment guards |
 | 014 | Department/designation whitespace and 200-character name constraints |
+| 015 | Pinned read-only currency catalogue; currency optimistic version |
+| 016 | Country/currency code/lifecycle/precision/audit and active financial references |
+| 017 | Disambiguate currency-code variable in active-reference guard |
 
 No legacy collection rename, automatic startup migration or down migration exists. Prior applied checksums must remain intact. Proposed future structures such as salary bands/catalogue, lease service extensions, seed datasets or job/storage tables are **planned**, not existing fields. Approve their semantics and write migrations rather than documenting guessed columns as implemented.
 
@@ -124,8 +127,9 @@ Scalar field tables, JSON fragments, FK/index declarations and original SQL cons
 | Table | Purpose | Mutability / expiration |
 |---|---|---|
 | audit_logs | Append-only actor-attributed business/security audit. Actor can be null for unrecognized/security events; no HTTP audit browser exists. | Append-only; no row TTL |
-| country_rules | Country policy/version and default currency. Policy JSON does not implement legal automation; no administrative API yet. | Mutable access metadata; no row TTL |
-| currencies | Three-uppercase-letter codes, precision and active status. This is not a complete ISO catalogue or external provider. | Mutable access metadata; no row TTL |
+| country_rules | Country policy/version and default currency; HR audited/versioned administration delivered. Policy notes do not implement legal automation. | Mutable access metadata; no row TTL |
+| currency_catalogue | Pinned SIX ISO code/name/minor-units/date/source, numeric or N.A.; runtime SELECT only. | Read-only runtime; no TTL |
+| currencies | Configured currency precision, lifecycle and version; legacy rows preserved separately from read-only ISO catalogue. | Mutable access metadata; no row TTL |
 | departments | Controlled case-insensitive department names; HR administration API/UI delivered in P4a. | Mutable access metadata; no row TTL |
 | designations | Controlled case-insensitive designation names; HR administration API/UI delivered in P4a. | Mutable access metadata; no row TTL |
 | employee_assignments | Immutable effective-dated country/department/designation/employment status; not a completed transfer workflow. | Append-only; no row TTL |
@@ -227,7 +231,7 @@ CREATE INDEX audit_actor_idx ON audit_logs(actor_id, created_at DESC);
 
 ## country_rules
 
-Country policy/version and default currency. Policy JSON does not implement legal automation; no administrative API yet.
+Country policy/version and default currency; HR audited/versioned administration delivered. Policy notes do not implement legal automation.
 
 **Application queries:** Lookup by dated assignment country; submission captures policy fields; approval compares current version with captured version.
 
@@ -305,11 +309,27 @@ CREATE TABLE country_rules (
 );
 ~~~
 
+## currency_catalogue
+
+Source: [015_currency_catalogue.sql](../acme-salary-app/database/migrations/015_currency_catalogue.sql) and [provenance JSON](../acme-salary-app/database/reference/iso4217.json).
+
+Read-only runtime ISO catalogue. Source: database/reference/iso4217.json (SIX publication 2026-09-17, retrieval 22 November 2026, raw XML hash recorded). 178 codes: 165 numeric minor units, 13 N.A. No FK to configured currencies is introduced; catalogue installation never rewrites legacy values. Runtime SELECT only, migration owner controls reviewed refreshes; no TTL or cleanup.
+
+| Column | Prisma scalar / nullable | Attributes |
+|---|---|---|
+| code | String required | primary key, three uppercase letters |
+| currency_name | String required | ISO display name |
+| minor_units | Int nullable | smallint 0..4; null means N.A. |
+| published_on | DateTime required | date; pinned publication date |
+| source | String required | official SIX List One URL |
+
+Synthetic shape: {"code":"USD","currency_name":"US Dollar","minor_units":2,"published_on":"2026-09-17","source":"official SIX URL"}. Lookup joins configured currencies for current is_active/version/precision; N.A. entries remain visible but cannot activate for salary use.
+
 ## currencies
 
-Three-uppercase-letter codes, precision and active status. This is not a complete ISO catalogue or external provider.
+Configured currencies with immutable code, minor units, active state and optimistic version. Pinned ISO catalogue is separate; existing rows retain their values.
 
-**Application queries:** No dedicated HTTP consumer; relation/schema or internal SQL use only. Inspect the source relation and migrations below before adding a consumer.
+**Application queries:** CountryCurrencyService catalogue/configured-list/status changes; versioned HR activation/deactivation. New financial records share-lock active currencies. Referenced precision changes are rejected.
 
 **Expiration/retention:** No table TTL or cleanup worker is implemented.
 
@@ -320,6 +340,7 @@ Three-uppercase-letter codes, precision and active status. This is not a complet
 | code | String (required) | @id |
 | minor_units | Int (required) | @db.SmallInt |
 | is_active | Boolean (required) | @default(true) |
+| version | Int (required) | @default(1); SQL auto-advances updates |
 
 Decimal maps to PostgreSQL numeric, DateTime to its shown native date/timestamptz, UUID/Citext to shown native String annotations; unannotated Int is integer, BigInt bigint, Boolean boolean, Json jsonb and String text. Square brackets denote a PostgreSQL scalar array. Relation properties are not columns.
 
@@ -1851,15 +1872,17 @@ Later CREATE OR REPLACE definitions supersede earlier function bodies. This list
 
 | Function | Final source |
 |---|---|
-| guard_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
-| validate_assignment_references | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
-| audit_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
 | advance_assignment_version | [005_assignment_version_guard.sql](../acme-salary-app/database/migrations/005_assignment_version_guard.sql) |
+| audit_country_currency_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
 | audit_fx_revision | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
 | audit_hold_event | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
+| audit_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
 | audit_salary_approval | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
 | audit_team_identity | [012_team_audit_snapshots.sql](../acme-salary-app/database/migrations/012_team_audit_snapshots.sql) |
 | block_immutable_change | [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql) |
+| guard_country_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
+| guard_currency_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
+| guard_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
 | invalidate_employee_snapshots | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
 | invalidate_permission_snapshots | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
 | protect_employee_removal | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
@@ -1869,12 +1892,20 @@ Later CREATE OR REPLACE definitions supersede earlier function bodies. This list
 | revoke_disabled_identity | [009_identity_revocation.sql](../acme-salary-app/database/migrations/009_identity_revocation.sql) |
 | salary_in_force | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
 | validate_assignment_date | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
+| validate_assignment_references | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
 | validate_fx_revision | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
 | validate_hold_actor | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
+| validate_new_financial_references | [017_financial_reference_variable.sql](../acme-salary-app/database/migrations/017_financial_reference_variable.sql) |
 | validate_salary_decision | [006_approval_currency_guard.sql](../acme-salary-app/database/migrations/006_approval_currency_guard.sql) |
 | validate_salary_record | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
 | validate_salary_request | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
 | verify_approved_salary_exists | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
+
+## P4b country/currency constraints
+
+Migration 016 guards currency/country code identity and rejects deletion/truncate; auto versions start1 and advance. Country policy updates do not rewrite salary snapshots. Currency precision is protected when referenced by country, salary/request (including default currency), FX base/quote or report target. Catalogue is runtime-read-only; precision correction needs reviewed migration, never HTTP. Existing records are preserved.
+
+validate_new_financial_references (final body in 017) checks active country for new assignment/request/ledger and active currencies for those plus new FX/report snapshots. Shared row locks conflict with status/precision changes. guard_country_configuration requires active default currency for active country writes; country deactivation may retain an inactive currency. Audits use same-transaction reference actor and before/after JSON. Notes merge existing metadata; no legal rule inferred. See [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md).
 
 ## Representation and future work cautions
 

@@ -7,14 +7,14 @@ const admin = new Client({ connectionString: ownerUrl.href }); await admin.conne
 try {
 // Reference HR identities must not change the team suite's last-manager scenario.
 // Each group has a separate disposable database, not weakened continuity guards.
-for (const suites of [['authentication.spec.ts','team.spec.ts'],['organization-references.spec.ts']]) {
+for (const suites of [['authentication.spec.ts','team.spec.ts'],['organization-references.spec.ts'],['country-currency.spec.ts']]) {
 const name = `acme_test_${randomUUID().replaceAll('-', '')}`;
 let created = false;
 try {
   await admin.query(`CREATE DATABASE ${name}`);
   created = true;
   ownerUrl.pathname = runtimeUrl.pathname = `/${name}`;
-  const env = { ...process.env, MIGRATION_DATABASE_URL: ownerUrl.href, DATABASE_URL: runtimeUrl.href, QA_RUN: suites.length===1?'references':'login', ACME_AUTH_TEST_DATABASE: name };
+  const env = { ...process.env, MIGRATION_DATABASE_URL: ownerUrl.href, DATABASE_URL: runtimeUrl.href, QA_RUN: suites[0]==='country-currency.spec.ts'?'country-currency':suites.length===1?'references':'login', ACME_AUTH_TEST_DATABASE: name };
   for (const args of [['scripts/migrate.mjs'], ['node_modules/@playwright/test/cli.js', 'test', '--config=playwright.auth.config.ts',...suites]]) {
     const result = spawnSync(process.execPath, args, { env, stdio: 'inherit', windowsHide: true });
     if (result.status !== 0) {

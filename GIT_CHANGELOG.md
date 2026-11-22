@@ -1,6 +1,6 @@
 # ACME Git change ledger
 
-Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent  
+Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent
 Started: 21 November 2026 (Asia/Calcutta).
 
 ## Confirmed history
@@ -31,6 +31,10 @@ The workflow improvement above was separately committed and pushed after its tes
 6. Never stage actual `.env`, secrets, local PostgreSQL data, dependencies, browser binaries or QA runtime traces. `.env.example` contains non-secret template values only. Run `node acme-salary-app/scripts/verify-staged.mjs` from the repository root before committing.
 
 ## Current delivery state
+
+P4b country/currency increment, 22 November 2026: branch `feature/country-currency-administration` created from current origin/main after merged documentation PR #6 (`a2dea9f`). ADR-004 accepted by client continuation. Implemented pinned SIX catalogue with provenance, HR currency lifecycle and versioned country policies, immutable codes, referenced-precision safeguards, active-reference locks, transactional audits, confirmed forms and actual DB/browser coverage. Local verification: 22 units/lint/types/build, 72 prior domain DB checks/Prisma/health, authentication, 22 team/23 reference and 27 country-currency PostgreSQL checks; 12 foundation + 9 auth/team + 4 organization-reference + 3 country-currency Chromium cases passed. Final country guard browser retest is recorded in QA_EXECUTION_REPORT.md. Intermediate environment/SQL/fixture failures and corrections are disclosed. No push or PR success is claimed before remote confirmation. FX, employee linkage/workflows, reporting and production qualification remain pending; bands deferred. Uploaded brief and ignored local tooling remain excluded.
+
+P4b country/currency increment, 22 November 2026: branch `feature/country-currency-administration` created from current origin/main after merged documentation PR #6 (`a2dea9f`). ADR-004 accepted by client continuation. Implemented pinned SIX catalogue with provenance, HR currency lifecycle and versioned country policies, immutable codes, referenced-precision safeguards, active-reference locks, transactional audits, confirmed forms and actual DB/browser coverage. Local verification: 22 units/lint/types/build, 72 prior domain DB checks/Prisma/health, authentication, 22 team/23 reference and 27 country-currency PostgreSQL checks; 12 foundation + 9 auth/team + 4 organization-reference + 3 country-currency Chromium cases passed. Final country guard browser retest is recorded in QA_EXECUTION_REPORT.md. Intermediate environment/SQL/fixture failures and corrections are disclosed. No push or PR success is claimed before remote confirmation. FX, employee linkage/workflows, reporting and production qualification remain pending; bands deferred. Uploaded brief and ignored local tooling remain excluded.
 
 PR #6 ([updated handoff pack](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/6)), `chore/update-handoff-docs` -> `main`: publication commit `2d62e34ce44d374d1378bf4dd4b7966a6df5b93d` committed and pushed, remote SHA confirmed. Actual-patch MCP review `6011078175` is COMMENT only. Minor follow-up corrects backlog table continuity, task-map path bases, current HR reference consumers and authorization wording. Fresh static verification is 590 checks over 14 documents; whitespace/staged safety are required before this follow-up push. No application source changes. PR remains OPEN for independent review; exact-head CI results and final MCP disposition are in linked PR checks/reviews, not inferred from older tests. No self-approval or merge.
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Describe implementation contracts, architecture, source evidence and pitfalls.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
@@ -39,8 +39,8 @@ Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Co
    ├─ .env.example                Template; lacks owner migration URL
    ├─ apps/api/src/               NestJS entry, factories, services and unit tests
    ├─ apps/web/src/               main.tsx, login.tsx, team.tsx, organization-references.tsx and styles.css
-   ├─ database/migrations/        001..014 authoritative SQL, no down migrations
-   ├─ database/schema.prisma      Introspected 22-model reference/client input
+   ├─ database/migrations/        001..017 authoritative SQL, no down migrations
+   ├─ database/schema.prisma      Introspected 23-model reference/client input
    ├─ scripts/                    DB lifecycle, migration, bootstrap, regression/safety tools
    ├─ e2e/                        Foundation and unmet-requirement Chromium probes
    ├─ e2e-auth/                   Real SMTP/login/team/reference Chromium workflows and capture server
@@ -99,15 +99,23 @@ SalaryApprovalService.submit(actorId,input) requires a backdated UTC date, manda
 
 SalaryApprovalService.decide(actorId,requestId,decision,comment) requires an independent active HR through SQL trigger checks. Rejection records only a decision. Approval locks the employee, checks current country policy version and shares-locks active currency, appends decision plus exact ledger row in one transaction. Deferred approval_salary_atomic prevents an approval committing without salary. record_salary_history creates before/after history/audit and advances employee version. Requester/subject checks rely on employee_id linkage, which is nullable and not yet verified end to end. **Block public salary exposure until linkage and trusted session-to-actor integration are implemented.**
 
-money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. Country/rate admin, salary bands/catalogue and employee HTTP/UI are absent.
+money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration, salary bands and employee HTTP/UI are absent.
 
 Employee assignments are append-only dated organization/status records. SQL validates joining date, protects historical joining-date changes and increments employee version. Holds/releases are append-only HR-attributed records; active holds block employee removal. No user-facing transfer, hold or permanent purge workflow exists.
 
 readSalarySnapshot(client,actorId,snapshotId,exportRequested,now) is an internal same-transaction guard. It locks current identity, requires read+salary:view (and export when requested), checks owner, authorization version, expiry and invalidation. Removal invalidation depends on report_snapshot_employees membership; future generators must populate it. There is no report generation/export endpoint or CSV download. record_locks is schema groundwork only, not a functioning edit-lease service.
 
+### Country and currency administration — P4b
+
+Sources: country-currency.ts, country-currency-controller.ts, web country-currency.tsx, migrations 015..017 and [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md). Catalogue SELECT permits current HR or read member; configuration routes are HR-only. All writes authenticate in the same transaction, require Origin/CSRF and set local reference actor. Versioned updates and transactional before/after audits prevent silent lost updates.
+
+Pinned SIX publication 2026-09-17 contains 178 codes (165 numeric and 13 N.A.). database/reference/iso4217.json records source/date/raw hash. Runtime catalogue is read-only, without network calls. HR activation inserts/updates configured currencies; version 0 means first activation. Codes/minor units are immutable through HTTP. N.A./unknown codes cannot activate, and mismatched legacy precision cannot silently reactivate. Separately reviewed precision corrections are rejected by SQL when referenced by country, ledger/request, FX or snapshot rows.
+
+Country inputs configure name/default currency, 0..4 precision, HALF_UP/FLOOR/CEIL and two descriptive notes. Editing merges notes without dropping existing metadata; holds remain separate, not inferred legal automation. Codes are immutable, versions auto-advance, no delete/truncate. Inactive-country or currency checks are locked for new assignment/request/ledger/FX/snapshot writes. Existing history/policy snapshots are unchanged. An inactive currency may block a still-active country until HR changes policy or reactivates; the UI confirms this consequence. Deactivating a country remains possible while its default currency is inactive.
+
 ## 7. Frontend architecture and data shapes
 
-main.tsx renders the sole root screen, skip link, health panel and Login. Health fetch aborts after 8 seconds. login.tsx holds email/code/challenge/message/busy/signedIn/identity in local React state. An existing CSRF cookie only hints to call /me; backend identity remains authoritative. HR identity mounts Team and OrganizationReferences; non-HR users do not see private Team controls. There is no React Router, path-based guard, app-wide cache or auth bearer storage.
+main.tsx renders the sole root screen, skip link, health panel and Login. Health fetch aborts after 8 seconds. login.tsx holds email/code/challenge/message/busy/signedIn/identity in local React state. An existing CSRF cookie only hints to call /me; backend identity remains authoritative. HR identity mounts Team, OrganizationReferences and CountryCurrency; members with read mount the catalogue-only CountryCurrency view; non-HR users do not see private Team controls. There is no React Router, path-based guard, app-wide cache or auth bearer storage.
 
 team.tsx uses native fetch, local list/editor state and expectedVersion. It displays a native HTML dialog via showModal(), focuses/traps through browser behavior, prevents closing while saving, and supports cancellation, paging and explicit delivery errors. A 409 preserves unsaved input: refresh the list and reopen Edit to load the current version. It does not silently merge concurrent permissions. CSS is system-font/ordinary classes; mobile tables scroll inside their container. Relative requests need a same-origin proxy/static hosting arrangement outside development.
 
@@ -129,7 +137,7 @@ The first is invite DTO; second is edit DTO; third is current-session identity r
 
 ## 8. API route map
 
-18 concrete method/path operations are listed below, registered by main.ts, auth-controller.ts, team-controller.ts and organization-references-controller.ts. The latter registers three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary, employees, country/currency/FX, audit, report, file or deployment endpoints are registered.
+24 concrete method/path operations are listed below, registered by main.ts and the auth, team, organization-reference and country-currency controller factories. The latter registers three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary, employee, FX maintenance, audit, report, file or deployment endpoints are registered.
 
 No deprecated registered routes or redirect targets were found. Old SDD route proposals are planned/unimplemented contracts, not legacy endpoints with working redirects.
 
@@ -153,6 +161,12 @@ No deprecated registered routes or redirect targets were found. Old SDD route pr
 | O04 | GET | /api/v1/organization-references/designations | Same list guard/shape as O01 |
 | O05 | POST | /api/v1/organization-references/designations | Same creation guard/shape as O02 |
 | O06 | PATCH | /api/v1/organization-references/designations/:id | Same edit/deactivation guard/shape as O03 |
+| C01 | GET | /api/v1/currency-catalogue | HR or read member; pinned 178-entry ISO list, N.A. preserved; no-store |
+| C02 | GET | /api/v1/currencies | HR only; configured rows/versions including legacy |
+| C03 | PATCH | /api/v1/currencies/:code | HR + Origin/CSRF, strict isActive/expectedVersion; immutable ISO facts |
+| C04 | GET | /api/v1/countries | HR only; strict offset, 20 rows/page, includes inactive |
+| C05 | POST | /api/v1/countries | HR + Origin/CSRF, strict country policy, active default required; 201 |
+| C06 | PATCH | /api/v1/countries/:code | Same + expectedVersion/isActive; immutable code; stale 409 |
 
 ## 9. Bug fixes and pitfalls
 
@@ -254,9 +268,13 @@ Account contains exactly the selected team row columns: id, email, full_name, is
 There is no HTTP idempotency-key, edit-lease-token, session-list/revoke-other-session, user reactivation, signup or salary-approval DTO contract yet. Internal BackdatedRequestInput is {employeeId,effectiveFrom,amount,currency,reason,expectedVersion,correctsId?}; amount is a decimal string and effectiveFrom an ISO date. Its actorId argument must come from a future trusted session boundary, not the client. Do not mistake this internal TypeScript interface for a registered API.
 
 
+### Country/currency detailed DTOs
+
+C01 returns {items:[{code,currency_name,minor_units,published_on,source,is_active,version,supported,configured_minor_units}]}. minor_units/configured_minor_units may be null. C02 returns configured {code,minor_units,is_active,version}. C03 takes strict {isActive,expectedVersion}; 0 is only valid for first activation. C04 uses strict offset 0..100000 and returns {items,total}, pages of 20 sorted name/code. C05 takes {countryCode,countryName,defaultCurrency,decimalPlaces,roundingMode,regulatoryNotes,retentionNotes}; C06 omits countryCode and adds {isActive,expectedVersion}. Names trim 1..200; notes trim/max4000; uppercase codes length2/3, precision0..4, rounding enum. Country output uses snake_case and derived regulatory_notes/retention_notes. Invalid DTO400; Origin/CSRF/role403; anonymous read401; stale/duplicate/inactive-default conflict409. Policy notes do not enforce legal retention.
+
 ## Appendix A. Source inventory at merged implementation snapshot
 
-The following 112 tracked files are the merged implementation snapshot before publishing this handoff pack. The pack adds its 14 Markdown deliverables separately; ignored runtime state and the local uploaded brief are excluded.
+The following 112 tracked files capture the PR #5 implementation baseline. Current additions include the published handoff pack and P4b country-currency API/service/UI, catalogue JSON, migrations 015..017, module contract and DB/browser tests. The pack adds its 14 Markdown deliverables separately; ignored runtime state and the local uploaded brief are excluded.
 
 ~~~text
 .gitattributes

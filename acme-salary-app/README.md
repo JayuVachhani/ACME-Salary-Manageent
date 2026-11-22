@@ -33,9 +33,11 @@ Migrations now cover identity/audit, countries/reference foundations, historical
 - SMTP OTP login, sessions, bootstrap and HR team invitations/permissions/offboarding; see docs/LOGIN_MODULE.md and docs/TEAM_MODULE.md.
 - HR department/designation administration with confirmations, pagination, audited versioned edits and soft deactivation; see [organization reference contracts](docs/ORGANIZATION_REFERENCES_MODULE.md).
 
+Country/currency administration now includes the pinned read-only ISO catalogue, HR activation and audited versioned country policy forms. See [country/currency contracts](docs/COUNTRY_CURRENCY_MODULE.md); run `npm run test:country-currency`.
+
 ## Not implemented yet
 
-Employee/salary/approval screens, country/currency/FX administration, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
+Employee/salary/approval screens, FX administration, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
 
 The authoritative progress plan is `../DEVELOPMENT_PLAN.md`; approved decision details are in `docs/DECISIONS.md`. No hosting is configured or authorized by this foundation.
 

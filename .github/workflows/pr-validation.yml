@@ -56,6 +56,8 @@ jobs:
         run: npm run test:team
       - name: Verify organization reference integrity in isolated PostgreSQL
         run: npm run test:references
+      - name: Verify country and currency integrity
+        run: npm run test:country-currency
       - name: Type-check browser tests
         run: npm run qa:typecheck
       - name: Test Git staging safety with synthetic credentials
@@ -79,6 +81,7 @@ jobs:
             acme-salary-app/qa-artifacts/ci/
             acme-salary-app/qa-artifacts/login/
             acme-salary-app/qa-artifacts/references/
+            acme-salary-app/qa-artifacts/country-currency/
           if-no-files-found: warn
           retention-days: 7
       - name: Stop isolated PostgreSQL

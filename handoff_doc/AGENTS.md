@@ -2,11 +2,11 @@
 
 **Purpose:** Onboard developers and coding agents without inventing functionality.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
-This is the single entry point for the root handoff_doc/ pack. ACME Salary Management is a TypeScript modular monolith with working passwordless login, team and department/designation administration and substantial internal database/compensation foundations. It is not a production-ready salary application. Read [ROADMAP.md](ROADMAP.md) before promising features. This pack describes the checked-out code, not every feature described in the BRD.
+This is the single entry point for the root handoff_doc/ pack. ACME Salary Management is a TypeScript modular monolith with working passwordless login, team, department/designation and country/currency administration (P4b under verification) and substantial internal database/compensation foundations. It is not a production-ready salary application. Read [ROADMAP.md](ROADMAP.md) before promising features. This pack describes the checked-out code, not every feature described in the BRD.
 
 ## Read order
 
@@ -106,4 +106,4 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 ## Discovery snapshot
 
-18 concrete method/path API operations (15 controller patterns, with two organization-reference kinds); one React root screen; 22 Prisma tables / 172 scalar fields; 14 ordered SQL migrations; 24 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #5 is merged at the source SHA above. This documentation branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.
+24 concrete method/path API operations (21 controller patterns, with two organization-reference kinds); one React root screen; 23 Prisma tables / 178 scalar fields; 17 ordered SQL migrations; 28 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #5 is merged at the source SHA above. This documentation branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.

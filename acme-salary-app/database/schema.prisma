@@ -47,6 +47,7 @@ model currencies {
   code                                                                       String                   @id
   minor_units                                                                Int                      @db.SmallInt
   is_active                                                                  Boolean                  @default(true)
+  version                                                                    Int                      @default(1)
   country_rules                                                              country_rules[]
   fx_rate_revisions_fx_rate_revisions_base_currencyTocurrencies              fx_rate_revisions[]      @relation("fx_rate_revisions_base_currencyTocurrencies")
   fx_rate_revisions_fx_rate_revisions_quote_currencyTocurrencies             fx_rate_revisions[]      @relation("fx_rate_revisions_quote_currencyTocurrencies")
@@ -376,4 +377,13 @@ model auth_rate_events {
 
   @@index([email_hash, created_at], map: "auth_rate_email")
   @@index([ip_hash, created_at], map: "auth_rate_ip")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model currency_catalogue {
+  code          String   @id
+  currency_name String
+  minor_units   Int?     @db.SmallInt
+  published_on  DateTime @default(dbgenerated("'2026-09-17'::date")) @db.Date
+  source        String   @default("https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml")
 }
