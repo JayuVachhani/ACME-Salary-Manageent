@@ -1,5 +1,11 @@
 # ACME — handoff validation report
 
+## PR #10 integration — 22 November 2026
+
+PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
+
+## Earlier checkpoint records
+
 ## Publication verification — 22 November 2026
 
 Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
@@ -15,6 +21,10 @@ NestJS rules alignment (22 November 2026), implemented but unverified: the exist
 ## Nest structure verification — 22 November 2026
 
 The chore/nestjs-backend-structure refactor preserves existing HTTP/SQL contracts and moves sources into capability folders. verify:foundation passes (22 units, lint, both types/builds). Isolated authentication/team22/references23/country27/FX23/employees19 checks, approvals38, transactional rules23, Prisma/health and QA typing pass. Run `npm run build -w @acme/api` before the added `npm run test:architecture`; it boots real Nest modules, checks shared/private DI, six feature route rejections, headers and ordered OTP drain/pool shutdown without database access. This gate is included in PR validation. Exact final Chromium/lifecycle/CI results are recorded in GIT_CHANGELOG.md; pending runs are not passes. Historical full-system gaps remain open.
+
+## Merged linkage checkpoint
+
+22 November 2026 backend delta supersedes earlier linkage-absent inventories: migration019 adds two SQL functions/two row triggers, no columns/tables; PATCH team/:id/employee-link adds one HTTP operation, GET team adds employee_id. Sources: TEAM_MODULE.md, team/team.service.ts, team/team.controller.ts, team/dto/team.dto.ts and 019_verified_employee_linkage.sql. No new env/dependency/provider/deployment boundary. Executed evidence belongs to QA_EXECUTION_REPORT.md and GIT_CHANGELOG.md; these documentation updates alone do not establish application passes.
 
 **Purpose:** Record documentation coverage against the merged implementation and distinguish static verification from runtime tests.
 

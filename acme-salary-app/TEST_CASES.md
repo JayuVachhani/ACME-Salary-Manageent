@@ -1,5 +1,9 @@
 # ACME test cases and execution ledger
 
+## Linkage backend — 22 November 2026
+
+`scripts/test-employee-linkage.mjs`, LINK01..17: restricted role; anonymous/non-HR/CSRF/self denial; strict DTO; SQL prelink/context rejection; SQL role/confirmation guard; link version/session/OTP/lease effects; owner/member snapshot invalidation; attributed identity audit; stale/unchanged/duplicate conflicts; removed/unknown subjects; actor employee protection; concurrent unique mapping; explicit unlink history; injected audit rollback; HTTP origin/path/body denial; successful safe HTTP projection; HR list mapping. All17 passed in one final isolated SQL/HTTP execution. Initial expanded run stopped before final assertions due to baseline ordering and is not counted. Existing22 team,19 employee,authentication and verify:database gates also passed; Chromium/CI disposition is in QA_EXECUTION_REPORT.md/GIT_CHANGELOG.md. No missing business requirement is reclassified as a pass.
+
 Date: 21 November 2026. This is the per-case ledger for actually executed checks and separately identified blocked scenarios. No blocked case is a pass. Full errors/traces are retained in artifact reports.
 
 ## Chromium final run

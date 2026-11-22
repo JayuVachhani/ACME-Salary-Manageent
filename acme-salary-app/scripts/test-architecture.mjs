@@ -57,6 +57,10 @@ try {
   assert.equal(spec.status, 200);
   const document = await spec.json();
   assert.ok(document.paths['/api/v1/employees']);
+  const linkage = document.paths['/api/v1/team/{id}/employee-link'].patch;
+  assert.ok(linkage.requestBody);
+  assert.ok(linkage.responses['200'].content['application/json'].schema.properties.employee_id);
+  assert.ok(linkage.responses['200'].content['application/json'].schema.required.includes('employee_id'));
   assert.ok(document.paths['/api/v1/auth/otp/verify'].post.requestBody);
   const malformed = await fetch(`${base}/api/v1/auth/otp/request`, { method: 'POST', headers: { Origin: process.env.APP_ORIGIN, 'Content-Type': 'application/json' }, body: '{}' });
   assert.equal(malformed.status, 400);

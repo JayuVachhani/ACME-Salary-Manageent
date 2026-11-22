@@ -16,3 +16,7 @@ export class ChangeMemberDto extends requestDto(changeInput, 'Invalid team detai
 export class MemberVersionDto extends requestDto(versionInput, 'Invalid team details; check names, email, permissions and version') {}
 
 export class AccountParamsDto extends requestDto(z.object({ id: accountId }).strict(), 'Invalid account ID') {}
+
+export const linkageInput = versionInput.extend({ employeeId: z.uuid().nullable(),
+  reason: z.string().trim().min(1).max(1000), confirmed: z.literal(true) }).strict();
+export class LinkEmployeeDto extends requestDto(linkageInput, 'Invalid team details; check names, email, permissions and version') {}

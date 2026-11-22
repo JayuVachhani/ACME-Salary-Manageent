@@ -1,5 +1,11 @@
 # ACME — technical context and handoff
 
+## PR #10 integration — 22 November 2026
+
+PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
+
+## Earlier checkpoint records
+
 ## Publication verification — 22 November 2026
 
 Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
@@ -25,6 +31,8 @@ On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factori
 ACME manages monthly salary records across countries/currencies; full payroll is outside the approved baseline. Login, HR team administration and HR department/designation administration have public functional workflows today. Monetary arithmetic, immutable salary/approval history, assignments, holds, FX revisions and snapshot access have internal implementations and database tests, not complete user workflows. PR #5 is merged at the source SHA above. This task changes documentation only; no deployment or new runtime test execution is claimed.
 
 ## 1. System overview
+
+Current backend delta from merged PR #9 (`1e0e65f`): `PATCH /api/v1/team/:id/employee-link` accepts `{employeeId:UUID|null,expectedVersion,reason,confirmed:true}`. Exact configured Origin, session-bound CSRF and independent current HR required. Stale/duplicate/unchanged/unavailable links return409, invalid DTO/path400, forbidden403. Returns the team projection including employee_id; GET team also includes it. Migration019 adds linkage guards and atomic audit/revocation; no environment/dependency change, salary values or UI. Earlier route inventories gain one operation. See [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md) and current QA/Git ledger. Initial salary and subsequent approved backend workflows remain undelivered.
 
 ~~~mermaid
 flowchart LR

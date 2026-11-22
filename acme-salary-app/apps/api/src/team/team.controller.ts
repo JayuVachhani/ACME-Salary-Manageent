@@ -7,7 +7,7 @@ import { MutationRequestGuard } from '../common/http/mutation-request.guard.js';
 import { ApiErrors, ApiInput, ApiMutation, ApiResult, ApiSession } from '../common/http/api-contract.decorators.js';
 import { TeamService } from './team.service.js';
 import { TeamInvitationsService } from './team-invitations.service.js';
-import { AccountParamsDto, InviteMemberDto, ChangeMemberDto, MemberVersionDto } from './dto/team.dto.js';
+import { AccountParamsDto, InviteMemberDto, ChangeMemberDto, MemberVersionDto, LinkEmployeeDto } from './dto/team.dto.js';
 import { invitationResponse, memberResponse, teamPageResponse } from './dto/team-response.dto.js';
 import { messageResponse } from '../common/dto/message-response.dto.js';
 
@@ -20,6 +20,15 @@ export class TeamController {
   constructor(@Inject(RequestSecurity) private readonly security: RequestSecurity,
     @Inject(TeamService) private readonly service: TeamService,
     @Inject(TeamInvitationsService) private readonly invitations: TeamInvitationsService) {}
+
+  @Patch(':id/employee-link')
+  @ApiMutation()
+  @ApiInput(AccountParamsDto, 'path')
+  @ApiInput(LinkEmployeeDto, 'body')
+  @ApiResult(memberResponse)
+  linkEmployee(@Req() req: Request, @Param() params: AccountParamsDto, @Body() body: LinkEmployeeDto) {
+    return this.service.linkEmployee(this.security.token(req), this.security.csrf(req), params.id, body);
+  }
 
   @Get()
   @ApiInput(OffsetQueryDto, 'query')

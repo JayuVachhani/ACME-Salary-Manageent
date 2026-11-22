@@ -1,5 +1,11 @@
 # ACME QA execution report
 
+## PR #10 integration — 22 November 2026
+
+PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
+
+## Earlier checkpoint records
+
 ## Publication verification — 22 November 2026
 
 Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
@@ -15,6 +21,16 @@ Full Nest conversion checkpoint: The backend conversion now uses native @Injecta
 ## Nest structure verification — 22 November 2026
 
 The chore/nestjs-backend-structure refactor preserves existing HTTP/SQL contracts and moves sources into capability folders. verify:foundation passes (22 units, lint, both types/builds). Isolated authentication/team22/references23/country27/FX23/employees19 checks, approvals38, transactional rules23, Prisma/health and QA typing pass. Run `npm run build -w @acme/api` before the added `npm run test:architecture`; it boots real Nest modules, checks shared/private DI, six feature route rejections, headers and ordered OTP drain/pool shutdown without database access. This gate is included in PR validation. Exact final Chromium/lifecycle/CI results are recorded in GIT_CHANGELOG.md; pending runs are not passes. Historical full-system gaps remain open.
+
+## Merged linkage checkpoint
+
+## Verified linkage backend — 22 November 2026
+
+Branch feature/backend-linkage from origin/main `1e0e65f`. Node24.20.0, verified restricted acme_app runtime; existing .env/data preserved. `test:employee-linkage` PASS17 real isolated PostgreSQL/service/HTTP checks: role/CSRF/origin/self denial, strict confirmation/reason/version DTO, direct SQL guard, competing mappings, revocation, selective snapshots, audit and injected failure rollback, safe real Nest route/list projection. `verify:database` PASS (lint/types/22 unit/build,11 identity +23 rules +38 approvals,Prisma,health). `test:team` PASS22; `test:employees` PASS19; `test:authentication` PASS. qa:typecheck PASS. test:login all five Chromium groups completed successfully:9 auth/team,4 references,3 country/currency,3 FX,3 employees (22 total,zero retries). Current-head CI/review remains required.
+
+Expanded linkage run initially stopped after13 records without a final summary. Investigation found a test-baseline error: login audit events were captured after the rollback baseline, so the equality assertion was invalid. Moved baseline capture after login and explicitly set nonzero status in the test catch to resist local Console Ninja error interception. Corrected run completed all17 assertions and final summary. No earlier partial run is counted as a pass. Local Nest dependency instrumentation was inspected but left untouched.
+
+No linkage UI/browser acceptance, public salary write, full backend completion or production readiness is claimed. Historical unmet-requirement failures/blocked workflows below remain.
 
 Executed 21 November 2026, Asia/Calcutta. **Release decision: NOT READY. Login now has dedicated SMTP/Chromium evidence; complete business E2E acceptance remains blocked by team and domain APIs/screens. Historical execution rows below are preserved and do not represent a new full-system pass.**
 

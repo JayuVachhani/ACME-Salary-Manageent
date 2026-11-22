@@ -43,9 +43,17 @@ try {
   await assert.rejects(service.submit(manager,await input('2026-10-01')),e=>e.code==='23505'); passed++;
   await assert.rejects(service.decide(manager,request,'APPROVED','Cannot approve own request'),e=>e.code==='42501'); passed++;
   await assert.rejects(service.decide(reader,request,'APPROVED','Not a manager'),e=>e.code==='42501'); passed++;
-  await owner.query('UPDATE users SET employee_id=$1 WHERE id=$2',[employee,approver]);
+  const fixtureLink = async employeeId => {
+    await owner.query('BEGIN');
+    try {
+      await owner.query(`SELECT set_config('acme.link_actor',$1,true),set_config('acme.link_reason','Synthetic self-subject regression',true),set_config('acme.link_confirmed','true',true)`,[manager]);
+      await owner.query('UPDATE users SET employee_id=$1 WHERE id=$2',[employeeId,approver]);
+      await owner.query('COMMIT');
+    } catch(error) { await owner.query('ROLLBACK'); throw error; }
+  };
+  await fixtureLink(employee);
   await assert.rejects(service.decide(approver,request,'APPROVED','Cannot approve own salary'),e=>e.code==='42501'); passed++;
-  await owner.query('UPDATE users SET employee_id=NULL WHERE id=$1',[approver]);
+  await fixtureLink(null);
   const approvalState = async () => ({
     version: await version(), salary: await salary('2026-11-21'),
     counts: (await owner.query(`SELECT

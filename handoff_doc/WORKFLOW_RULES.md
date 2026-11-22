@@ -1,5 +1,7 @@
 # ACME — workflow rules and state transitions
 
+Migration019: accounts start unlinked. Independent current HR may link/relink/unlink with reason, confirmation and expected team version. No self-link or actor's own employee identity, removed subject or duplicate live mapping. Commit atomically updates mapping/version, revokes target sessions/open OTPs, removes target edit leases, invalidates owner and old/new membership snapshots and appends actor/time/reason/old/new identity audit. Failure rolls everything back. No implicit email mapping or linkage UI; public salary writes remain absent. Earlier linkage-pending descriptions are the historical pre-019 checkpoint. See TEAM_MODULE.md.
+
 **Purpose:** Explain allowed transitions, side effects and forbidden shortcuts.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

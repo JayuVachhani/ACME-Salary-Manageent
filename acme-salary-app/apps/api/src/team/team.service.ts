@@ -4,11 +4,11 @@ import type { MemberRecord } from './dto/team-response.dto.js';
 import { withTransaction } from '../database/transaction.js';
 import { ApplicationError } from '../common/errors/application-error.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { inviteInput, changeInput } from './dto/team.dto.js';
+import { inviteInput, changeInput, linkageInput } from './dto/team.dto.js';
 import { Pool, type PoolClient } from 'pg';
 import { z } from 'zod';
 import { AuthenticationService } from '../auth/authentication.service.js';
-const columns = 'id,email,full_name,is_hr_manager,permissions,status,invite_expires_at,team_version';
+const columns = 'id,email,full_name,is_hr_manager,permissions,status,invite_expires_at,team_version,employee_id';
 @Injectable()
 export class TeamService {
   constructor(
@@ -34,9 +34,9 @@ export class TeamService {
     catch (error) {
       const code = sqlState(error);
       if (code === '23505')
-        throw new ApplicationError('An account with this email already exists', 409);
+        throw new ApplicationError('Email or employee is already assigned to an account', 409);
       if (code === '23514')
-        throw new ApplicationError('At least one active HR Manager must remain', 409);
+        throw new ApplicationError('Account or employee state prevents this change', 409);
       if (code === '42501')
         throw new ApplicationError('This team change is not permitted', 403);
       throw error;
@@ -80,4 +80,20 @@ export class TeamService {
       return requiredRow(result);
     });
   }
+  async linkEmployee(token: string, csrf: string, id: string, input: z.infer<typeof linkageInput>) {
+    const value = linkageInput.parse(input);
+    return this.run(token, csrf, true, async (client, actor) => {
+      if (id === actor) throw new ApplicationError('Own employee linkage cannot be changed', 403);
+      const target = (await client.query<Pick<MemberRecord, 'employee_id'>>(`SELECT employee_id FROM users
+        WHERE id=$1 AND NOT is_system AND status<>'DELETED' AND team_version=$2 FOR UPDATE`,
+        [id, value.expectedVersion])).rows[0];
+      if (!target) throw new ApplicationError('Account changed or is unavailable; refresh the team list', 409);
+      if (target.employee_id === value.employeeId) throw new ApplicationError('Employee linkage is unchanged', 409);
+      await client.query(`SELECT set_config('acme.link_actor',$1,true),
+        set_config('acme.link_reason',$2,true),set_config('acme.link_confirmed','true',true)`, [actor, value.reason]);
+      return requiredRow(await client.query<MemberRecord>(`UPDATE users SET employee_id=$2 WHERE id=$1 RETURNING ${columns}`,
+        [id, value.employeeId]));
+    });
+  }
+
 }

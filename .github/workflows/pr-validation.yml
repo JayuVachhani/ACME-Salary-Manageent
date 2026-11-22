@@ -64,6 +64,8 @@ jobs:
         run: npm run test:fx
       - name: Verify employee directory and privacy
         run: npm run test:employees
+      - name: Verify independent employee linkage and HTTP protections
+        run: npm run test:employee-linkage
       - name: Verify built QA web server and API proxy
         run: npm run test:qa-web
       - name: Type-check browser tests

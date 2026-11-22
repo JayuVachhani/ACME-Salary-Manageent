@@ -1,5 +1,11 @@
 # ACME — prioritized product and engineering backlog
 
+## PR #10 integration — 22 November 2026
+
+PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
+
+## Earlier checkpoint records
+
 ## Publication verification — 22 November 2026
 
 Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
@@ -32,6 +38,10 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 | A1b | Country/currency administration (P4b) | Critical | done | PR #7 merged at0e0fb86; ADR-004, pinned catalogue and country-currency module |
 | A1c | Immutable historical FX administration (P4c) | High | done | Implemented;23 DB /3 FX Chromium and final-head CI passed; Merged PR #8 at2a3ee19. FX_MODULE.md, migration018, service/controller/UI |
 | A2 | Verify and administer employee/user linkage before public salary access | Critical | blocked | ADR-005 independent HR/reason/confirmation/session revocation approved,implementation pending; nullable mapping still permits incomplete self-subject protection; users, common/domain/policy.ts, employee workflows |
+
+## Merged linkage checkpoint
+
+| A2 | Verify and administer employee/user linkage before public salary access | Critical | stub/partial | Backend on feature/backend-linkage: migration019, confirmed independent HR endpoint, audit/revocation and SQL/HTTP checks. Linkage UI and salary-boundary integration pending; public salary writes remain absent |
 | A3 | Employee create/directory/edit/removal with initial salary atomicity | Critical | stub/partial | P5a directory/profile locally verified19 DB /3 Chromium; PR pending. Dated assignments, validation, permissions, holds and unique keys; employee schemas/UI/API |
 | A4 | Expose backdated request/independent decision workflow safely | Critical | blocked | Depends on A2/A3; SalaryApprovalService, trusted session boundary, approver/requester browser accounts |
 | A5 | Ordinary salary/corrections/transfer and operational edit leases | High | stub/partial | Existing schemas are not complete workflow; clarify affected unresolved rules, record_locks, history |
