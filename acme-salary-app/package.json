@@ -16,6 +16,7 @@
   "scripts": {
     "qa:e2e": "node --env-file=.env node_modules/@playwright/test/cli.js test",
     "qa:regression": "node scripts/qa-regression.mjs",
+    "test:qa-web": "node scripts/test-qa-web-server.mjs",
     "qa:typecheck": "tsc -p tsconfig.qa.json",
     "qa:report": "node scripts/qa-report.mjs",
     "db:local:start": "node scripts/local-postgres.mjs start",

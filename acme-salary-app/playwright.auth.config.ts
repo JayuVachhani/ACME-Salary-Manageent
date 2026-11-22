@@ -11,7 +11,7 @@ export default defineConfig({ ...base,
   webServer: [
     { command: 'node --env-file=.env apps/api/dist/main.js', url: `http://127.0.0.1:${apiPort}/healthz`,
       env: { PORT: String(apiPort), APP_ORIGIN: origin, SMTP_HOST: '127.0.0.1', SMTP_PORT: '4325', DEV_INSECURE_COOKIES: 'true' }, stdout:'pipe',stderr:'pipe',reuseExistingServer: false, timeout: 60000 },
-    { command: `npm run dev -w @acme/web -- --port ${webPort}`, url: origin,
+    { command: `node scripts/qa-web-server.mjs ${webPort}`, url: origin,
       env: { QA_API_PORT: String(apiPort) }, stdout:'pipe',stderr:'pipe',reuseExistingServer: false, timeout: 60000 }
   ]
 });

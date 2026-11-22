@@ -60,6 +60,8 @@ jobs:
         run: npm run test:country-currency
       - name: Verify FX revisions and historical lookup
         run: npm run test:fx
+      - name: Verify built QA web server and API proxy
+        run: npm run test:qa-web
       - name: Type-check browser tests
         run: npm run qa:typecheck
       - name: Test Git staging safety with synthetic credentials
