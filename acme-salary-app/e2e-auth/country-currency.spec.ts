@@ -36,7 +36,7 @@ test('CTRY-E2E-02 read member catalogue, HR-only writes, malformed DTO, stale ve
  await expect(area(page).getByRole('table',{name:'ISO currency catalogue'})).toBeVisible();await expect(area(page).getByLabel('Country code')).toHaveCount(0);
  expect((await page.request.get('/api/v1/countries')).status()).toBe(403);expect((await page.request.get('/api/v1/currencies')).status()).toBe(403);
  await page.getByRole('button',{name:'Sign out',exact:true}).click();await login(page);
- const csrf=(await page.context().cookies()).find(c=>c.name==='acme_csrf')!.value,headers={Origin:'http://127.0.0.1:4427','X-CSRF-Token':csrf};
+ const csrf=(await page.context().cookies()).find(c=>c.name==='acme_csrf')!.value,headers={Origin:new URL(page.url()).origin,'X-CSRF-Token':csrf};
  const valid={countryCode:'ZY',countryName:'Synthetic API Country',defaultCurrency:'USD',decimalPlaces:2,roundingMode:'HALF_UP',regulatoryNotes:'',retentionNotes:''};
  expect((await page.request.post('/api/v1/countries',{headers:{...headers,Origin:'https://invalid.acme.test'},data:valid})).status()).toBe(403);
  expect((await page.request.post('/api/v1/countries',{headers:{...headers,'X-CSRF-Token':'invalid'},data:valid})).status()).toBe(403);

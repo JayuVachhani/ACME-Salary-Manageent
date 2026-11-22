@@ -44,10 +44,10 @@ test('REF-E2E-02 anonymous/member access and invalid DTO, origin, CSRF, ID and s
   expect((await request.get('/api/v1/organization-references/departments')).status()).toBe(401);
   await login(page,'refs.member@acme.test');await expect(section(page)).toHaveCount(0);
   expect((await page.request.get('/api/v1/organization-references/departments')).status()).toBe(403);
-  expect((await page.request.post('/api/v1/organization-references/departments',{headers:{Origin:'http://127.0.0.1:4427'},data:{name:'Denied'}})).status()).toBe(403);
+  expect((await page.request.post('/api/v1/organization-references/departments',{headers:{Origin:new URL(page.url()).origin},data:{name:'Denied'}})).status()).toBe(403);
   await page.getByRole('button',{name:'Sign out',exact:true}).click();await login(page);
   const csrf=(await page.context().cookies()).find(c=>c.name==='acme_csrf')!.value;
-  const headers={Origin:'http://127.0.0.1:4427','X-CSRF-Token':csrf};
+  const headers={Origin:new URL(page.url()).origin,'X-CSRF-Token':csrf};
   const path='/api/v1/organization-references/departments';
   expect((await page.request.post(path,{headers:{...headers,Origin:'https://invalid.acme.test'},data:{name:'Denied'}})).status()).toBe(403);
   expect((await page.request.post(path,{headers:{...headers,'X-CSRF-Token':'wrong'},data:{name:'Denied'}})).status()).toBe(403);

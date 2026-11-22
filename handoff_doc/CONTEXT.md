@@ -20,7 +20,7 @@ flowchart LR
   Prisma[Prisma runtime smoke/client] --> PG
 ~~~
 
-Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Compose instead exposes PostgreSQL 5432, Mailpit SMTP 1025 and inbox 8025. Foundation QA uses web/API 4317/4318; isolated auth/team QA uses 4427/4428 and SMTP 4325. No Redis, remote storage or worker ports exist.
+Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Compose instead exposes PostgreSQL 5432, Mailpit SMTP 1025 and inbox 8025. Foundation QA uses web/API 4317/4318; isolated QA uses auth/team 4427/4428, organization references 4527/4528, country/currency 4627/4628, with sequential SMTP 4325. No Redis, remote storage or worker ports exist.
 
 ## 2. Directory structure
 
@@ -226,7 +226,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 | SMTP_USER | Optional | Must be paired with SMTP_PASSWORD; omitted for local capture/authorized relay |
 | SMTP_PASSWORD | Optional secret | Must be paired with SMTP_USER; never log or commit |
 | MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
-| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428 |
+| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428, references 4528, countries 4628 |
 | QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login or references |
 | PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
 | ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team/reference browser fixtures verify URL database matches it |
@@ -390,3 +390,5 @@ acme-salary-app/tsconfig.base.json
 acme-salary-app/tsconfig.qa.json
 acme-salary-app/vitest.config.ts
 ~~~
+
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.

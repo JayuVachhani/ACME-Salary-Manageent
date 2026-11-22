@@ -323,3 +323,7 @@ Final isolated browser run: 4/4 reference cases PASS, plus 9/9 existing auth/tea
 | CTRY-E2E-03 | Paging, simulated catalogue outage/recovery, empty search, mobile/axe/console | Correct pages and states, no overflow/violations/page errors | Actual CRUD/paging and browser assertions satisfied; outage/empty-search UI state explicit | PASS | None |
 
 Earlier 9 auth/team + 4 organization-reference and 12 foundation Chromium cases also reran successfully. No full-system pass is inferred.
+
+CI scope note: run 45006454596 failed before CTRY-E2E-01..03 could execute; those cases were BLOCKED for that CI run, not passed. Earlier local entries above describe their executed local runs. Port-isolation retest and subsequent current-head CI results are recorded separately in QA_EXECUTION_REPORT.md and PR #7 reviews.
+
+Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.

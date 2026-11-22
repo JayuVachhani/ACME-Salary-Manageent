@@ -53,3 +53,5 @@ Before approving a deploy plan, choose target/runtime/service manager, static ho
 - For SMTP, ephemeral OTP work can be lost on crash; user resends. Team invitation remains committed when mail fails. Decide whether durable delivery is a release requirement; it is not implemented.
 
 The client authorized committing/pushing this documentation pack on 22 November 2026. Application tests were not rerun just to author this pack; historical passing CI is evidence for the referenced source snapshot, not production acceptance.
+
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.

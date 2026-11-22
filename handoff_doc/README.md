@@ -81,7 +81,7 @@ Environment checklist, including script/container-only settings:
 | SMTP_USER | Optional | Must be paired with SMTP_PASSWORD; omitted for local capture/authorized relay |
 | SMTP_PASSWORD | Optional secret | Must be paired with SMTP_USER; never log or commit |
 | MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
-| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428 |
+| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428, references 4528, countries 4628 |
 | QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login |
 | PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
 | ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team browser fixtures verify URL database matches it |
@@ -211,3 +211,5 @@ npm.cmd run db:local:stop
 ~~~
 
 verify:database expands to migrations, Prisma generation, lint/type/unit/build, identity checks, country/FX/hold/snapshot checks, approval checks, Prisma adapter and health smoke. test:login builds again and runs SMTP + multi-account auth/team Chromium in one disposable database and reference Chromium in a second disposable database, then country/currency Chromium in a third. Do not parallelize browser commands. Full qa:e2e includes explicit unfinished-requirement failures and is not the passing foundation CI slice. Merged PR #5 verification evidence (run 44997876398, job 137132754960): 22 unit tests, 72 existing logical DB checks, 22 team plus 23 reference DB checks, 12 foundation Chromium, 9 auth/team Chromium and 4 reference Chromium; 3/11 pass/fail requirement probes are a separate run, not full-system acceptance. This documentation task did not rerun application tests. See [SMOKE_TESTS.md](SMOKE_TESTS.md), [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.

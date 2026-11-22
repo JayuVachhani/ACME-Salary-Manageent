@@ -16,7 +16,9 @@ try {
   ownerUrl.pathname = runtimeUrl.pathname = `/${name}`;
   const env = { ...process.env, MIGRATION_DATABASE_URL: ownerUrl.href, DATABASE_URL: runtimeUrl.href, QA_RUN: suites[0]==='country-currency.spec.ts'?'country-currency':suites.length===1?'references':'login', ACME_AUTH_TEST_DATABASE: name };
   for (const args of [['scripts/migrate.mjs'], ['node_modules/@playwright/test/cli.js', 'test', '--config=playwright.auth.config.ts',...suites]]) {
+    console.log(JSON.stringify({event:'browser_group_process_start',group:env.QA_RUN,stage:args[0].includes('migrate')?'migration':'chromium'}));
     const result = spawnSync(process.execPath, args, { env, stdio: 'inherit', windowsHide: true });
+    console.log(JSON.stringify({event:'browser_group_process_end',group:env.QA_RUN,status:result.status,signal:result.signal,errorCode:result.error?.code??null}));
     if (result.status !== 0) {
       if (result.error || result.signal) console.error('Test process failed to complete', result.error?.code ?? result.signal);
       process.exitCode = result.status ?? 1; break;
