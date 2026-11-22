@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Team } from './team';
 import { OrganizationReferences } from './organization-references';
+import { CountryCurrency } from './country-currency';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ export function Login() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
-  const [identity,setIdentity]=useState<{id:string;isHrManager:boolean}|null>(null);
+  const [identity,setIdentity]=useState<{id:string;isHrManager:boolean;permissions:string[]}|null>(null);
   useEffect(()=>{
     const controller=new AbortController();
     if(signedIn) fetch('/api/v1/auth/me',{signal:controller.signal}).then(async response=>{if(response.ok)setIdentity(await response.json());else{setIdentity(null);setSignedIn(false);}}).catch(()=>{});
@@ -61,5 +62,5 @@ export function Login() {
       {challengeId && <><button type="button" disabled={busy} onClick={() => void act(send)}>Resend code</button><button type="button" disabled={busy} onClick={() => { setChallenge(''); setCode(''); setMessage(''); }}>Use another email</button></>}
     </form>}
     {message && <p role="alert">{message}</p>}
-  </section>{signedIn&&identity?.isHrManager&&<><Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/><OrganizationReferences/></>}</>;
+  </section>{signedIn&&identity?.isHrManager&&<><Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/><OrganizationReferences/></>}{signedIn&&identity&&(identity.isHrManager||identity.permissions.includes('read'))&&<CountryCurrency isHrManager={identity.isHrManager}/>}</>;
 }

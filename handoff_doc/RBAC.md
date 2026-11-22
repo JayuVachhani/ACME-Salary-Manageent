@@ -2,7 +2,7 @@
 
 **Purpose:** Map real security checks without inventing framework guards.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
@@ -57,6 +57,9 @@ IDs resolve to the canonical [route map](CONTEXT.md#8-api-route-map); this avoid
 | O01,O04 | HR only | Strict bounded offset, 20 rows/page; includes inactive; anonymous 401/member 403 |
 | O02,O05 | HR only | Origin+bound CSRF, strict trimmed name; active/inactive uniqueness, audit atomicity |
 | O03,O06 | HR only | Same + UUID, explicit isActive and expectedVersion; stale 409; rename/deactivate/reactivate with stable ID |
+| C01 | HR or member with read | Current session; read-only pinned catalogue; N.A. entries listed |
+| C02,C04 | HR only | Configured currencies/country policies; country list bounded 20/page |
+| C03,C05,C06 | HR only | Exact Origin, bound CSRF, strict DTO, immutable codes, optimistic versions, transactional audit, active-default/precision protections |
 
 ## Frontend path × guard
 
@@ -67,6 +70,7 @@ IDs resolve to the canonical [route map](CONTEXT.md#8-api-route-map); this avoid
 | / Team section (not a /team route) | identity.isHrManager conditional mounts Team | HR only; backend still checks each request |
 | / Organization references section | Login identity.isHrManager mounts OrganizationReferences | HR only; current backend session checked on every call |
 | Team own-edit controls | self comparison disables role/permission fields | Own name may change; server rechecks actual fields |
+| / Countries and currencies | Login checks HR or read permission; CountryCurrency hides admin controls for member | Catalogue read-member/HR; country/currency configuration HR only; backend authoritative |
 | Planned employee/report/salary screens | None implemented | No claimed permission enforcement at missing endpoints |
 
 Use independent browser contexts for role testing. Current tests cover HR/member denial, crafted actor/privilege fields, stale versions, own permission changes, both CSRF failures, independent offboarding and last-manager protection. Full cross-module role/action matrix remains blocked by missing modules, not waived. No admin privilege should be inferred from hidden/visible UI controls.

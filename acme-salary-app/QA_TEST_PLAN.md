@@ -37,3 +37,7 @@ Run `npm run test:login` for isolated PostgreSQL + actual Chromium + loopback SM
 ## Reference increment — 22 November 2026
 
 Review ADR-003 and ORGANIZATION_REFERENCES_MODULE.md. Test both department/designation lists through real HR SMTP login and Chromium: confirmed creation/cancel, trimming/display case, case-insensitive duplicates, rename/deactivate/reactivate, stale edit, permissions, strict DTO, Origin/CSRF, loading/empty/error/success, pagination, mobile/axe and page errors. PostgreSQL tests separately verify immutable identities, no deletion/truncation, inactive assignment rejection/history retention, concurrent writes, before/after audit and audit-failure rollback. Existing login/team/foundation/compensation regressions remain required. Only synthetic disposable database fixtures are used. Country/currency/FX and deferred bands are not claimed as delivered.
+
+## Country/currency increment
+
+Execute test:country-currency on a disposable PostgreSQL database; verify catalogue read permissions, HR-only config, N.A./precision protection, inactive country/currency references, concurrency, immutable codes/history, stale updates and audit rollback. Execute country-currency.spec.ts through test:login with independent HR/read-member contexts, actual SMTP, confirmations/cancel, CRUD/lifecycle, negative DTO/Origin/CSRF, pagination, mobile/axe and visible outage recovery. Retain existing gates and do not claim full-system acceptance.

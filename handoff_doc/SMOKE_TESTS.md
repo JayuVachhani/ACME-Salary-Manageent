@@ -2,7 +2,7 @@
 
 **Purpose:** Provide executable checks without implying missing workflows passed.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
@@ -19,6 +19,7 @@ npm.cmd run verify:database
 npm.cmd run test:authentication
 npm.cmd run test:team
 npm.cmd run test:references
+npm.cmd run test:country-currency
 npm.cmd run qa:typecheck
 # Repository root:
 # node acme-salary-app/scripts/test-git-safety.mjs
@@ -97,3 +98,9 @@ Test captured SMTP success/failure without external addresses. No LLM, upload/do
 7. Use only test:references in a disposable database for inactive-assignment, concurrent deactivation, direct deletion/truncate and audit-failure checks. Never run destructive probes against an existing/shared database.
 
 Automated equivalents: test:references (23 real PostgreSQL checks) and test:login (9 auth/team plus 4 reference Chromium cases). Empty/outage rendering is explicitly simulated UI-state coverage; real CRUD/pagination uses actual API/database calls. Merged PR #5 head d84ba8e passed run 44997876398/job 137132754960. This documentation task does not claim a new browser execution.
+
+## 7. Country/currency smoke
+
+Use synthetic HR/read-member contexts. Verify catalogue search, numeric minor units vs N.A., HR-only currency activation confirmation/cancel, country creation, immutable code, versioned precision/rounding/notes edits, deactivate/reactivate and stale conflicts. Member sees catalogue without administration; direct country/config API denies member. Inactivate a currency then confirm new assignment/salary/FX/report use fails through isolated test:country-currency, preserving old history. UI warns about inactive defaults, descriptive notes and no legal automation. Check pagination, outages/recovery, mobile/axe and console. New country-currency browser group uses its own disposable database/artifact folder; do not run against shared data.
+
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.

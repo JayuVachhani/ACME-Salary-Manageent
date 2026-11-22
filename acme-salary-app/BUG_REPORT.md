@@ -32,3 +32,11 @@ The API's intentional readiness 503 is recorded as an unfinished application rea
 ## Reference increment — 22 November 2026
 
 Department/designation administration is implemented with new database/Chromium coverage; QA-005 remains OPEN for country/currency/FX. Initial combined Chromium run: 11 pass / 1 fail. The new reference-suite HR fixture invalidated the team suite's last-manager assumption. An attempted afterAll cleanup correctly hit last-manager protection (second run: 11 pass / 2 fail), so the final fix isolates reference and auth/team groups in separate disposable databases. Guards are unchanged. Final retest is recorded in QA_EXECUTION_REPORT.md. A local migration checksum mismatch was diagnosed by comparing file hashes and restoring the exact already-applied migration bytes; database migration ledger values were not altered. Full employee/salary/report/browser and production-readiness gaps remain open.
+
+## Country/currency increment
+
+QA-005 is partially addressed by catalogue/country API/UI; FX administration remains missing. New financial-reference SQL initially failed with ambiguous code variable; forward migration 017 disambiguates it while preserving applied checksums. Initial local verification was also blocked by missing pg dependencies and locked PostgreSQL binaries; recovered the pinned control binary, stopped only project-local PG cleanly and restored lockfile dependencies without resetting data. Results and retests are recorded separately.
+
+CI harness issue CTRY-QA-STARTUP: current-head run 45006454596 exited before the country browser group executed; no country result JSON in retained artifact. Exact cause unproven. Distinct per-group ports and explicit child status diagnostics are under retest; no test retries/assertion relaxation added. PR #7 remains unapproved/unmerged.
+
+Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.

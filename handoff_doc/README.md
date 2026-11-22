@@ -2,7 +2,7 @@
 
 **Purpose:** Run the delivered application and its verification gates safely.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
@@ -81,7 +81,7 @@ Environment checklist, including script/container-only settings:
 | SMTP_USER | Optional | Must be paired with SMTP_PASSWORD; omitted for local capture/authorized relay |
 | SMTP_PASSWORD | Optional secret | Must be paired with SMTP_USER; never log or commit |
 | MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
-| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428 |
+| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428, references 4528, countries 4628 |
 | QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login |
 | PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
 | ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team browser fixtures verify URL database matches it |
@@ -132,7 +132,11 @@ Recovery controls: resend replaces earlier OTP and consumes the same limits; Rei
 
 ### Department/designation happy path
 
-As HR, open Organization references, choose Departments or Designations, enter a synthetic name, Review reference, inspect the native confirmation and confirm. Cancel must save nothing. Edit supports rename and an active checkbox; deactivation preserves the entry/history, and reactivation retains its ID. Duplicate names ignore case and remain reserved while inactive. For a stale 409, refresh and reopen the edit. Country/currency/FX administration is not available yet; salary bands are deferred. Detailed semantics are in [WORKFLOW_RULES §7](WORKFLOW_RULES.md#7-departmentdesignation-administration--done-for-p4a).
+As HR, open Organization references, choose Departments or Designations, enter a synthetic name, Review reference, inspect the native confirmation and confirm. Cancel must save nothing. Edit supports rename and an active checkbox; deactivation preserves the entry/history, and reactivation retains its ID. Duplicate names ignore case and remain reserved while inactive. For a stale 409, refresh and reopen the edit. FX administration is not available yet; salary bands are deferred. Detailed semantics are in [WORKFLOW_RULES §7](WORKFLOW_RULES.md#7-departmentdesignation-administration--done-for-p4a).
+
+### Country/currency happy path
+
+Sign in as HR, search the pinned currency catalogue and activate a supported numeric-minor-unit entry with confirmation. Add a country policy selecting that active currency, precision/rounding and descriptive notes; confirm actual details before save. Edit supports versioned policy and soft deactivation/reactivation, never code/ISO precision changes. Member read access sees the catalogue without administration. N.A. entries remain listed/unavailable. Currency deactivation blocks new financial uses even for active countries; history remains. See [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md) and [workflow rules](WORKFLOW_RULES.md).
 
 ## 6. Stop/restart and troubleshooting
 
@@ -155,7 +159,7 @@ Stop dev command normally; restart after a build when dist/main.js is absent. St
 
 ## 7. API route reference
 
-Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 18 concrete operations:
+Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 24 concrete operations:
 
 | ID | Method | Path | Guard / response |
 |---|---|---|---|
@@ -177,6 +181,12 @@ Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 18 concr
 | O04 | GET | /api/v1/organization-references/designations | Same list guard/shape as O01 |
 | O05 | POST | /api/v1/organization-references/designations | Same creation guard/shape as O02 |
 | O06 | PATCH | /api/v1/organization-references/designations/:id | Same edit/deactivation guard/shape as O03 |
+| C01 | GET | /api/v1/currency-catalogue | HR or read member; pinned 178-entry ISO list, N.A. preserved; no-store |
+| C02 | GET | /api/v1/currencies | HR only; configured rows/versions including legacy |
+| C03 | PATCH | /api/v1/currencies/:code | HR + Origin/CSRF, strict isActive/expectedVersion; immutable ISO facts |
+| C04 | GET | /api/v1/countries | HR only; strict offset, 20 rows/page, includes inactive |
+| C05 | POST | /api/v1/countries | HR + Origin/CSRF, strict country policy, active default required; 201 |
+| C06 | PATCH | /api/v1/countries/:code | Same + expectedVersion/isActive; immutable code; stale 409 |
 
 ## 8. CI verification
 
@@ -189,6 +199,7 @@ npm.cmd run verify:database
 npm.cmd run test:authentication
 npm.cmd run test:team
 npm.cmd run test:references
+npm.cmd run test:country-currency
 npm.cmd run qa:typecheck
 # Run the next two from repository root, as CI does:
 # node acme-salary-app/scripts/test-git-safety.mjs
@@ -199,4 +210,6 @@ npm.cmd run test:login
 npm.cmd run db:local:stop
 ~~~
 
-verify:database expands to migrations, Prisma generation, lint/type/unit/build, identity checks, country/FX/hold/snapshot checks, approval checks, Prisma adapter and health smoke. test:login builds again and runs SMTP + multi-account auth/team Chromium in one disposable database and reference Chromium in a second disposable database. Do not parallelize browser commands. Full qa:e2e includes explicit unfinished-requirement failures and is not the passing foundation CI slice. Merged PR #5 verification evidence (run 44997876398, job 137132754960): 22 unit tests, 72 existing logical DB checks, 22 team plus 23 reference DB checks, 12 foundation Chromium, 9 auth/team Chromium and 4 reference Chromium; 3/11 pass/fail requirement probes are a separate run, not full-system acceptance. This documentation task did not rerun application tests. See [SMOKE_TESTS.md](SMOKE_TESTS.md), [DEPLOYMENT.md](DEPLOYMENT.md).
+verify:database expands to migrations, Prisma generation, lint/type/unit/build, identity checks, country/FX/hold/snapshot checks, approval checks, Prisma adapter and health smoke. test:login builds again and runs SMTP + multi-account auth/team Chromium in one disposable database and reference Chromium in a second disposable database, then country/currency Chromium in a third. Do not parallelize browser commands. Full qa:e2e includes explicit unfinished-requirement failures and is not the passing foundation CI slice. Merged PR #5 verification evidence (run 44997876398, job 137132754960): 22 unit tests, 72 existing logical DB checks, 22 team plus 23 reference DB checks, 12 foundation Chromium, 9 auth/team Chromium and 4 reference Chromium; 3/11 pass/fail requirement probes are a separate run, not full-system acceptance. This documentation task did not rerun application tests. See [SMOKE_TESTS.md](SMOKE_TESTS.md), [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.

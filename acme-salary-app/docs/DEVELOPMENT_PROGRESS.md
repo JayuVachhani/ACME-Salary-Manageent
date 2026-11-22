@@ -18,7 +18,7 @@ QA update: actual Chromium execution completed. Final result: 12 passed / 14 fai
 | Backdated salary approvals | Backend/database tested | Request/decision service, atomic ledger/history/audit, pending/rejected exclusion, no self-approval, duplicate/stale handling. API/UI/lease/idempotency integration pending |
 | Retention and snapshots | Guard/database tested | Holds block removal; every snapshot read checks current identity/permissions/owner/version/expiry. Generation/export/admin UI pending |
 | Authentication/team | Merged in PR #4 | Login plus team invitation/permission/offboarding API and UI implemented. 22 team PostgreSQL checks and 9 auth/team Chromium cases pass, including independent accounts, concurrency, before/after audit, pagination/mobile/axe and delivery failures. See LOGIN_MODULE.md and TEAM_MODULE.md. Employee linkage and full production/security acceptance remain pending |
-| Remaining product modules | Not started | Country/currency/FX administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
+| Remaining product modules | Not started | FX administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
 | Production readiness | Not achieved | Infrastructure/legal/migration gates and full security/performance/UAT remain pending |
 
 ## Historical foundation verification
@@ -39,3 +39,7 @@ After this gate, npm audit identified an Effect advisory in Prisma tooling. Scop
 ## Reference increment — 22 November 2026
 
 PR #4 merged at fa2cbc4867994dcde5e81ba0ee3d5b417d2ac8b8, confirmed through GitHub MCP. ADR-003 approved. P4a department/designation API/UI, migrations 013/014, stale-edit/deactivation/history/audit safeguards implemented; locally verified: 23 reference PostgreSQL checks, 13 SMTP/auth/team/reference Chromium cases and 12 foundation Chromium cases pass; PR #5 merged at 8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b. Countries/currencies/FX remain pending and salary bands are explicitly deferred. Current results are recorded in QA_EXECUTION_REPORT.md; historical counts above describe their original checkpoints.
+
+## P4b country/currency increment — locally tested; PR #7 open; independent approval pending
+
+ADR-004 approved; migrations 015..017, pinned SIX catalogue, authenticated country/currency APIs and confirmed UI implemented. Final country guard retest passed 27 DB and 3 Chromium cases; existing auth/team/reference/foundation browser groups and database gates also passed. See QA_EXECUTION_REPORT.md. FX administration, verified employee linkage, employee/salary/reporting screens and production readiness remain pending; bands deferred. Dependencies restored from lockfile after missing-module/locked local PG binary issues without resetting existing data.

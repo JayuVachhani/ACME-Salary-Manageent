@@ -2,7 +2,7 @@
 
 **Purpose:** Explain allowed transitions, side effects and forbidden shortcuts.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
 
 ## Executive summary
 
@@ -139,3 +139,17 @@ All mutations call OrganizationReferencesService.run with the current HR session
 New assignment insertion locks active department/designation rows FOR SHARE; concurrent deactivation waits or the new assignment fails after deactivation commits. Existing history remains readable. audit_organization_reference writes before/after with the session actor in the same transaction; audit failure rolls back the reference change. No salary change, salary approval or historical revaluation is implied by renaming/deactivation. Country/currency/FX administration and precision restrictions are subsequent work. Salary bands remain deferred under ADR-003.
 
 Related: [reference module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), [RBAC](RBAC.md), [DATA_MODEL](DATA_MODEL.md).
+
+## 8. Country/currency administration — P4b
+
+~~~mermaid
+stateDiagram-v2
+  [*] --> CatalogueOnly: pinned ISO record
+  CatalogueOnly --> Active: HR confirms numeric entry activation
+  Active --> Inactive: HR confirms deactivate
+  Inactive --> Active: HR confirms reactivate
+~~~
+
+N.A. entries never activate. Codes/minor units are read-only over HTTP. Referenced precision cannot change through SQL; any correction needs a reviewed migration. Country create/edit uses 0..4 precision, rounding enum, descriptive notes, current HR+CSRF and expectedVersion on edits. Codes remain immutable. Country/currency deactivation preserves history and blocks new financial records through active-reference locks. Active-country configuration requires an active default; country deactivation remains allowed when its default is inactive. Policy edits change version and invalidate stale approval policy bases, not old salary rows. Rejection remains independent of salary insertion. Notes preserve existing JSON metadata and do not implement legal retention; holds stay separate. No delete, forced override or automatic catalogue refresh exists.
+
+Related: [country/currency module](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md), [RBAC](RBAC.md), [DATA_MODEL](DATA_MODEL.md).

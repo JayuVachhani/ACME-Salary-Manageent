@@ -52,3 +52,13 @@ Status: explicitly approved by client, 22 November 2026. Applies until a subsequ
 - Apply the approved rules in API validation, frontend and database constraints where applicable; audit management changes, reject stale edits and maintain documentation with implementation.
 
 Delivery split: P4a departments/designations; P4b country/currency administration and precision/lifecycle enforcement; P4c immutable FX maintenance. Only P4a is implemented in the present increment. ISO catalogue selection and salary-band rules remain open.
+
+## ADR-004 — ISO catalogue and country-policy administration
+
+Status: proposed interpretation approved by client continuation, 22 November 2026. Reconciles FR-REF-01 read-only catalogue with ADR-003 HR administration.
+
+- Pin the official SIX catalogue with publication/source/hash provenance. ISO code/minor-unit facts are read-only through the app; HR controls activation/deactivation. N.A. minor-unit entries are listed but unavailable for salary use.
+- Precision corrections require a separately reviewed migration and must reject currencies referenced by existing records. Never silently update existing currency precision or historical policy snapshots on catalogue refresh.
+- Country regulatory/retention text remains descriptive notes. Merge notes without deleting existing JSON metadata; explicit holds are enforced separately. No jurisdiction-specific legal automation is claimed.
+- Country policy precision/rounding remain FR-CTRY 0..4 and HALF_UP/FLOOR/CEIL, independent of the read-only ISO minor units. Existing history remains unchanged; new writes use the current policy.
+- Salary bands stay deferred; FX maintenance remains a separate increment. Catalogue refresh, currency historical retirement and production operational policies require reviewed future changes.

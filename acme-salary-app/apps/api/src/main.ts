@@ -9,6 +9,7 @@ import { loadConfig } from './config.js';
 import { authController } from './auth-controller.js';
 import { teamController } from './team-controller.js';
 import { organizationReferencesController } from './organization-references-controller.js';
+import { countryCurrencyController } from './country-currency-controller.js';
 
 async function bootstrap() {
   const config = loadConfig(process.env);
@@ -30,10 +31,11 @@ async function bootstrap() {
     }
   }
   const authentication = authController(pool, config);
-  @Module({ controllers: [HealthController, authentication.controller, teamController(pool,config), organizationReferencesController(pool,config)] })
+  @Module({ controllers: [HealthController, authentication.controller, teamController(pool,config), organizationReferencesController(pool,config),countryCurrencyController(pool,config)] })
   class AppModule {}
   const app = await NestFactory.create(AppModule, { logger: false });
   app.use(helmet());
+  app.use('/api/v1', (_req: Request,res: Response,next: NextFunction)=>{res.setHeader('Cache-Control','no-store');next();});
   app.use('/api/v1/auth', (_req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Cache-Control', 'no-store'); next();
   });
