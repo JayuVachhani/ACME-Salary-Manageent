@@ -1,5 +1,18 @@
 # ACME — technical context and handoff
 
+## Independent package publication checks — 23 November 2026
+
+The commit/push request authorizes verification. Independently installed frontend passed format,React lint,strict types,9 units,Vite production build and architecture71/7550. Backend passed format,lint,types,27 units,Prisma generation,official Nest CLI build,native architecture/OpenAPI and production-doc isolation. QA typing/formatting/proxy checks and all4 Git hook rejection/acceptance checks passed; safety regression passed. Serial isolated PostgreSQL integrity/auth/team/reference/country/FX/employee/approval suites and17 linkage SQL/HTTP checks passed. All12 foundation Chromium cases passed. Source comparison confirms all19 migration files and all75 frontend source files unchanged apart from relocation; only config/config.module.ts changes among81 backend source files. All22 delivered Chromium cases passed in the complete serial run without retries. Native Nest CLI watch and Vite development startup/proxy checks passed on isolated ports; those test-owned processes were stopped. First309-file indexed scan and whitespace checks passed. Final hook-gated commit/push and exact-head GitHub CI remain pending; no pending check is a pass. Historical report generation now writes only ignored QA artifacts rather than overwriting canonical documents. Earlier implementation-only records below are historical; no production completion/approval/merge claimed.
+
+
+## Independent application ownership — 22 November 2026
+
+Current implementation on `chore/independent-app-packages`: root frontend/ and backend/ are independent npm projects with separate lockfiles,strict TypeScript,ESLint,Prettier,tests,environment templates and native scripts. Frontend uses React19/Vite8,app/node TS projects and React hooks/refresh lint rules. Backend uses Nest12 CLI/nest-cli.json/tsconfig.build.json and official @nestjs/config with the existing safe Zod validation. Backend owns PostgreSQL/Prisma/migrations/bootstrap; no SQL or salary/permission policy is changed. QA is an independent qa/ package. tools/quality owns Git orchestration only; root has no package.json or framework configuration. Husky delegates to package-native checks. CI installs/checks each package independently.
+
+Old acme-salary-app/ now contains canonical documentation and ignored legacy local artifacts only. The previous local PostgreSQL cluster remains untouched; backend local-start reuses it when present. Existing server .env copied only into ignored backend/.env. Frontend receives no secrets. See [manual run steps](../README.md) from acme-salary-app,or root README.md from the repository. No test/lint/type/build/browser/safety verification,staging,commit or push performed for this increment under the implementation-first rule. Package installation/configuration are not test passes. Earlier workspace paths/check results below are historical; source links have been mapped to the current owners.
+
+## Earlier checkpoint records
+
 ## Quality tooling publication checks — 22 November 2026
 
 Push request authorizes verification. Formatting,lint,workspace types,36 units,builds,QA typing and React architecture71/7550 passed. Disposable Git/Husky integration checks reject unformatted source,explicit any and prohibited runtime files,and accept valid staged source. Git safety regression passed. Initial formatter baseline changes source layout only. Final indexed scan,real commit/push hooks and exact-head CI remain pending; no approval/merge. Earlier implementation-only records below are historical.
@@ -58,7 +71,7 @@ NestJS rules alignment (22 November 2026), implemented but unverified: the exist
 
 ## Backend structure checkpoint — 22 November 2026
 
-On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
+On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under backend/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
 
 **Purpose:** Describe implementation contracts, architecture, source evidence and pitfalls.
 
@@ -99,8 +112,8 @@ Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Co
    ├─ package.json / package-lock.json   Pinned workspace scripts/dependencies
    ├─ compose.yaml                Development PostgreSQL and Mailpit only
    ├─ .env.example                Template; lacks owner migration URL
-   ├─ apps/api/src/               NestJS entry, factories, services and unit tests
-   ├─ apps/web/src/               main.tsx, features/auth/login.tsx, features/team/team.tsx, features/organization-references/organization-references.tsx, features/country-currency/country-currency.tsx, features/fx-rates/fx-rates.tsx and styles.css
+   ├─ backend/src/               NestJS entry, factories, services and unit tests
+   ├─ frontend/src/               main.tsx, features/auth/login.tsx, features/team/team.tsx, features/organization-references/organization-references.tsx, features/country-currency/country-currency.tsx, features/fx-rates/fx-rates.tsx and styles.css
    ├─ database/migrations/        001..018 authoritative SQL, no down migrations
    ├─ database/schema.prisma      Introspected 23-model reference/client input
    ├─ scripts/                    DB lifecycle, migration, bootstrap, regression/safety tools
@@ -127,7 +140,7 @@ There are no uploads, file document types, transcription, queues, scheduler, aut
 
 ## 4. Authentication and security module
 
-Source: [auth/auth.controller.ts](../acme-salary-app/apps/api/src/auth/auth.controller.ts), [auth/authentication.service.ts](../acme-salary-app/apps/api/src/auth/authentication.service.ts), [auth/auth-rate.ts](../acme-salary-app/apps/api/src/auth/auth-rate.ts).
+Source: [auth/auth.controller.ts](../backend/src/auth/auth.controller.ts), [auth/authentication.service.ts](../backend/src/auth/authentication.service.ts), [auth/auth-rate.ts](../backend/src/auth/auth-rate.ts).
 
 A01/A02 validate strict email input and exact Origin, consume rate budget and return a fresh random challengeId plus the same generic message for unknown/ineligible/throttled recipients. Delivery runs outside the response path. AuthenticationService.issue locks an eligible non-system ACTIVE/INVITED user, checks invitation expiry after lock, consumes prior open challenges and inserts a HMAC of a cryptographic six-digit code. The raw code is only passed to SMTP. Mail failure invalidates its challenge and records a sanitized event.
 
@@ -137,7 +150,7 @@ A04 re-reads current ACTIVE non-system identity/permissions and checks revocatio
 
 ## 5. HR team module
 
-Source: [team/team.controller.ts](../acme-salary-app/apps/api/src/team/team.controller.ts), [team/team.service.ts](../acme-salary-app/apps/api/src/team/team.service.ts), SQL 011/012, [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md).
+Source: [team/team.controller.ts](../backend/src/team/team.controller.ts), [team/team.service.ts](../backend/src/team/team.service.ts), SQL 011/012, [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md).
 
 T01 returns live/invited accounts, excludes system/deleted identities, orders created_at/id and pages 20 rows. T02 creates a seven-day INVITED account and notifies after commit, returning delivery sent/failed. T03 changes fullName, isHrManager and permission array against expectedVersion. T04 soft-removes and revokes all access. T05 only renews INVITED records, increments version, invalidates open OTPs and resends mail. Rejoin is a new ID, not an activation endpoint for old DELETED rows.
 
@@ -149,8 +162,8 @@ Users may edit their own name but not permissions; self-removal is subject to an
 
 ### Organization reference administration — done for P4a
 
-Sources: [controller](../acme-salary-app/apps/api/src/organization-references-controller.ts), [service](../acme-salary-app/apps/api/src/organization-references.ts), [UI](../acme-salary-app/apps/web/src/features/organization-references/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
-Sources: [controller](../acme-salary-app/apps/api/src/organization-references/organization-references.controller.ts), [service](../acme-salary-app/apps/api/src/organization-references/organization-references.service.ts), [UI](../acme-salary-app/apps/web/src/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
+Sources: [controller](../backend/src/organization-references-controller.ts), [service](../backend/src/organization-references.ts), [UI](../frontend/src/features/organization-references/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
+Sources: [controller](../backend/src/organization-references/organization-references.controller.ts), [service](../backend/src/organization-references/organization-references.service.ts), [UI](../frontend/src/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
 
 OrganizationReferencesService.run holds the current HR identity/session through each transaction and sets local acme.reference_actor for atomic before/after audits. Only departments/designations are accepted by referenceKind before any table-name interpolation; all values are SQL parameters. list returns 20 rows ordered by name/id, including inactive records. create trims a 1..200-character name and returns version 1. change requires name, isActive and expectedVersion; stale or unavailable IDs return 409. Case-insensitive uniqueness reserves inactive names. IDs cannot change; there is no DELETE route.
 
@@ -379,54 +392,54 @@ acme-salary-app/QA_EXECUTION_REPORT.md
 acme-salary-app/QA_TEST_PLAN.md
 acme-salary-app/README.md
 acme-salary-app/TEST_CASES.md
-acme-salary-app/apps/api/package.json
-acme-salary-app/apps/api/src/auth/auth.controller.ts
-acme-salary-app/apps/api/src/auth/auth-rate.ts
-acme-salary-app/apps/api/src/auth-secrets.test.ts
-acme-salary-app/apps/api/src/auth/auth-secrets.ts
-acme-salary-app/apps/api/src/auth/authentication.service.ts
-acme-salary-app/apps/api/src/config.test.ts
-acme-salary-app/apps/api/src/config/config.ts
-acme-salary-app/apps/api/src/database/prisma.ts
-acme-salary-app/apps/api/src/main.ts
-acme-salary-app/apps/api/src/money.test.ts
-acme-salary-app/apps/api/src/common/domain/money.ts
-acme-salary-app/apps/api/src/organization-references/organization-references.controller.ts
-acme-salary-app/apps/api/src/organization-references/organization-references.service.ts
-acme-salary-app/apps/api/src/mail/otp-mail.ts
-acme-salary-app/apps/api/src/policy.test.ts
-acme-salary-app/apps/api/src/common/domain/policy.ts
-acme-salary-app/apps/api/src/reports/report-access.ts
-acme-salary-app/apps/api/src/salary/salary-approval.service.ts
-acme-salary-app/apps/api/src/team/team.controller.ts
-acme-salary-app/apps/api/src/team/team.service.ts
-acme-salary-app/apps/api/tsconfig.json
-acme-salary-app/apps/web/index.html
-acme-salary-app/apps/web/package.json
-acme-salary-app/apps/web/src/features/auth/login.tsx
-acme-salary-app/apps/web/src/main.tsx
-acme-salary-app/apps/web/src/features/organization-references/organization-references.tsx
-acme-salary-app/apps/web/src/app/styles.css
-acme-salary-app/apps/web/src/features/team/team.tsx
-acme-salary-app/apps/web/src/vite-env.d.ts
-acme-salary-app/apps/web/tsconfig.json
-acme-salary-app/apps/web/vite.config.ts
+backend/package.json
+backend/src/auth/auth.controller.ts
+backend/src/auth/auth-rate.ts
+backend/src/auth-secrets.test.ts
+backend/src/auth/auth-secrets.ts
+backend/src/auth/authentication.service.ts
+backend/src/config.test.ts
+backend/src/config/config.ts
+backend/src/database/prisma.ts
+backend/src/main.ts
+backend/src/money.test.ts
+backend/src/common/domain/money.ts
+backend/src/organization-references/organization-references.controller.ts
+backend/src/organization-references/organization-references.service.ts
+backend/src/mail/otp-mail.ts
+backend/src/policy.test.ts
+backend/src/common/domain/policy.ts
+backend/src/reports/report-access.ts
+backend/src/salary/salary-approval.service.ts
+backend/src/team/team.controller.ts
+backend/src/team/team.service.ts
+backend/tsconfig.json
+frontend/index.html
+frontend/package.json
+frontend/src/features/auth/login.tsx
+frontend/src/main.tsx
+frontend/src/features/organization-references/organization-references.tsx
+frontend/src/app/styles.css
+frontend/src/features/team/team.tsx
+frontend/src/vite-env.d.ts
+frontend/tsconfig.json
+frontend/vite.config.ts
 acme-salary-app/compose.yaml
-acme-salary-app/database/migrations/001_identity_audit.sql
-acme-salary-app/database/migrations/002_country_employee_fx.sql
-acme-salary-app/database/migrations/003_salary_approval.sql
-acme-salary-app/database/migrations/004_salary_history_atomic.sql
-acme-salary-app/database/migrations/005_assignment_version_guard.sql
-acme-salary-app/database/migrations/006_approval_currency_guard.sql
-acme-salary-app/database/migrations/007_authentication.sql
-acme-salary-app/database/migrations/008_auth_rate_limits.sql
-acme-salary-app/database/migrations/009_identity_revocation.sql
-acme-salary-app/database/migrations/010_auth_rate_denials.sql
-acme-salary-app/database/migrations/011_team_integrity.sql
-acme-salary-app/database/migrations/012_team_audit_snapshots.sql
-acme-salary-app/database/migrations/013_organization_references.sql
-acme-salary-app/database/migrations/014_reference_name_bounds.sql
-acme-salary-app/database/schema.prisma
+backend/database/migrations/001_identity_audit.sql
+backend/database/migrations/002_country_employee_fx.sql
+backend/database/migrations/003_salary_approval.sql
+backend/database/migrations/004_salary_history_atomic.sql
+backend/database/migrations/005_assignment_version_guard.sql
+backend/database/migrations/006_approval_currency_guard.sql
+backend/database/migrations/007_authentication.sql
+backend/database/migrations/008_auth_rate_limits.sql
+backend/database/migrations/009_identity_revocation.sql
+backend/database/migrations/010_auth_rate_denials.sql
+backend/database/migrations/011_team_integrity.sql
+backend/database/migrations/012_team_audit_snapshots.sql
+backend/database/migrations/013_organization_references.sql
+backend/database/migrations/014_reference_name_bounds.sql
+backend/database/schema.prisma
 acme-salary-app/docs/DECISIONS.md
 acme-salary-app/docs/DEVELOPMENT_LOG.md
 acme-salary-app/docs/DEVELOPMENT_PROGRESS.md
@@ -460,13 +473,13 @@ acme-salary-app/scripts/test-approvals.mjs
 acme-salary-app/scripts/test-authentication.mjs
 acme-salary-app/scripts/test-country-fx-retention.mjs
 acme-salary-app/scripts/test-database.mjs
-acme-salary-app/scripts/test-git-safety.mjs
+tools/quality/scripts/test-git-safety.mjs
 acme-salary-app/scripts/test-health.mjs
 acme-salary-app/scripts/test-login.mjs
 acme-salary-app/scripts/test-organization-references.mjs
 acme-salary-app/scripts/test-prisma.mjs
 acme-salary-app/scripts/test-team.mjs
-acme-salary-app/scripts/verify-staged.mjs
+tools/quality/scripts/verify-staged.mjs
 acme-salary-app/tsconfig.base.json
 acme-salary-app/tsconfig.qa.json
 acme-salary-app/vitest.config.ts

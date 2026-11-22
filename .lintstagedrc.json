@@ -1,9 +1,15 @@
 {
-  "acme-salary-app/apps/**/*.{ts,tsx}": [
-    "prettier --check --ignore-path .prettierignore",
-    "eslint --config acme-salary-app/eslint.config.mjs --max-warnings 0"
+  "frontend/src/**/*.{ts,tsx}": [
+    "node frontend/node_modules/prettier/bin/prettier.cjs --check --config frontend/.prettierrc.json --ignore-path frontend/.prettierignore",
+    "node frontend/node_modules/eslint/bin/eslint.js --config frontend/eslint.config.mjs --max-warnings 0"
   ],
-  "acme-salary-app/{scripts/**/*.mjs,e2e*/**/*.ts,apps/**/*.{css,json,html},*.{json,mjs,ts,yml,yaml}}": "prettier --check --ignore-path .prettierignore",
-  ".github/**/*.{yml,yaml}": "prettier --check --ignore-path .prettierignore",
-  ".{prettierrc,lintstagedrc}.json": "prettier --check --ignore-path .prettierignore"
+  "frontend/{scripts/**/*.mjs,*.{json,ts,mjs,html},src/**/*.css}": "node frontend/node_modules/prettier/bin/prettier.cjs --check --config frontend/.prettierrc.json --ignore-path frontend/.prettierignore",
+  "backend/src/**/*.{ts,tsx}": [
+    "node backend/node_modules/prettier/bin/prettier.cjs --check --config backend/.prettierrc.json --ignore-path backend/.prettierignore",
+    "node backend/node_modules/eslint/bin/eslint.js --config backend/eslint.config.mjs --max-warnings 0"
+  ],
+  "backend/{scripts/**/*.mjs,*.{json,ts,mjs,html},src/**/*.css}": "node backend/node_modules/prettier/bin/prettier.cjs --check --config backend/.prettierrc.json --ignore-path backend/.prettierignore",
+  "qa/**/*.{ts,mjs,json}": "node qa/node_modules/prettier/bin/prettier.cjs --check --config qa/.prettierrc.json --ignore-path qa/.prettierignore",
+  "tools/quality/**/*.{mjs,json}": "node tools/quality/node_modules/prettier/bin/prettier.cjs --check --config tools/quality/.prettierrc.json --ignore-path tools/quality/.prettierignore",
+  ".lintstagedrc.json": "node tools/quality/node_modules/prettier/bin/prettier.cjs --check --config tools/quality/.prettierrc.json"
 }

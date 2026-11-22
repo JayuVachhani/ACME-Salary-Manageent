@@ -12,7 +12,7 @@ SMTP through Nodemailer 10.6.1 is the only delivered external application servic
 
 ## Configuration and transport
 
-Source: [mail/otp-mail.ts](../acme-salary-app/apps/api/src/mail/otp-mail.ts) and [config/config.ts](../acme-salary-app/apps/api/src/config/config.ts). Required SMTP_HOST/SMTP_FROM, port default 1025, SMTP_SECURE false, optional paired SMTP_USER/SMTP_PASSWORD. Production sets requireTLS; certificate validation is not disabled. Connect, greeting and socket timeouts are each 5000 ms. File and URL access are disabled, no attachments are constructed, and SMTP logging/debug is false. A complete operation can include multiple protocol timeout phases plus one retry; do not promise an overall five-second deadline.
+Source: [mail/otp-mail.ts](../backend/src/mail/otp-mail.ts) and [config/config.ts](../backend/src/config/config.ts). Required SMTP_HOST/SMTP_FROM, port default 1025, SMTP_SECURE false, optional paired SMTP_USER/SMTP_PASSWORD. Production sets requireTLS; certificate validation is not disabled. Connect, greeting and socket timeouts are each 5000 ms. File and URL access are disabled, no attachments are constructed, and SMTP logging/debug is false. A complete operation can include multiple protocol timeout phases plus one retry; do not promise an overall five-second deadline.
 
 ## Interfaces
 

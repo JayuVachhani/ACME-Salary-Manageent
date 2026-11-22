@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.local/
+coverage/
+qa-artifacts/
+package-lock.json
+*.md
+database/
+.env*

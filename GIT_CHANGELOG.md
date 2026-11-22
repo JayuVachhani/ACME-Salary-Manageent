@@ -1,5 +1,18 @@
 # ACME Git change ledger
 
+## Independent package publication checks — 23 November 2026
+
+The commit/push request authorizes verification. Independently installed frontend passed format,React lint,strict types,9 units,Vite production build and architecture71/7550. Backend passed format,lint,types,27 units,Prisma generation,official Nest CLI build,native architecture/OpenAPI and production-doc isolation. QA typing/formatting/proxy checks and all4 Git hook rejection/acceptance checks passed; safety regression passed. Serial isolated PostgreSQL integrity/auth/team/reference/country/FX/employee/approval suites and17 linkage SQL/HTTP checks passed. All12 foundation Chromium cases passed. Source comparison confirms all19 migration files and all75 frontend source files unchanged apart from relocation; only config/config.module.ts changes among81 backend source files. All22 delivered Chromium cases passed in the complete serial run without retries. Native Nest CLI watch and Vite development startup/proxy checks passed on isolated ports; those test-owned processes were stopped. First309-file indexed scan and whitespace checks passed. Final hook-gated commit/push and exact-head GitHub CI remain pending; no pending check is a pass. Historical report generation now writes only ignored QA artifacts rather than overwriting canonical documents. Earlier implementation-only records below are historical; no production completion/approval/merge claimed.
+
+Branch chore/independent-app-packages starts from merged main5725254. Preserve unrelated handoff-document-prompt.md and ignored legacy cluster/env. No staging/push result inferred; hashes and actual remote outcome will be recorded when available.
+
+
+## Independent packages — implementation only — 22 November 2026
+
+Fetched approved origin and confirmed PR #13 merged at57252546ef3a47670c8189be405f5e84b1c2f5ba. New chore/independent-app-packages starts from origin/main. Move application source/config/dependencies/scripts into root frontend/backend, browser tooling into qa and Git tooling into tools/quality. Dependency installation completed independently for frontend,backend,qa and tools/quality without lifecycle scripts; add package-local lockfiles and official Nest CLI/config integration,retain Vite,strict compiler settings and all existing domain contracts. Old workspace manifests/configs removed; acme-salary-app is documentation/ignored historical artifacts only. Local .env copied to ignored backend/.env; original PostgreSQL data left untouched and explicitly reused by local start. No verification/test/lint/type/build/browser/safety/staging/commit/push/new CI pass claimed. No new financial/permission/schema rule. Manual runbook is root README.md. Unrelated user prompt preserved.
+
+## Earlier publication records
+
 ## Confirmed quality tooling push — 22 November 2026
 
 Commit `4a28ea1a94bacfa79895e4116ea314f5dc88984b` pushed normally to origin/chore/quality-hooks; git ls-remote confirmed the exact SHA. Actual Husky pre-commit and pre-push gates passed,including288-file indexed scan. Local quality:check,36 units,React71/7550,Nest architecture/OpenAPI,safety regression and four disposable Git hook acceptance/rejection checks passed. No user file staged; handoff-document-prompt.md preserved. PR targets main; exact-head GitHub CI and independent review remain separate gates. This publication ledger follow-up is committed/pushed separately with hooks enabled. No approval/merge/deployment.
@@ -129,7 +142,7 @@ The workflow improvement above was separately committed and pushed after its tes
 3. Run relevant tests and staged-file safety checks before each push. Record actual failures and blocked work; do not label incomplete modules as completed.
 4. Push the verified logical commit to its branch; verify remote head SHA, then record commit, tests, branch and push result here. A local commit is not evidence of a successful push.
 5. Manage PR creation, actual-code review, approval and merge with GitHub MCP only. Automatic approval/merge is authorized only for the reviewed head after unresolved critical/high issues are closed, required checks verifiably pass and repository policies/permissions allow it. Keep incomplete PRs draft. Do not self-approve when prohibited, bypass independent reviews, force-push, delete branches or bypass protections. Re-review changed heads and use an expected-head merge guard.
-6. Never stage actual `.env`, secrets, local PostgreSQL data, dependencies, browser binaries or QA runtime traces. `.env.example` contains non-secret template values only. Run `node acme-salary-app/scripts/verify-staged.mjs` from the repository root before committing.
+6. Never stage actual `.env`, secrets, local PostgreSQL data, dependencies, browser binaries or QA runtime traces. `.env.example` contains non-secret template values only. Run `node tools/quality/scripts/verify-staged.mjs` from the repository root before committing.
 
 ## Employee directory development — 22 November2026
 

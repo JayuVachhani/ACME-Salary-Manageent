@@ -1,0 +1,172 @@
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { Client, Pool } from 'pg';
+import { AuthenticationService } from '../dist/auth/authentication.service.js';
+import { EmployeesService } from '../dist/employees/employees.service.js';
+import { employeeQuery } from '../dist/employees/dto/employees.dto.js';
+const name = `acme_test_${randomUUID().replaceAll('-', '')}`,
+  ownerUrl = new URL(process.env.MIGRATION_DATABASE_URL),
+  runtimeUrl = new URL(process.env.DATABASE_URL),
+  admin = new Client({ connectionString: ownerUrl.href });
+await admin.connect();
+let created = false,
+  owner,
+  pool,
+  n = 0;
+const ok = (label) => console.log(`PASS EMP-DB-${String(++n).padStart(2, '0')} ${label}`);
+const denied = (p, status) => assert.rejects(p, (e) => e.status === status);
+try {
+  await admin.query(`CREATE DATABASE ${name}`);
+  created = true;
+  ownerUrl.pathname = runtimeUrl.pathname = `/${name}`;
+  execFileSync(process.execPath, ['scripts/migrate.mjs'], {
+    env: { ...process.env, MIGRATION_DATABASE_URL: ownerUrl.href },
+    stdio: 'pipe',
+    windowsHide: true,
+  });
+  owner = new Client({ connectionString: ownerUrl.href });
+  await owner.connect();
+  pool = new Pool({ connectionString: runtimeUrl.href });
+  const actor = randomUUID(),
+    reader = randomUUID();
+  await owner.query(
+    "INSERT INTO users(id,email,full_name,status,is_hr_manager,permissions) VALUES($1,'directory.hr@acme.test','Synthetic HR','ACTIVE',true,ARRAY[]::text[]),($2,'directory.reader@acme.test','Synthetic Reader','ACTIVE',false,ARRAY['read'])",
+    [actor, reader],
+  );
+  await owner.query("INSERT INTO currencies(code,minor_units) VALUES('USD',2)");
+  await owner.query(
+    "INSERT INTO country_rules(country_code,country_name,default_currency,decimal_places,rounding_mode,updated_by) VALUES('US','Synthetic US','USD',2,'HALF_UP',$1),('IN','Synthetic India','USD',2,'HALF_UP',$1)",
+    [actor],
+  );
+  const department = (
+      await owner.query(
+        "INSERT INTO departments(name) VALUES('Synthetic Engineering') RETURNING id",
+      )
+    ).rows[0].id,
+    designation = (
+      await owner.query("INSERT INTO designations(name) VALUES('Synthetic Engineer') RETURNING id")
+    ).rows[0].id;
+  const auth = new AuthenticationService(
+      pool,
+      'synthetic-directory-test-key-at-least-32-characters',
+    ),
+    service = new EmployeesService(pool, auth);
+  const login = async (email) => {
+      const c = await auth.issue(email);
+      return auth.verify(c.challengeId, c.code);
+    },
+    hr = await login('directory.hr@acme.test'),
+    member = await login('directory.reader@acme.test');
+  const query = (q = {}) => employeeQuery.parse(q);
+  await denied(service.list('', query()), 401);
+  ok('anonymous denied');
+  assert.equal((await service.list(member.token, query())).total, 0);
+  ok('reader empty list');
+  await owner.query('UPDATE users SET permissions=ARRAY[]::text[] WHERE id=$1', [reader]);
+  await denied(service.list(member.token, query()), 403);
+  await denied(service.filters(member.token), 403);
+  ok('fresh read revocation enforced');
+  await owner.query("UPDATE users SET permissions=ARRAY['read'] WHERE id=$1", [reader]);
+  const ids = [];
+  for (let i = 1; i <= 28; i++) {
+    const id = (
+      await owner.query(
+        "INSERT INTO employees(employee_code,email,first_name,last_name,joining_date,created_by) VALUES($1,$2,$3,'Sample','2026-01-01',$4) RETURNING id",
+        [
+          `SYN${String(i).padStart(3, '0')}`,
+          `directory.${i}@acme.test`,
+          i === 1 ? 'Literal%_\\Name' : `Person${i}`,
+          actor,
+        ],
+      )
+    ).rows[0].id;
+    ids.push(id);
+    await owner.query(
+      "INSERT INTO employee_assignments(employee_id,country_code,department_id,designation_id,employment_status,effective_from,reason,created_by) VALUES($1,'US',$2,$3,$4,'2026-01-01','Synthetic fixture',$5)",
+      [id, department, designation, i % 2 ? 'ACTIVE' : 'INACTIVE', actor],
+    );
+  }
+  const first = await service.list(hr.token, query());
+  assert.equal(first.items.length, 25);
+  assert.equal(first.total, 28);
+  assert.equal(first.items[0].employee_code, 'SYN001');
+  ok('default page25 deterministic code order');
+  const second = await service.list(member.token, query({ page: 2 }));
+  assert.equal(second.items.length, 3);
+  assert.equal(second.items[0].employee_code, 'SYN026');
+  ok('second page retains remainder');
+  assert.equal((await service.list(hr.token, query({ page: 3 }))).total, 28);
+  ok('empty page preserves total');
+  assert.equal((await service.list(hr.token, query({ pageSize: 100 }))).items.length, 28);
+  ok('page size100 accepted');
+  for (const q of [
+    { page: 0 },
+    { pageSize: 101 },
+    { page: 'abc' },
+    { sort: 'employee_code;DROP TABLE employees' },
+    { direction: 'DESC;--' },
+    { country: 'USA' },
+    { department: 'bad' },
+    { search: 'x'.repeat(201) },
+    { unexpected: true },
+  ])
+    assert.equal(employeeQuery.safeParse(q).success, false);
+  ok('strict pagination filter and sort whitelist');
+  for (const search of ['%', '_', '\\']) {
+    const r = await service.list(member.token, query({ search }));
+    assert.equal(r.total, 1);
+    assert.equal(r.items[0].id, ids[0]);
+  }
+  ok('percent underscore backslash literal search');
+  assert.equal((await service.list(member.token, query({ search: 'syn00' }))).total, 9);
+  assert.equal((await service.list(member.token, query({ search: 'DIRECTORY.28@' }))).total, 1);
+  assert.equal((await service.list(member.token, query({ search: 'person28 sample' }))).total, 1);
+  ok('case insensitive code email full name search');
+  assert.equal(
+    (await service.list(hr.token, query({ country: 'US', department, status: 'INACTIVE' }))).total,
+    14,
+  );
+  assert.equal((await service.list(hr.token, query({ country: 'IN' }))).total, 0);
+  ok('combined country department employment filters');
+  await owner.query(
+    "INSERT INTO employee_assignments(employee_id,country_code,department_id,designation_id,employment_status,effective_from,reason,created_by) VALUES($1,'IN',$2,$3,'INACTIVE',(clock_timestamp() AT TIME ZONE 'UTC')::date+1,'Synthetic future transfer',$4)",
+    [ids[0], department, designation, actor],
+  );
+  assert.equal((await service.detail(hr.token, ids[0])).country_code, 'US');
+  ok('future assignment excluded from current profile');
+  await owner.query('UPDATE employees SET removed_at=clock_timestamp() WHERE id=$1', [ids[1]]);
+  assert.equal((await service.list(hr.token, query())).total, 27);
+  await denied(service.detail(hr.token, ids[1]), 404);
+  ok('removed employee excluded and profile404');
+  await denied(service.detail(member.token, randomUUID()), 404);
+  ok('unknown employee404');
+  for (const sort of ['code', 'name', 'joiningDate', 'department', 'country'])
+    for (const direction of ['asc', 'desc'])
+      assert.equal((await service.list(hr.token, query({ sort, direction }))).items.length, 25);
+  ok('all sort and direction options execute');
+  const detail = await service.detail(member.token, ids[0]);
+  assert.equal(detail.designation, 'Synthetic Engineer');
+  for (const key of ['monthly_amount', 'salary', 'salary_records', 'permissions', 'created_by'])
+    assert.equal(Object.hasOwn(detail, key), false);
+  assert.ok(first.items.every((row) => !Object.hasOwn(row, 'monthly_amount')));
+  ok('allowlisted non-salary profile and list payload');
+  const options = await service.filters(member.token);
+  assert.equal(options.countries.length, 2);
+  assert.equal(options.departments.length, 1);
+  ok('read member gets filter references without HR routes');
+  await owner.query('UPDATE departments SET is_active=false WHERE id=$1', [department]);
+  assert.equal((await service.detail(member.token, ids[0])).department, 'Synthetic Engineering');
+  ok('inactive reference does not hide historical assignment');
+  await owner.query("UPDATE users SET status='DELETED',deleted_at=clock_timestamp() WHERE id=$1", [
+    reader,
+  ]);
+  await denied(service.list(member.token, query()), 401);
+  ok('removed account session denied');
+  console.log(`${n} real PostgreSQL employee directory checks passed`);
+} finally {
+  await pool?.end();
+  await owner?.end();
+  if (created) await admin.query(`DROP DATABASE ${name} WITH (FORCE)`);
+  await admin.end();
+}
