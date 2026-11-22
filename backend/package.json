@@ -1,0 +1,82 @@
+{
+  "name": "@acme/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:local:start": "node scripts/local-postgres.mjs start",
+    "db:local:stop": "node scripts/local-postgres.mjs stop",
+    "db:migrate": "node --env-file=.env scripts/migrate.mjs",
+    "test:database": "node --env-file=.env scripts/test-database.mjs",
+    "test:authentication": "node --env-file=.env scripts/test-authentication.mjs",
+    "test:team": "node --env-file=.env scripts/test-team.mjs",
+    "test:employees": "node --env-file=.env scripts/test-employees.mjs",
+    "test:employee-linkage": "node --env-file=.env scripts/test-employee-linkage.mjs",
+    "test:fx": "node --env-file=.env scripts/test-fx-rates.mjs",
+    "test:country-currency": "node --env-file=.env scripts/test-country-currency.mjs",
+    "test:references": "node --env-file=.env scripts/test-organization-references.mjs",
+    "test:health": "node --env-file=.env scripts/test-health.mjs",
+    "test:rules": "node --env-file=.env scripts/test-country-fx-retention.mjs",
+    "test:approvals": "node --env-file=.env scripts/test-approvals.mjs",
+    "test:prisma": "node --env-file=.env scripts/test-prisma.mjs",
+    "db:introspect": "node --env-file=.env node_modules/prisma/build/index.js db pull",
+    "db:generate": "node --env-file=.env node_modules/prisma/build/index.js generate",
+    "test:architecture": "node --env-file=.env scripts/test-architecture.mjs",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main.js",
+    "build": "nest build",
+    "typecheck": "tsc --noEmit -p tsconfig.build.json",
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix --max-warnings 0",
+    "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.mjs\" \"*.{json,mjs,ts}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"scripts/**/*.mjs\" \"*.{json,mjs,ts}\"",
+    "test": "vitest run",
+    "bootstrap:manager": "node --env-file=.env scripts/bootstrap-manager.mjs",
+    "quality:check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
+    "verify:foundation": "npm run lint && npm run typecheck && npm test && npm run build",
+    "verify:database": "npm run db:migrate && npm run db:generate && npm run verify:foundation && npm run test:database && npm run test:rules && npm run test:approvals && npm run test:prisma && npm run test:health"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.6.0",
+    "@nestjs/core": "12.6.0",
+    "@nestjs/platform-express": "12.6.0",
+    "@nestjs/swagger": "12.1.2",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "decimal.js": "10.6.0",
+    "helmet": "8.3.0",
+    "nodemailer": "10.6.1",
+    "pg": "8.23.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "zod": "4.6.7",
+    "@nestjs/config": "12.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/nodemailer": "8.0.2",
+    "@types/pg": "8.23.1",
+    "@eslint/js": "10.0.1",
+    "eslint": "10.15.0",
+    "prettier": "3.10.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.73.0",
+    "vitest": "5.1.1",
+    "@types/node": "26.6.6",
+    "@nestjs/cli": "12.0.15",
+    "prisma": "7.10.1"
+  },
+  "engines": {
+    "node": ">=24.20.0"
+  },
+  "overrides": {
+    "@prisma/config": {
+      "effect": "3.22.1"
+    }
+  },
+  "optionalDependencies": {
+    "@embedded-postgres/windows-x64": "17.12.0-beta.19"
+  }
+}

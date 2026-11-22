@@ -53,7 +53,7 @@ No legacy collection rename, automatic startup migration or down migration exist
 
 Department/designation IDs are immutable. Version is initialized to 1 and advanced on every update. Names preserve display casing, are case-insensitively unique across active/inactive entries, are trimmed and bounded to 200 characters. Deactivation retains all historical assignments; new assignments lock/check active references. There is no delete/truncate path. Audits are atomic when the trusted server sets acme.reference_actor in the authenticated transaction; runtime credentials remain a trusted server boundary, not end-user credentials. No legacy row cleanup is performed.
 
-Source: [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql).
+Source: [013_organization_references.sql](../backend/database/migrations/013_organization_references.sql).
 
 ~~~sql
 -- Preserve existing values: reject dirty legacy names instead of silently rewriting them.
@@ -108,7 +108,7 @@ CREATE TRIGGER designation_audit AFTER INSERT OR UPDATE ON designations FOR EACH
 REVOKE ALL ON FUNCTION guard_organization_reference(),validate_assignment_references(),audit_organization_reference() FROM PUBLIC;
 ~~~
 
-Source: [014_reference_name_bounds.sql](../acme-salary-app/database/migrations/014_reference_name_bounds.sql).
+Source: [014_reference_name_bounds.sql](../backend/database/migrations/014_reference_name_bounds.sql).
 
 ~~~sql
 -- Match API whitespace/length checks without rewriting pre-existing reference names.
@@ -203,7 +203,7 @@ users       users?   @relation(fields: [actor_id], references: [id], onDelete: N
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE TABLE audit_logs (
@@ -218,13 +218,13 @@ CREATE TABLE audit_logs (
 );
 ~~~
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE INDEX audit_entity_idx ON audit_logs(entity_type, entity_id, created_at DESC, id DESC);
 ~~~
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE INDEX audit_actor_idx ON audit_logs(actor_id, created_at DESC);
@@ -292,7 +292,7 @@ salary_records         salary_records[]
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE country_rules (
@@ -312,7 +312,7 @@ CREATE TABLE country_rules (
 
 ## currency_catalogue
 
-Source: [015_currency_catalogue.sql](../acme-salary-app/database/migrations/015_currency_catalogue.sql) and [provenance JSON](../acme-salary-app/database/reference/iso4217.json).
+Source: [015_currency_catalogue.sql](../backend/database/migrations/015_currency_catalogue.sql) and [provenance JSON](../backend/database/reference/iso4217.json).
 
 Read-only runtime ISO catalogue. Source: database/reference/iso4217.json (SIX publication 2026-09-17, retrieval 22 November 2026, raw XML hash recorded). 178 codes: 165 numeric minor units, 13 N.A. No FK to configured currencies is introduced; catalogue installation never rewrites legacy values. Runtime SELECT only, migration owner controls reviewed refreshes; no TTL or cleanup.
 
@@ -374,7 +374,7 @@ salary_records_salary_records_default_currencyTocurrencies                 salar
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE currencies (
@@ -426,7 +426,7 @@ employee_assignments employee_assignments[]
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE departments (
@@ -479,7 +479,7 @@ employee_assignments employee_assignments[]
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE designations (
@@ -550,7 +550,7 @@ employees         employees     @relation(fields: [employee_id], references: [id
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE employee_assignments (
@@ -568,7 +568,7 @@ CREATE TABLE employee_assignments (
 );
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX assignment_employee_date_idx ON employee_assignments(employee_id, effective_from DESC);
@@ -639,7 +639,7 @@ users_users_employee_idToemployees users?                      @relation("users_
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE employees (
@@ -657,31 +657,31 @@ CREATE TABLE employees (
 );
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX employees_code_live_uq ON employees(employee_code) WHERE removed_at IS NULL;
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX employees_email_live_uq ON employees(email) WHERE removed_at IS NULL;
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX employees_name_trgm ON employees USING gin ((first_name || ' ' || last_name) gin_trgm_ops);
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX employees_code_trgm ON employees USING gin (employee_code gin_trgm_ops);
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX employees_email_trgm ON employees USING gin ((email::text) gin_trgm_ops);
@@ -745,7 +745,7 @@ currencies_fx_rate_revisions_quote_currencyTocurrencies currencies @relation("fx
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE fx_rate_revisions (
@@ -764,7 +764,7 @@ CREATE TABLE fx_rate_revisions (
 );
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX fx_lookup_idx ON fx_rate_revisions(base_currency,quote_currency,effective_date DESC,revision DESC);
@@ -817,7 +817,7 @@ users       users     @relation(fields: [locked_by], references: [id], onDelete:
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE record_locks (
@@ -870,7 +870,7 @@ report_snapshots report_snapshots @relation(fields: [snapshot_id], references: [
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE report_snapshot_employees (
@@ -880,7 +880,7 @@ CREATE TABLE report_snapshot_employees (
 );
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX snapshot_employee_idx ON report_snapshot_employees(employee_id,snapshot_id);
@@ -942,7 +942,7 @@ currencies                currencies                  @relation(fields: [target_
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE report_snapshots (
@@ -1003,7 +1003,7 @@ users           users           @relation(fields: [released_by], references: [id
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE retention_hold_releases (
@@ -1061,7 +1061,7 @@ users                   users                    @relation(fields: [placed_by], 
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE TABLE retention_holds (
@@ -1073,7 +1073,7 @@ CREATE TABLE retention_holds (
 );
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 CREATE INDEX holds_employee_idx ON retention_holds(employee_id);
@@ -1124,7 +1124,7 @@ salary_change_requests salary_change_requests @relation(fields: [request_id], re
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE TABLE salary_approval_decisions (
@@ -1212,7 +1212,7 @@ salary_records_salary_records_approval_request_idTosalary_change_requests salary
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE TABLE salary_change_requests (
@@ -1238,13 +1238,13 @@ CREATE TABLE salary_change_requests (
 );
 ~~~
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 ALTER TABLE salary_change_requests ADD CONSTRAINT request_correction_fk FOREIGN KEY(corrects_id) REFERENCES salary_records(id);
 ~~~
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE INDEX requests_employee_date_idx ON salary_change_requests(employee_id,effective_from);
@@ -1304,7 +1304,7 @@ users            users          @relation(fields: [updated_by], references: [id]
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE TABLE salary_history_events (
@@ -1401,7 +1401,7 @@ employees                                                                       
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE TABLE salary_records (
@@ -1427,19 +1427,19 @@ CREATE TABLE salary_records (
 );
 ~~~
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX salary_original_date_uq ON salary_records(employee_id,effective_from) WHERE corrects_id IS NULL;
 ~~~
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX salary_correction_uq ON salary_records(corrects_id) WHERE corrects_id IS NOT NULL;
 ~~~
 
-Source: [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql).
+Source: [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql).
 
 ~~~sql
 CREATE INDEX salary_employee_date_idx ON salary_records(employee_id,effective_from DESC);
@@ -1572,7 +1572,7 @@ other_users                            users[]                     @relation("us
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE TABLE users (
@@ -1594,37 +1594,37 @@ CREATE TABLE users (
 );
 ~~~
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX users_live_email_uq ON users(email) WHERE status <> 'DELETED';
 ~~~
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX users_one_system_uq ON users(is_system) WHERE is_system;
 ~~~
 
-Source: [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql).
+Source: [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX users_employee_link_uq ON users(employee_id) WHERE status <> 'DELETED' AND employee_id IS NOT NULL;
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 ALTER TABLE users ADD CONSTRAINT users_employee_fk FOREIGN KEY (employee_id) REFERENCES employees(id);
 ~~~
 
-Source: [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql).
+Source: [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql).
 
 ~~~sql
 ALTER TABLE users ADD COLUMN authorization_version integer NOT NULL DEFAULT 1;
 ~~~
 
-Source: [011_team_integrity.sql](../acme-salary-app/database/migrations/011_team_integrity.sql).
+Source: [011_team_integrity.sql](../backend/database/migrations/011_team_integrity.sql).
 
 ~~~sql
 ALTER TABLE users ADD COLUMN team_version integer NOT NULL DEFAULT 1 CHECK(team_version > 0);
@@ -1678,7 +1678,7 @@ users       users     @relation(fields: [user_id], references: [id], onDelete: N
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [007_authentication.sql](../acme-salary-app/database/migrations/007_authentication.sql).
+Source: [007_authentication.sql](../backend/database/migrations/007_authentication.sql).
 
 ~~~sql
 CREATE TABLE login_challenges (
@@ -1693,7 +1693,7 @@ CREATE TABLE login_challenges (
 );
 ~~~
 
-Source: [007_authentication.sql](../acme-salary-app/database/migrations/007_authentication.sql).
+Source: [007_authentication.sql](../backend/database/migrations/007_authentication.sql).
 
 ~~~sql
 CREATE UNIQUE INDEX login_challenge_live_user ON login_challenges(user_id) WHERE consumed_at IS NULL;
@@ -1746,7 +1746,7 @@ users        users     @relation(fields: [user_id], references: [id], onDelete: 
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [007_authentication.sql](../acme-salary-app/database/migrations/007_authentication.sql).
+Source: [007_authentication.sql](../backend/database/migrations/007_authentication.sql).
 
 ~~~sql
 CREATE TABLE user_sessions (
@@ -1760,7 +1760,7 @@ CREATE TABLE user_sessions (
 );
 ~~~
 
-Source: [007_authentication.sql](../acme-salary-app/database/migrations/007_authentication.sql).
+Source: [007_authentication.sql](../backend/database/migrations/007_authentication.sql).
 
 ~~~sql
 CREATE INDEX user_sessions_user ON user_sessions(user_id);
@@ -1813,7 +1813,7 @@ All shown onDelete: NoAction relations retain referenced identity/history. An ex
 
 The following DDL is reference material, not a script to rerun. Later function replacements and triggers remain authoritative; full schema creation is migrate.mjs only.
 
-Source: [008_auth_rate_limits.sql](../acme-salary-app/database/migrations/008_auth_rate_limits.sql).
+Source: [008_auth_rate_limits.sql](../backend/database/migrations/008_auth_rate_limits.sql).
 
 ~~~sql
 CREATE TABLE auth_rate_events (
@@ -1825,19 +1825,19 @@ CREATE TABLE auth_rate_events (
 );
 ~~~
 
-Source: [008_auth_rate_limits.sql](../acme-salary-app/database/migrations/008_auth_rate_limits.sql).
+Source: [008_auth_rate_limits.sql](../backend/database/migrations/008_auth_rate_limits.sql).
 
 ~~~sql
 CREATE INDEX auth_rate_email ON auth_rate_events(email_hash,created_at);
 ~~~
 
-Source: [008_auth_rate_limits.sql](../acme-salary-app/database/migrations/008_auth_rate_limits.sql).
+Source: [008_auth_rate_limits.sql](../backend/database/migrations/008_auth_rate_limits.sql).
 
 ~~~sql
 CREATE INDEX auth_rate_ip ON auth_rate_events(ip_hash,created_at);
 ~~~
 
-Source: [010_auth_rate_denials.sql](../acme-salary-app/database/migrations/010_auth_rate_denials.sql).
+Source: [010_auth_rate_denials.sql](../backend/database/migrations/010_auth_rate_denials.sql).
 
 ~~~sql
 ALTER TABLE auth_rate_events ADD COLUMN is_allowed boolean NOT NULL DEFAULT true;
@@ -1845,7 +1845,7 @@ ALTER TABLE auth_rate_events ADD COLUMN is_allowed boolean NOT NULL DEFAULT true
 
 ## SQL views and query function
 
-Source: [migration 003](../acme-salary-app/database/migrations/003_salary_approval.sql). These objects are not extra Prisma tables and have no public routes.
+Source: [migration 003](../backend/database/migrations/003_salary_approval.sql). These objects are not extra Prisma tables and have no public routes.
 
 ~~~sql
 CREATE FUNCTION salary_in_force(as_of date) RETURNS SETOF salary_records LANGUAGE sql STABLE AS $$
@@ -1873,34 +1873,34 @@ Later CREATE OR REPLACE definitions supersede earlier function bodies. This list
 
 | Function | Final source |
 |---|---|
-| advance_assignment_version | [005_assignment_version_guard.sql](../acme-salary-app/database/migrations/005_assignment_version_guard.sql) |
-| audit_country_currency_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
-| audit_fx_revision | [018_fx_audit_before_after.sql](../acme-salary-app/database/migrations/018_fx_audit_before_after.sql) |
-| audit_hold_event | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| audit_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
-| audit_salary_approval | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
-| audit_team_identity | [012_team_audit_snapshots.sql](../acme-salary-app/database/migrations/012_team_audit_snapshots.sql) |
-| block_immutable_change | [001_identity_audit.sql](../acme-salary-app/database/migrations/001_identity_audit.sql) |
-| guard_country_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
-| guard_currency_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
-| guard_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
-| invalidate_employee_snapshots | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| invalidate_permission_snapshots | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| protect_employee_removal | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| protect_joining_date | [005_assignment_version_guard.sql](../acme-salary-app/database/migrations/005_assignment_version_guard.sql) |
-| protect_team_identity | [011_team_integrity.sql](../acme-salary-app/database/migrations/011_team_integrity.sql) |
-| record_salary_history | [004_salary_history_atomic.sql](../acme-salary-app/database/migrations/004_salary_history_atomic.sql) |
-| revoke_disabled_identity | [009_identity_revocation.sql](../acme-salary-app/database/migrations/009_identity_revocation.sql) |
-| salary_in_force | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
-| validate_assignment_date | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| validate_assignment_references | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
-| validate_fx_revision | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| validate_hold_actor | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
-| validate_new_financial_references | [017_financial_reference_variable.sql](../acme-salary-app/database/migrations/017_financial_reference_variable.sql) |
-| validate_salary_decision | [006_approval_currency_guard.sql](../acme-salary-app/database/migrations/006_approval_currency_guard.sql) |
-| validate_salary_record | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
-| validate_salary_request | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
-| verify_approved_salary_exists | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
+| advance_assignment_version | [005_assignment_version_guard.sql](../backend/database/migrations/005_assignment_version_guard.sql) |
+| audit_country_currency_configuration | [016_country_currency_integrity.sql](../backend/database/migrations/016_country_currency_integrity.sql) |
+| audit_fx_revision | [018_fx_audit_before_after.sql](../backend/database/migrations/018_fx_audit_before_after.sql) |
+| audit_hold_event | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| audit_organization_reference | [013_organization_references.sql](../backend/database/migrations/013_organization_references.sql) |
+| audit_salary_approval | [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql) |
+| audit_team_identity | [012_team_audit_snapshots.sql](../backend/database/migrations/012_team_audit_snapshots.sql) |
+| block_immutable_change | [001_identity_audit.sql](../backend/database/migrations/001_identity_audit.sql) |
+| guard_country_configuration | [016_country_currency_integrity.sql](../backend/database/migrations/016_country_currency_integrity.sql) |
+| guard_currency_configuration | [016_country_currency_integrity.sql](../backend/database/migrations/016_country_currency_integrity.sql) |
+| guard_organization_reference | [013_organization_references.sql](../backend/database/migrations/013_organization_references.sql) |
+| invalidate_employee_snapshots | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| invalidate_permission_snapshots | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| protect_employee_removal | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| protect_joining_date | [005_assignment_version_guard.sql](../backend/database/migrations/005_assignment_version_guard.sql) |
+| protect_team_identity | [011_team_integrity.sql](../backend/database/migrations/011_team_integrity.sql) |
+| record_salary_history | [004_salary_history_atomic.sql](../backend/database/migrations/004_salary_history_atomic.sql) |
+| revoke_disabled_identity | [009_identity_revocation.sql](../backend/database/migrations/009_identity_revocation.sql) |
+| salary_in_force | [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql) |
+| validate_assignment_date | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| validate_assignment_references | [013_organization_references.sql](../backend/database/migrations/013_organization_references.sql) |
+| validate_fx_revision | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| validate_hold_actor | [002_country_employee_fx.sql](../backend/database/migrations/002_country_employee_fx.sql) |
+| validate_new_financial_references | [017_financial_reference_variable.sql](../backend/database/migrations/017_financial_reference_variable.sql) |
+| validate_salary_decision | [006_approval_currency_guard.sql](../backend/database/migrations/006_approval_currency_guard.sql) |
+| validate_salary_record | [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql) |
+| validate_salary_request | [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql) |
+| verify_approved_salary_exists | [003_salary_approval.sql](../backend/database/migrations/003_salary_approval.sql) |
 
 ## P4b country/currency constraints
 
@@ -1910,7 +1910,7 @@ validate_new_financial_references (final body in 017) checks active country for 
 
 ## Current FX audit and API integration
 
-FxRatesService provides authenticated read-permission history/resolution and HR-only append. Immutable row/audit protections remain. SQL audit_fx_revision is replaced by [migration018](../acme-salary-app/database/migrations/018_fx_audit_before_after.sql): NEW audit payload has before (previous same pair/date revision or null) and after (full NEW row). Earlier immutable audit payloads retain their original flat shape; consumers must not assume all historical events use the new envelope. No column/model was added; tables23/scalar fields178/functions28/views2 unchanged, migrations now18. Rate corrections do not rewrite salary/report snapshots referencing older IDs. See [FX contract](../acme-salary-app/docs/FX_MODULE.md).
+FxRatesService provides authenticated read-permission history/resolution and HR-only append. Immutable row/audit protections remain. SQL audit_fx_revision is replaced by [migration018](../backend/database/migrations/018_fx_audit_before_after.sql): NEW audit payload has before (previous same pair/date revision or null) and after (full NEW row). Earlier immutable audit payloads retain their original flat shape; consumers must not assume all historical events use the new envelope. No column/model was added; tables23/scalar fields178/functions28/views2 unchanged, migrations now18. Rate corrections do not rewrite salary/report snapshots referencing older IDs. See [FX contract](../acme-salary-app/docs/FX_MODULE.md).
 
 ## Representation and future work cautions
 

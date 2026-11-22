@@ -1,0 +1,29 @@
+{
+  "name": "@acme/browser-qa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.20.0"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.qa.json",
+    "format:check": "prettier --check \"**/*.ts\" \"scripts/**/*.mjs\" \"package.json\"",
+    "format": "prettier --write \"**/*.ts\" \"scripts/**/*.mjs\" \"package.json\"",
+    "test:foundation": "node --env-file=../backend/.env node_modules/@playwright/test/cli.js test e2e/foundation.spec.ts",
+    "test:login": "node --env-file=../backend/.env scripts/test-login.mjs",
+    "test:qa-web": "node scripts/test-qa-web-server.mjs",
+    "test:e2e": "node --env-file=../backend/.env node_modules/@playwright/test/cli.js test",
+    "qa:regression": "node --env-file=../backend/.env scripts/qa-regression.mjs",
+    "qa:report": "node scripts/qa-report.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.6",
+    "typescript": "6.0.3",
+    "prettier": "3.10.1",
+    "pg": "8.23.1",
+    "@types/pg": "8.23.1"
+  }
+}

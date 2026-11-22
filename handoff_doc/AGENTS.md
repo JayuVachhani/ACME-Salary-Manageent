@@ -1,5 +1,18 @@
 # ACME handoff â€” start here
 
+## Independent package publication checks — 23 November 2026
+
+The commit/push request authorizes verification. Independently installed frontend passed format,React lint,strict types,9 units,Vite production build and architecture71/7550. Backend passed format,lint,types,27 units,Prisma generation,official Nest CLI build,native architecture/OpenAPI and production-doc isolation. QA typing/formatting/proxy checks and all4 Git hook rejection/acceptance checks passed; safety regression passed. Serial isolated PostgreSQL integrity/auth/team/reference/country/FX/employee/approval suites and17 linkage SQL/HTTP checks passed. All12 foundation Chromium cases passed. Source comparison confirms all19 migration files and all75 frontend source files unchanged apart from relocation; only config/config.module.ts changes among81 backend source files. All22 delivered Chromium cases passed in the complete serial run without retries. Native Nest CLI watch and Vite development startup/proxy checks passed on isolated ports; those test-owned processes were stopped. First309-file indexed scan and whitespace checks passed. Final hook-gated commit/push and exact-head GitHub CI remain pending; no pending check is a pass. Historical report generation now writes only ignored QA artifacts rather than overwriting canonical documents. Earlier implementation-only records below are historical; no production completion/approval/merge claimed.
+
+
+## Independent application ownership — 22 November 2026
+
+Current implementation on `chore/independent-app-packages`: root frontend/ and backend/ are independent npm projects with separate lockfiles,strict TypeScript,ESLint,Prettier,tests,environment templates and native scripts. Frontend uses React19/Vite8,app/node TS projects and React hooks/refresh lint rules. Backend uses Nest12 CLI/nest-cli.json/tsconfig.build.json and official @nestjs/config with the existing safe Zod validation. Backend owns PostgreSQL/Prisma/migrations/bootstrap; no SQL or salary/permission policy is changed. QA is an independent qa/ package. tools/quality owns Git orchestration only; root has no package.json or framework configuration. Husky delegates to package-native checks. CI installs/checks each package independently.
+
+Old acme-salary-app/ now contains canonical documentation and ignored legacy local artifacts only. The previous local PostgreSQL cluster remains untouched; backend local-start reuses it when present. Existing server .env copied only into ignored backend/.env. Frontend receives no secrets. See [manual run steps](../README.md) from acme-salary-app,or root README.md from the repository. No test/lint/type/build/browser/safety verification,staging,commit or push performed for this increment under the implementation-first rule. Package installation/configuration are not test passes. Earlier workspace paths/check results below are historical; source links have been mapped to the current owners.
+
+## Earlier checkpoint records
+
 ## Combined React/NestJS reconciliation — 22 November 2026
 
 PR #10 linkage and PR #11 native NestJS architecture are merged to main at `8b8d7ed344d0eb1b6d05e5dd891786db0d9edc9a`. Existing PR #12 now merges this base, preserving all backend feature modules, DTO/global validation/OpenAPI, migration019 and linkage protections alongside Redux Toolkit/RTK Query and shared React controls. Both architecture commands remain in CI. React Account models the nullable employee_id response; this reconciliation adds no linkage UI or salary workflow. Lockfile contains both Swagger and Redux dependencies. Combined local lint/types/builds,36 units,QA typing,React architecture71/7550,Nest architecture/OpenAPI,serial isolated PostgreSQL suites and17 linkage SQL/HTTP checks passed. The initial FX browser assertion raced a successful second save by matching a retained toast; the helper now awaits the current POST201 and dialog closure. All3 FX cases passed unchanged application code; QA typing passed again. All22 delivered browser cases passed across the completed groups (9auth/team,4references,3country,3FX,3employees). The initial FX failure remains historical, with no relaxed timeout/assertion or application change. Final safety scan,publication and exact-head CI are in progress; earlier branch-only passes and deferred-check snapshots below are historical. No self-approval/merge/deployment; unrelated user files remain excluded.
@@ -100,26 +113,26 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 
 ## Task-to-code map
 
-API filenames below are under acme-salary-app/apps/api/src; migration references are under acme-salary-app/database/migrations. Paths beginning apps/, scripts/, e2e/ or e2e-auth/ are relative to acme-salary-app/. The web reference component is apps/web/src/features/organization-references/organization-references.tsx.
+API filenames below are under backend/src; migration references are under backend/database/migrations. Paths beginning apps/, scripts/, e2e/ or e2e-auth/ are relative to acme-salary-app/. The web reference component is frontend/src/features/organization-references/organization-references.tsx.
 
 | Task/symptom | Primary locations |
 |---|---|
-| API entry/health/headers | apps/api/src/main.ts, config.ts |
+| API entry/health/headers | backend/src/main.ts, config.ts |
 | OTP/cookies/origin | auth-controller.ts, authentication.ts, auth-secrets.ts, auth-rate.ts |
 | Department/designation admin | organization-references-controller.ts, organization-references.ts, web features/organization-references/organization-references.tsx, migrations 013/014 |
 | Email delivery | otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
 | Team access/conflicts | team-controller.ts, team.ts, migrations 011/012 |
 | Salary/FX | salary-approval.ts, money.ts, fx-rates-controller.ts, fx-rates.ts, migrations003..006/018, web features/fx-rates/fx-rates.tsx |
 | Snapshot/holds | report-access.ts, migrations/002_country_employee_fx.sql |
-| UI state/confirmation | apps/web/src/app/workspace.tsx, features/auth/use-login.ts, features/team/use-team.ts, shared/ui/confirmation-dialog.tsx, app/styles.css |
-| API entry/health/headers | apps/api/src/main.ts, config/config.ts |
+| UI state/confirmation | frontend/src/app/workspace.tsx, features/auth/use-login.ts, features/team/use-team.ts, shared/ui/confirmation-dialog.tsx, app/styles.css |
+| API entry/health/headers | backend/src/main.ts, config/config.ts |
 | OTP/cookies/origin | auth/auth.controller.ts, auth/authentication.service.ts, auth/auth-secrets.ts, auth/auth-rate.ts |
 | Department/designation admin | organization-references/organization-references.controller.ts, organization-references/organization-references.service.ts, web organization-references.tsx, migrations 013/014 |
 | Email delivery | mail/otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
 | Team access/conflicts | team/team.controller.ts, team/team.service.ts, migrations 011/012 |
 | Salary/FX | salary/salary-approval.service.ts, common/domain/money.ts, fx-rates/fx-rates.controller.ts, fx-rates/fx-rates.service.ts, migrations003..006/018, web fx-rates.tsx |
 | Snapshot/holds | reports/report-access.ts, migrations/002_country_employee_fx.sql |
-| UI state/confirmation | apps/web/src/main.tsx, login.tsx, team.tsx, styles.css |
+| UI state/confirmation | frontend/src/main.tsx, login.tsx, team.tsx, styles.css |
 | Local DB/bootstrap | scripts/local-postgres.mjs, migrate.mjs, bootstrap-manager.mjs |
 | QA/CI | e2e/, e2e-auth/, scripts/test-*.mjs, ../.github/workflows/pr-validation.yml |
 

@@ -1,5 +1,18 @@
 # ACME — deployment, GitHub CI and infrastructure
 
+## Independent package publication checks — 23 November 2026
+
+The commit/push request authorizes verification. Independently installed frontend passed format,React lint,strict types,9 units,Vite production build and architecture71/7550. Backend passed format,lint,types,27 units,Prisma generation,official Nest CLI build,native architecture/OpenAPI and production-doc isolation. QA typing/formatting/proxy checks and all4 Git hook rejection/acceptance checks passed; safety regression passed. Serial isolated PostgreSQL integrity/auth/team/reference/country/FX/employee/approval suites and17 linkage SQL/HTTP checks passed. All12 foundation Chromium cases passed. Source comparison confirms all19 migration files and all75 frontend source files unchanged apart from relocation; only config/config.module.ts changes among81 backend source files. All22 delivered Chromium cases passed in the complete serial run without retries. Native Nest CLI watch and Vite development startup/proxy checks passed on isolated ports; those test-owned processes were stopped. First309-file indexed scan and whitespace checks passed. Final hook-gated commit/push and exact-head GitHub CI remain pending; no pending check is a pass. Historical report generation now writes only ignored QA artifacts rather than overwriting canonical documents. Earlier implementation-only records below are historical; no production completion/approval/merge claimed.
+
+
+## Independent application ownership — 22 November 2026
+
+Current implementation on `chore/independent-app-packages`: root frontend/ and backend/ are independent npm projects with separate lockfiles,strict TypeScript,ESLint,Prettier,tests,environment templates and native scripts. Frontend uses React19/Vite8,app/node TS projects and React hooks/refresh lint rules. Backend uses Nest12 CLI/nest-cli.json/tsconfig.build.json and official @nestjs/config with the existing safe Zod validation. Backend owns PostgreSQL/Prisma/migrations/bootstrap; no SQL or salary/permission policy is changed. QA is an independent qa/ package. tools/quality owns Git orchestration only; root has no package.json or framework configuration. Husky delegates to package-native checks. CI installs/checks each package independently.
+
+Old acme-salary-app/ now contains canonical documentation and ignored legacy local artifacts only. The previous local PostgreSQL cluster remains untouched; backend local-start reuses it when present. Existing server .env copied only into ignored backend/.env. Frontend receives no secrets. See [manual run steps](../README.md) from acme-salary-app,or root README.md from the repository. No test/lint/type/build/browser/safety verification,staging,commit or push performed for this increment under the implementation-first rule. Package installation/configuration are not test passes. Earlier workspace paths/check results below are historical; source links have been mapped to the current owners.
+
+## Earlier checkpoint records
+
 Unverified operational repair: background pg errors are handled via redacted SQLSTATE telemetry rather than an unhandled pool event. Failed rollback destroys the connection without hiding the original operation/commit error. APP_ORIGIN must be the canonical HTTP(S) URL.origin; invalid values fail startup. No infrastructure rollout, operational audit retention policy, new retry mechanism or production readiness claim is introduced.
 
 Current unverified HTTP setup: NODE_ENV=production omits `/api/docs`, `/api/openapi.json` and `/api/openapi.yaml`; development/test reference UI disables submissions and persisted authorization. CORS is limited to configured APP_ORIGIN. No new deployment, environment variable or production approval is introduced. Required checks remain deferred at user request.
@@ -14,7 +27,7 @@ Production deployment is blocked. The repository has a Windows GitHub Actions PR
 
 ## Actual infrastructure and prerequisites
 
-- Node/npm workspace; API build emits apps/api/dist; Vite emits apps/web/dist. API binds 127.0.0.1 and built frontend requests relative same-origin paths.
+- Node/npm workspace; API build emits backend/dist; Vite emits frontend/dist. API binds 127.0.0.1 and built frontend requests relative same-origin paths.
 - Development Compose contains postgres:17 and Mailpit only; no application service, Dockerfile or .dockerignore is present. Compose dev defaults must not be reused as production secret policy.
 - Project-local PostgreSQL launcher is Windows-only and uses a privileged initdb owner plus restricted runtime role; it is not a production DB operator.
 - Allowed public release status: none currently. /readyz is intentionally always 503, domain workflows and UAT are incomplete, and deployment authorization/infrastructure remain separate scope.

@@ -1,3 +1,7 @@
+# Current package ownership
+
+Follow the user architecture requirement: root frontend/ and backend/ are self-contained npm projects. Never restore a root/workspace framework configuration or shared framework dependency package. Use native Vite and Nest CLI scripts; backend owns all database/env secrets. qa/ and tools/quality/ are optional independent tooling,not application build systems. Current commands and manual testing are in root README.md. Source/docs migrated under chore/independent-app-packages; the current commit/push request authorizes required verification and publication. Implementation-first deferral remains the default for future tasks.
+
 # ACME project instructions
 
 ## Scope and authority
@@ -15,8 +19,8 @@ Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Pres
 
 ## Local quality tooling
 
-- Prettier and ESLint are enforced by Husky: pre-commit checks staged formatting/lint plus indexed safety; pre-push checks complete formatting,lint,types,units,builds,QA typing,React boundaries and indexed safety. Database/linkage/Nest runtime/browser gates remain in CI.
-- From acme-salary-app, install dependencies with lifecycle scripts disabled as documented, then explicitly run npm run hooks:install for local development. Normal development install also runs prepare. Hooks require the supported Node version on PATH and use installed local binaries.
+- Prettier and ESLint are enforced by Husky: pre-commit checks staged formatting/lint plus indexed safety; pre-push checks complete formatting,lint,types,units,builds,QA typing,package-native boundaries and indexed safety. Database/linkage/Nest runtime/browser gates remain in CI.
+- Install frontend/backend/qa/tools/quality independently; from tools/quality, install dependencies with lifecycle scripts disabled as documented, then explicitly run npm run hooks:install for local development. Normal development install also runs prepare. Hooks require the supported Node version on PATH and use installed local binaries.
 - The formatter baseline excludes Markdown,immutable SQL,package-lock.json and runtime/generated data. Never stage unrelated files to satisfy a hook or weaken hooks/CI to bypass failures. Implementation-first verification deferral remains in force until explicitly authorized.
 
 ## Git delivery
@@ -24,7 +28,7 @@ Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Pres
 - Fetch and inspect the remote before starting work. New development branches start from `origin/main` and must begin with `feature/`, `bugfix/` or `chore/`.
 - Foundation PR #1 was merged by the user on 21 November 2026; merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea`. New modules start from the updated `origin/main`; preserve the original feature branch.
 - Commit completed features, logical bug fixes, refactors and important test improvements separately, using clear conventional messages. Include relevant documentation and progress updates.
-- Run appropriate tests and `node acme-salary-app/scripts/verify-staged.mjs` before commits/pushes. Test the safety checker with `node acme-salary-app/scripts/test-git-safety.mjs` when changing it.
+- Run appropriate tests and `node tools/quality/scripts/verify-staged.mjs` before commits/pushes. Test the safety checker with `node tools/quality/scripts/test-git-safety.mjs` when changing it.
 - Push tested logical changes incrementally, then confirm the remote branch head. Update `GIT_CHANGELOG.md` with hashes, branch, verification and actual push result. Never claim a local commit is pushed without confirmation.
 - Use GitHub MCP exclusively for PR creation, actual-code review, approval and merge. Open PRs targeting `main`. Automatic approval/merge is authorized only after the reviewed head has no unresolved critical/high issues, required checks have verified passing results and repository policies permit the action. Never self-approve when prohibited, substitute this account's comment for independent review, force-push, delete branches or bypass protections. The one-time empty-main bootstrap exception has already been used and permits no further direct main pushes.
 - Review the actual head SHA with MCP, inspect code/requirements/tests and GitHub check results, fix issues on the same PR branch, then repeat review after updates. Recheck the exact head and checks immediately before approval/merge. Use an expected-head SHA for merge. A missing CI result is not a passing result. Maintain PR links, findings, approval/merge disposition in GIT_CHANGELOG.md; synchronize locally and continue dependent work only after a successful merge.
@@ -43,6 +47,6 @@ Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Pres
 
 The current implementation is incomplete. Chromium audit records 12 passes, 14 failed unmet-requirement checks and 45 blocked workflows. Do not hide/skip these failures or describe the baseline as a completed production system. Backend/domain passes do not substitute for browser E2E. Use synthetic data only and isolated/transactional PostgreSQL tests; do not reset existing data.
 
-`acme-salary-app` contains application commands. `npm run verify:database` runs current lower-level gates; `npm run qa:typecheck` validates browser tests; `npm run qa:e2e` executes actual Chromium and intentionally remains nonzero while required modules are absent. PR #1's explicit foundation acceptance boundary is in `acme-salary-app/docs/PR_1_SCOPE.md`; its CI runs the delivered foundation browser suite without deleting or suppressing future requirement cases. PR-test GitHub Actions is now explicitly authorized; deployment and production infrastructure remain separately scoped.
+`frontend/` and `backend/` own independent application commands; `qa/` owns browser tooling and `tools/quality/` owns Git-only orchestration. Root has no framework package/configuration. `npm run verify:database` runs current lower-level gates; `npm run qa:typecheck` validates browser tests; `npm run qa:e2e` executes actual Chromium and intentionally remains nonzero while required modules are absent. PR #1's explicit foundation acceptance boundary is in `acme-salary-app/docs/PR_1_SCOPE.md`; its CI runs the delivered foundation browser suite without deleting or suppressing future requirement cases. PR-test GitHub Actions is now explicitly authorized; deployment and production infrastructure remain separately scoped.
 
 Latest PR #1 instruction: fix current-feature issues, execute checks, repeat MCP code review and leave the PR ready for an authorized independent reviewer. Do not self-approve or merge during this checkpoint. Existing local passes cannot substitute for a verified current-head GitHub check result.

@@ -48,10 +48,10 @@ If a durable queue is approved, preserve generic request/attempt/replay/expiry c
 
 | Code map | Responsibility |
 |---|---|
-| apps/api/src/auth/auth.service.ts and mail/otp-deliveries.service.ts | Tracked delivery, generic response, invalidate-on-failure |
-| apps/api/src/mail/otp-mail.ts | Transport/retry wrappers |
-| apps/api/src/team/team-notifications.service.ts | Post-commit notification and visible failure |
-| apps/api/src/app-lifecycle.service.ts | Ordered post-HTTP OTP drain and pool shutdown |
+| backend/src/auth/auth.service.ts and mail/otp-deliveries.service.ts | Tracked delivery, generic response, invalidate-on-failure |
+| backend/src/mail/otp-mail.ts | Transport/retry wrappers |
+| backend/src/team/team-notifications.service.ts | Post-commit notification and visible failure |
+| backend/src/app-lifecycle.service.ts | Ordered post-HTTP OTP drain and pool shutdown |
 | e2e-auth/smtp-capture.ts | Loopback-only synthetic SMTP protocol capture |
 
 Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
