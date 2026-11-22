@@ -62,6 +62,7 @@ Status: proposed interpretation approved by client continuation, 22 November 202
 - Country regulatory/retention text remains descriptive notes. Merge notes without deleting existing JSON metadata; explicit holds are enforced separately. No jurisdiction-specific legal automation is claimed.
 - Country policy precision/rounding remain FR-CTRY 0..4 and HALF_UP/FLOOR/CEIL, independent of the read-only ISO minor units. Existing history remains unchanged; new writes use the current policy.
 - Salary bands stay deferred; FX maintenance remains a separate increment. Catalogue refresh, currency historical retirement and production operational policies require reviewed future changes.
+
 ## ADR-005 — verified employee linkage and initial salary approval
 
 Status: explicitly approved by client,22 November2026. Supersedes incomplete earlier linkage/initial-salary language. Implementation is tracked separately from approval.

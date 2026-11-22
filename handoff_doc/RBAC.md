@@ -62,7 +62,6 @@ IDs resolve to the canonical [route map](CONTEXT.md#8-api-route-map); this avoid
 | C03,C05,C06 | HR only | Exact Origin, bound CSRF, strict DTO, immutable codes, optimistic versions, transactional audit, active-default/precision protections |
 | F01,F03 | HR or read member | Fresh session; list history and resolve as-of; no salary:view/export needed for reference rates |
 | F02 | HR only | Exact Origin/bound CSRF, strict DTO, active currencies, expectedRevision/pair-date lock, atomic audit |
-
 | E01,E02,E03 | HR or read member | Fresh same-transaction session; no salary fields; removed excluded; no implied salary/write privilege |
 
 ## Frontend path × guard
@@ -77,6 +76,6 @@ IDs resolve to the canonical [route map](CONTEXT.md#8-api-route-map); this avoid
 | / Countries and currencies | Login checks HR or read permission; CountryCurrency hides admin controls for member | Catalogue read-member/HR; country/currency configuration HR only; backend authoritative |
 | / Employee directory/profile | Login HR/read mounts Employees | Backend current-session read checks; non-salary allowlist; no mutations |
 | / Exchange rates | Login HR/read mounts FxRates | Read members see history/lookup; HR authoring controls; server authorizes every call |
-| Planned employee/report/salary screens | None implemented | No claimed permission enforcement at missing endpoints |
+| Planned employee mutation/report/salary screens | None implemented | No claimed permission enforcement at missing endpoints |
 
 Use independent browser contexts for role testing. Current tests cover HR/member denial, crafted actor/privilege fields, stale versions, own permission changes, both CSRF failures, independent offboarding and last-manager protection. Full cross-module role/action matrix remains blocked by missing modules, not waived. No admin privilege should be inferred from hidden/visible UI controls.
