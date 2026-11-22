@@ -4,6 +4,8 @@ Authoritative decisions are recorded in [DECISIONS.md](DECISIONS.md), including 
 
 ## Implementation choices
 
+- Team decisions: preserve the authenticated identity lock through each team transaction, serialize team decisions with a PostgreSQL advisory lock, and use `team_version` for optimistic form concurrency. Migrations 011/012 enforce continuity/protection and transactional before/after audit. Invitations send after commit; SMTP failure leaves a valid pending invitation with an explicit failed-delivery response and audit event. See TEAM_MODULE.md for contracts and boundary decisions.
+
 - Email login increment: see LOGIN_MODULE.md. Use pinned Nodemailer SMTP transport with production TLS and disabled message logging/file/URL access. Delivery is outside the public response path and failures invalidate the issued challenge. PostgreSQL-backed rate events and a short global advisory lock implement atomic email/pair/IP limits across processes; denied attempts count toward the IP throttle. No proxy headers are trusted implicitly. Auth rate-event retention/operational sizing requires a release policy; this increment does not silently delete audit or employee records.
 
 - Keep PostgreSQL-specific integrity in forward-only, checksummed SQL migrations. Prisma schema is introspected from the migrated database and Prisma Client provides typed access. Never run `prisma db push` against application data: it cannot preserve all triggers, checks and derived objects.

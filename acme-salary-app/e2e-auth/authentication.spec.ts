@@ -10,7 +10,7 @@ test.beforeAll(async () => {
     throw new Error('Run npm run test:login; authentication E2E requires its isolated synthetic database');
   }
   capture = await smtpCapture(4325);
-  await pool.query("INSERT INTO users(email,full_name,status) VALUES('login.browser@acme.test','Synthetic Browser User','ACTIVE')");
+  await pool.query("INSERT INTO users(email,full_name,status) VALUES('login.browser@acme.test','Synthetic Browser User','ACTIVE') ON CONFLICT(email) WHERE status<>'DELETED' DO NOTHING");
 });
 test.afterAll(async () => { await capture?.close(); await pool.end(); });
 test('AUTH-E2E-01 real SMTP OTP login, HttpOnly session, CSRF logout and revocation', async ({ page, context }) => {

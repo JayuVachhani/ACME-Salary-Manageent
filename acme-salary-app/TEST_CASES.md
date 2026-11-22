@@ -231,3 +231,14 @@ These are not skipped Playwright passes. The corresponding entry-point requireme
 | AUTH-E2E-05 | Verification throttle and spoofed IP header | IP limit yields 429; X-Forwarded-For does not evade limit | Final request 429 despite changing forwarded headers | PASS | None |
 
 Existing requirement-entry retest: REQ-LOGIN and REQ-OTP now PASS; REQ-TEAM, REQ-EMP, REQ-SAL, REQ-HISTORY, REQ-APPROVAL, REQ-TRANSFER, REQ-COUNTRY, REQ-FX, REQ-REPORT, REQ-AUDIT, REQ-DASH and REQ-API still FAIL because modules/domain routes are missing. Historical case records below remain evidence of earlier executions.
+# Team increment test coverage
+
+| ID | Module/scenario | Expected | Actual executed evidence | Status |
+|---|---|---|---|---|
+| TEAM-DB-01..22 | Team authorization, concurrency, invitation lifecycle and audit integrity | Deny unauthorized/stale/self/last-manager changes; preserve immutable attribution and rollback; grant current permissions | All 22 PostgreSQL service/trigger checks executed successfully; output includes individual IDs | PASS |
+| TEAM-E2E-01 | HR UI invite/renew/edit/remove; member browser access | Confirm before save; real invitation; existing member session sees changed privileges and is revoked on removal | Confirmed, cancelled, saved, renewed, edited and removed through UI; member session permission refresh/revocation observed | PASS |
+| TEAM-E2E-02 | Own permissions, CSRF, DTO and stale edits | Disabled own controls and server-side rejection, including crafted API requests | Own controls disabled; self-change 403, stale edit 409, missing/invalid CSRF 403, unknown fields/privileges 400 | PASS |
+| TEAM-E2E-03 | Independent HR offboarding, final manager, pages/mobile/axe | Removed manager loses access; last remains; page buttons work; no overflow/axe violations | Separate HR contexts: removed 401, last-manager 409; pagination, mobile overflow and axe assertions passed | PASS |
+| TEAM-E2E-04 | Invitation SMTP failure | Explicit saved-but-undelivered message and audit; pending account remains | Capture stopped; saved INVITED record and failure audit verified with visible warning | PASS |
+
+REQ-TEAM's earlier anonymous-navigation assertion was replaced with the required anonymous API denial. Authenticated team UI is tested above, not removed from coverage. Remaining REQ-EMP/SAL/HISTORY/APPROVAL/TRANSFER/COUNTRY/FX/REPORT/AUDIT/DASH/API cases continue to fail because their business modules are unfinished.

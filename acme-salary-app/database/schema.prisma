@@ -319,6 +319,7 @@ model users {
   deleted_at                             DateTime?                   @db.Timestamptz(6)
   created_at                             DateTime                    @default(now()) @db.Timestamptz(6)
   authorization_version                  Int                         @default(1)
+  team_version                           Int                         @default(1)
   audit_logs                             audit_logs[]
   country_rules                          country_rules[]
   employee_assignments                   employee_assignments[]
