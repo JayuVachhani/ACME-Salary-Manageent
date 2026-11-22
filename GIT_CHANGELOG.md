@@ -1,5 +1,11 @@
 # ACME Git change ledger
 
+## Confirmed PR #10 integration push — 22 November 2026
+
+Merge commit `df2b5474081f77cb881810b718a0d879cc491293` incorporates merged main4509d5f into existing PR #11 with linkage ported to native NestJS. Normal push to origin/chore/nestjs-backend-structure succeeded; git ls-remote confirmed the exact SHA. Local lint/types/builds,27 units,17 isolated linkage SQL/real-HTTP checks, native architecture/OpenAPI checks, serial database suites and9 affected Chromium cases passed. Final211-file safety and whitespace checks passed. Actual-head MCP patch review covers the port and preserved migration019; no new critical/high issue identified. Author review is not independent approval. Exact-head GitHub CI remains pending, never inferred from earlier branch passes. This ledger follow-up is published separately with final remote-head confirmation; no self-approval/merge. PR #12 awaits backend merge before reconciliation.
+
+## Earlier integration preparation
+
 ## Integrating merged PR #10 into PR #11 — 22 November 2026
 
 Fetched approved origin and confirmed PR #10 merged at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. Existing `chore/nestjs-backend-structure` merges origin/main without rewriting history. Old team factory/file conflicts resolved by porting endpoint, strict DTO and operation into native modules; migration019 unchanged. Real-application linkage test and OpenAPI mapping projection coverage added. Local lint/types/builds,27 units,17 linkage SQL/HTTP cases, architecture/OpenAPI, serial isolated database suites and9 affected authentication/team Chromium cases passed. Indexed211-file scan passed; final scan follows this documentation normalization. Commit/push, actual-head review and CI pending; no approval/merge. PR #12 and unrelated user work untouched.
