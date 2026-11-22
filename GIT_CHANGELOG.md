@@ -3,6 +3,12 @@
 Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent
 Started: 21 November 2026 (Asia/Calcutta).
 
+## Backend linkage increment — 22 November 2026
+
+Fetched approved origin and verified PR #9 merge `1e0e65f`; new branch `feature/backend-linkage` starts there. Original feature/employee-management preserved; unrelated untracked handoff-document-prompt.md excluded. Full approved backend requested; unresolved business rules explicitly remain blocked. This increment implements ADR-005 independent confirmed HR linkage (migration019, team service/HTTP endpoint, atomic audit/revocation/snapshot invalidation). Employee/pending-initial creation and subsequent salary/reporting work remain undelivered and dependency-gated.
+
+Local verification: Node24.20.0; verify:database PASS (22unit,72 DB,lint/types/build,Prisma/health); linkage17 SQL/HTTP PASS; team22,employee19,authentication PASS. qa:typecheck PASS; test:login all five Chromium groups PASS (9 auth/team +4 references +3 country/currency +3 FX +3 employees =22, zero retries). Commit/push/head/PR/current-head CI and MCP review results will be recorded after they actually occur; no push or remote pass is claimed here. No self-approval/merge/protection changes.
+
 ## Confirmed history
 
 Authentication work on `feature/authentication-team-access`: helper commit `009931c` was pushed successfully after lint/type/build and 21 unit tests passed. The next persistence increment adds migration 007, internal OTP/session service and isolated PostgreSQL regressions. Two SQL parameter-type errors found during regression execution were fixed before publication; the complete authentication regression then passed. No SMTP, login UI or complete authentication acceptance is claimed. Exact increment hashes are available through `git log` for these files; push outcomes are verified after committing.

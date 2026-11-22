@@ -1,5 +1,7 @@
 # ACME handoff — start here
 
+Current backend delta (22 November 2026): PR #9 merged at `1e0e65f`; `feature/backend-linkage` adds migration019 and `PATCH /api/v1/team/:id/employee-link`. Independent HR, reason, confirmation, version checks, revocation and audit are implemented at the backend; no linkage UI or public salary writes. Read [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md). Earlier discovery counts are historical: add one method/path, two SQL functions and two triggers, no tables/fields/env. Remaining approved backend work is pending; unresolved business rules stay blocked per client direction.
+
 **Purpose:** Onboard developers and coding agents without inventing functionality.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

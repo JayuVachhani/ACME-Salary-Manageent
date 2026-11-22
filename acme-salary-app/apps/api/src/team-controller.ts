@@ -3,7 +3,7 @@ import type { Request } from 'express';
 import type { Pool } from 'pg';
 import { z } from 'zod';
 import { AuthenticationService } from './authentication.js';
-import { TeamService, inviteInput, changeInput, versionInput } from './team.js';
+import { TeamService, inviteInput, changeInput, versionInput, linkageInput } from './team.js';
 import { createInvitationMailer } from './otp-mail.js';
 import type { loadConfig } from './config.js';
 
@@ -31,6 +31,10 @@ export function teamController(pool: Pool, config: ReturnType<typeof loadConfig>
   }
   @Controller('/api/v1/team')
   class TeamController {
+    @Patch(':id/employee-link') async linkEmployee(@Req() req: Request,@Param('id') accountId: string,@Body() body: unknown) {
+      const header=csrf(req);
+      return service.linkEmployee(token(req),header,id(accountId),parse(linkageInput,body));
+    }
     @Get() async list(@Req() req: Request) {
       const query=z.object({ offset:z.coerce.number().int().min(0).max(100000).default(0) }).strict().safeParse(req.query);
       if(!query.success) throw new HttpException('Invalid page',400);

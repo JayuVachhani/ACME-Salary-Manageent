@@ -27,6 +27,7 @@
     "test:login": "npm run build && node --env-file=.env scripts/test-login.mjs",
     "test:team": "node --env-file=.env scripts/test-team.mjs",
     "test:employees": "node --env-file=.env scripts/test-employees.mjs",
+    "test:employee-linkage": "node --env-file=.env scripts/test-employee-linkage.mjs",
     "test:fx": "node --env-file=.env scripts/test-fx-rates.mjs",
     "test:country-currency": "node --env-file=.env scripts/test-country-currency.mjs",
     "test:references": "node --env-file=.env scripts/test-organization-references.mjs",

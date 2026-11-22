@@ -2,7 +2,7 @@
 
 Last updated: 22 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
 
-Current checkpoint: PR #8 merged at2a3ee19. P5a read-only employee directory/profile implemented on feature/employee-management;19 PostgreSQL and3 employee Chromium cases pass,alongside31 prior scoped browser cases; PR review/CI pending. ADR-005 linkage and pending initial salary rules approved; their schema/API/UI implementation remains next. Historical chronology below does not override this status.
+Current checkpoint: PR #9 merged at `1e0e65f`. On `feature/backend-linkage`, ADR-005 verified linkage backend adds migration 019 and confirmed independent-HR team linkage with session/OTP/lease revocation and snapshot invalidation. Initial salary/employee writes and other approved backend modules remain pending; unresolved report/band/transfer definitions stay blocked per client direction. Current evidence and PR disposition are in the QA report and Git ledger. Historical chronology below does not override this status.
 
 PR #1 merged by the user: GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`. Final pre-merge head `0c8456e` passed GitHub Actions run 44920501262 (18 unit tests, 72 logical PostgreSQL checks and 12 foundation Chromium tests) and received an MCP comment review. The agent did not approve or merge the PR. Local main is synchronized; next module branch is `feature/authentication-team-access`, created from origin/main. No authentication implementation or additional test execution is claimed by this documentation handoff.
 

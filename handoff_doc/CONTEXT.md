@@ -10,6 +10,8 @@ ACME manages monthly salary records across countries/currencies; full payroll is
 
 ## 1. System overview
 
+Current backend delta from merged PR #9 (`1e0e65f`): `PATCH /api/v1/team/:id/employee-link` accepts `{employeeId:UUID|null,expectedVersion,reason,confirmed:true}`. Exact configured Origin, session-bound CSRF and independent current HR required. Stale/duplicate/unchanged/unavailable links return409, invalid DTO/path400, forbidden403. Returns the team projection including employee_id; GET team also includes it. Migration019 adds linkage guards and atomic audit/revocation; no environment/dependency change, salary values or UI. Earlier route inventories gain one operation. See [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md) and current QA/Git ledger. Initial salary and subsequent approved backend workflows remain undelivered.
+
 ~~~mermaid
 flowchart LR
   Browser[React root screen] --> Proxy[Vite development proxy]
