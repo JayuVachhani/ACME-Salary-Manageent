@@ -1,5 +1,10 @@
 # ACME Git change ledger
 
+## Confirmed quality tooling push — 22 November 2026
+
+Commit `4a28ea1a94bacfa79895e4116ea314f5dc88984b` pushed normally to origin/chore/quality-hooks; git ls-remote confirmed the exact SHA. Actual Husky pre-commit and pre-push gates passed,including288-file indexed scan. Local quality:check,36 units,React71/7550,Nest architecture/OpenAPI,safety regression and four disposable Git hook acceptance/rejection checks passed. No user file staged; handoff-document-prompt.md preserved. PR targets main; exact-head GitHub CI and independent review remain separate gates. This publication ledger follow-up is committed/pushed separately with hooks enabled. No approval/merge/deployment.
+
+
 ## Quality tooling publication checks — 22 November 2026
 
 Push request authorizes verification. Formatting,lint,workspace types,36 units,builds,QA typing and React architecture71/7550 passed. Disposable Git/Husky integration checks reject unformatted source,explicit any and prohibited runtime files,and accept valid staged source. Git safety regression passed. Initial formatter baseline changes source layout only. Final indexed scan,real commit/push hooks and exact-head CI remain pending; no approval/merge. Earlier implementation-only records below are historical.
