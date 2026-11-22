@@ -62,3 +62,13 @@ Status: proposed interpretation approved by client continuation, 22 November 202
 - Country regulatory/retention text remains descriptive notes. Merge notes without deleting existing JSON metadata; explicit holds are enforced separately. No jurisdiction-specific legal automation is claimed.
 - Country policy precision/rounding remain FR-CTRY 0..4 and HALF_UP/FLOOR/CEIL, independent of the read-only ISO minor units. Existing history remains unchanged; new writes use the current policy.
 - Salary bands stay deferred; FX maintenance remains a separate increment. Catalogue refresh, currency historical retirement and production operational policies require reviewed future changes.
+
+## ADR-005 — verified employee linkage and initial salary approval
+
+Status: explicitly approved by client,22 November2026. Supersedes incomplete earlier linkage/initial-salary language. Implementation is tracked separately from approval.
+
+Only an independent HR Manager may link an account to an existing employee. Every change requires a reason and confirmation; each employee may have only one active account. Self-linking and unauthorized relinking are prohibited. Backend and database must enforce the rules, audit actor/time/reason/old and new employee details, invalidate affected sessions and relevant report snapshots. Unlinked accounts cannot modify or approve salaries. Do not expose salary writes until these safeguards are implemented and tested. Relinking must never be an implicit consequence of email matching.
+
+Initial salary entries remain Pending Approval, including those with a past effective date. A different authorized HR Manager must approve; the creator cannot approve their entry. Preserve the requested effective date; no initial salary is approved/finalized or included in active compensation until approval. Record creator,approver,reason and approval timestamp. Employee creation must atomically persist the employee and its pending initial request, rather than inserting an approved salary ledger row. The existing initial-ledger/date and backdated-only request constraints need reviewed forward migrations before this workflow is exposed.
+
+Delivery: P5a read-only directory/profile first (no salary payload or mutations), then verified linkage and creation/approval integration. This does not treat approved rules as already implemented.

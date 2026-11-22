@@ -2,7 +2,7 @@
 
 **Purpose:** Run the delivered application and its verification gates safely.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -12,7 +12,7 @@ Use this guide from the acme-salary-app/ working directory unless a command says
 
 | Item | Actual requirement |
 |---|---|
-| Node/npm | Node >=24.15.0; CI uses 24.15.0 and npm workspaces |
+| Node/npm | Node >=24.20.0; CI uses 24.20.0 and npm workspaces |
 | OS | Windows for bundled @embedded-postgres/windows-x64 local launcher and current CI |
 | PostgreSQL | 17 family; project-local pinned package 17.12.0-beta.19 provides PostgreSQL 17.12 |
 | Browser tests | Installed project-local Chromium through Playwright 1.65.1 |
@@ -159,7 +159,7 @@ Stop dev command normally; restart after a build when dist/main.js is absent. St
 
 ## 7. API route reference
 
-Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 27 concrete operations:
+Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 30 concrete operations:
 
 | ID | Method | Path | Guard / response |
 |---|---|---|---|
@@ -190,10 +190,13 @@ Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 27 concr
 | F01 | GET | /api/v1/fx-rates | HR or read member; pair/asOf filters,20-row immutable history |
 | F02 | POST | /api/v1/fx-rates | HR + Origin/CSRF; positive decimal/source/reason/expectedRevision; appends,201 |
 | F03 | GET | /api/v1/fx-rates/resolve | HR or read member; base/quote/asOf; historical direct/inverse/USD path or422 |
+| E01 | GET | /api/v1/employees | HR/read; literal search,current assignment filters,whitelisted sorting,page25/max100; no salary fields |
+| E02 | GET | /api/v1/employees/filters | HR/read; country/department options including inactive reference labels |
+| E03 | GET | /api/v1/employees/:id | HR/read; UUID; non-removed allowlisted profile or404; no salary fields |
 
 ## 8. CI verification
 
-Actual pipeline: [pr-validation.yml](../.github/workflows/pr-validation.yml), windows-latest, 20-minute job, Node 24.15.0, exact PR SHA, contents-read token, pinned actions, allowed prefix and no stored checkout credentials. From app root, in order:
+Actual pipeline: [pr-validation.yml](../.github/workflows/pr-validation.yml), windows-latest, 20-minute job, Node 24.20.0, exact PR SHA, contents-read token, pinned actions, allowed prefix and no stored checkout credentials. From app root, in order:
 
 ~~~powershell
 npm.cmd ci --ignore-scripts --no-fund --no-audit
@@ -219,3 +222,13 @@ verify:database expands to migrations, Prisma generation, lint/type/unit/build, 
 Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628, FX4727/4728; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
 
 FX smoke: use synthetic HR to load a pair/date revision, enter positive decimal/source/reason, cancel confirmation (no write), then confirm first quote and append a correction. Verify prior row/audit before/after and stale conflict. Read member sees history/lookup, cannot POST. Resolve a historical direct/inverse/USD path with revision/source/date; reject missing/stale paths. Test pagination, negative DTO/Origin/CSRF, inactive currency, outage/error recovery and mobile/axe. Automated test:fx plus FX test:login group (4727/4728, own disposable DB). Full application remains incomplete.
+
+## P5a employee directory integration
+
+Sources employees-controller.ts,employees.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
+
+CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on4827/4828,SMTP4325 sequential; artifacts qa-artifacts/employees. Approved ADR-005 requires independently HR-verified linkage and pending initial salaries; both need future database/API/UI integration,not inferred from directory reads.
+
+Browser runtime update: Playwright now serves built web assets through scripts/qa-web-server.mjs (loopback Node HTTP,strict port,existing QA_API_PORT proxy); npm run dev remains development only. Build before qa:e2e; test:login builds itself. Repeated native dev/preview exits3221226505 are retained failures,root cause unproven. See [browser test runtime](../acme-salary-app/docs/BROWSER_TEST_RUNTIME.md); no deployment or retry/assertion change.
+
+CI also runs `npm.cmd run test:qa-web` to verify real built-static path/MIME/HEAD protections and API proxy method/query/Origin/body/cookies/health/error behavior. No new config or dependency.

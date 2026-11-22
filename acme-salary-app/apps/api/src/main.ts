@@ -10,6 +10,7 @@ import { authController } from './auth-controller.js';
 import { teamController } from './team-controller.js';
 import { organizationReferencesController } from './organization-references-controller.js';
 import { countryCurrencyController } from './country-currency-controller.js';
+import { employeesController } from './employees-controller.js';
 import { fxRatesController } from './fx-rates-controller.js';
 
 async function bootstrap() {
@@ -32,7 +33,7 @@ async function bootstrap() {
     }
   }
   const authentication = authController(pool, config);
-  @Module({ controllers: [HealthController, authentication.controller, teamController(pool,config), organizationReferencesController(pool,config),countryCurrencyController(pool,config),fxRatesController(pool,config)] })
+  @Module({ controllers: [HealthController, authentication.controller, teamController(pool,config), organizationReferencesController(pool,config),countryCurrencyController(pool,config),fxRatesController(pool,config),employeesController(pool,config)] })
   class AppModule {}
   const app = await NestFactory.create(AppModule, { logger: false });
   app.use(helmet());

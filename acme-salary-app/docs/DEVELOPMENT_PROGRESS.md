@@ -2,7 +2,7 @@
 
 Last updated: 22 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
 
-Current checkpoint: PR #7 country/currency administration is merged at 0e0fb86. P4c FX API/UI/migration/test implementation is on feature/fx-rate-administration. All23 new FX PostgreSQL and all19 authenticated Chromium cases passed after the accessibility fix. PR CI/independent review remain required. The chronology below retains historical findings and does not override this checkpoint. Employee/linkage, salary, reports, audit browsing and production acceptance remain open.
+Current checkpoint: PR #8 merged at2a3ee19. P5a read-only employee directory/profile implemented on feature/employee-management;19 PostgreSQL and3 employee Chromium cases pass,alongside31 prior scoped browser cases; PR review/CI pending. ADR-005 linkage and pending initial salary rules approved; their schema/API/UI implementation remains next. Historical chronology below does not override this status.
 
 PR #1 merged by the user: GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`. Final pre-merge head `0c8456e` passed GitHub Actions run 44920501262 (18 unit tests, 72 logical PostgreSQL checks and 12 foundation Chromium tests) and received an MCP comment review. The agent did not approve or merge the PR. Local main is synchronized; next module branch is `feature/authentication-team-access`, created from origin/main. No authentication implementation or additional test execution is claimed by this documentation handoff.
 
@@ -49,3 +49,5 @@ ADR-004 approved; migrations 015..017, pinned SIX catalogue, authenticated count
 ## P4c FX administration — locally verified, PR delivery pending
 
 PR #7 merged at0e0fb86; country/currency scope completed. FX service/controller/UI and migration018 implement append-only rate correction, audited before/after, reader history, historical direct/inverse/USD lookup and configured staleness. Actual tests/results are recorded in QA reports; no full-system acceptance implied.
+
+P5a lower-level final gate PASS under verified non-superuser acme_app override; existing local .env retained.19 directory DB cases,22 units,72 foundation DB,Prisma/health/lint/types/build pass. Browser retests and intermediate accessibility/locator/native startup failures are recorded explicitly in QA_EXECUTION_REPORT.md; no employee write/linkage/approval completion implied.

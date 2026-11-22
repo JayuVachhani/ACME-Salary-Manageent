@@ -2,7 +2,7 @@
 
 **Purpose:** Record implementation status by scope without duplicating backlog priority.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -29,7 +29,8 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Reference | Salary bands | deferred | Overlap/validation/conflict policies await approval |
 | Reference | Pinned ISO currency catalogue | done | SIX publication 2026-09-17, 178 codes, migration 015 + provenance JSON; read-only runtime |
 | Employee | Schema and dated assignments/history guard | done | migrations 002/005 |
-| Employee | Directory/create/edit/remove/transfer workflow | not started | Missing API/UI; no 10k seed |
+| Employee | Directory/profile | stub/partial | P5a directory/profile locally verified19 DB /3 Chromium; PR pending; no salary payload/band filter |
+| Employee | Create/edit/remove/transfer workflow | not started | ADR-005 pending initial salary; linkage/approval/leases required; no10k seed |
 | Salary | Exact decimal/FX calculation helpers | done | money.ts and tests |
 | Salary | Append-only ledger/history/approval integrity | done | migrations 003..006 and 38 approval checks; internal scope |
 | Salary | Backdated submission/decision user workflow | stub/partial | SalaryApprovalService exists; no authenticated controller/UI; linkage gate missing |

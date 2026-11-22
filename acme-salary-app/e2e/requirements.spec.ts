@@ -18,10 +18,20 @@ test('REQ-TEAM anonymous team access is denied; authorized UI is covered by the 
   await expect(page.getByRole('heading',{name:'Team',exact:true})).toHaveCount(0);
   expect((await page.request.get('/api/v1/team')).status()).toBe(401);
 });
+// Delivered private modules must be hidden anonymously; authenticated user journeys
+// are actually executed in employees/country-currency/fx-rates.spec.ts via SMTP.
+for(const [id,label,path] of [
+ ['REQ-EMP','Employee directory','/api/v1/employees'],
+ ['REQ-COUNTRY','Countries and currencies','/api/v1/currency-catalogue'],
+ ['REQ-FX','Exchange rates','/api/v1/fx-rates']
+])test(`${id} delivered module denies anonymous access; workflow covered by SMTP suite`,async({page})=>{
+ await page.goto('/');await expect(page.getByRole('region',{name:label,exact:true})).toHaveCount(0);
+ const response=await page.request.get(path!);expect(response.status()).toBe(401);expect(response.headers()['cache-control']).toBe('no-store');
+});
 for(const [id,label] of [
-  ['REQ-EMP','Employees'],['REQ-SAL','Salary'],['REQ-HISTORY','History'],
-  ['REQ-APPROVAL','Approvals'],['REQ-TRANSFER','Transfer'],['REQ-COUNTRY','Country'],
-  ['REQ-FX','Exchange rates'],['REQ-REPORT','Reports'],['REQ-AUDIT','Audit'],['REQ-DASH','Dashboard']
+  ['REQ-SAL','Salary'],['REQ-HISTORY','History'],
+  ['REQ-APPROVAL','Approvals'],['REQ-TRANSFER','Transfer'],
+  ['REQ-REPORT','Reports'],['REQ-AUDIT','Audit'],['REQ-DASH','Dashboard']
 ]) {
   test(`${id} ${label} workflow entry is available`,async ({page},info)=>{
     await page.goto('/');
@@ -31,7 +41,7 @@ for(const [id,label] of [
 }
 test('REQ-API unauthenticated domain endpoints enforce a real auth boundary',async ({page},info)=>{
   await page.goto('/');
-  const paths=['/api/v1/employees','/api/v1/auth/me','/api/v1/country-rules','/api/v1/fx-rates','/api/v1/reports/generate','/api/v1/audit-logs'];
+  const paths=['/api/v1/employees','/api/v1/auth/me','/api/v1/countries','/api/v1/fx-rates','/api/v1/reports/generate','/api/v1/audit-logs'];
   const actual=await page.evaluate(async paths=>Promise.all(paths.map(async path=>{
     const response=await fetch(path);return {path,status:response.status,body:await response.text()};
   })),paths);

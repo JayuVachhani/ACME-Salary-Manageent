@@ -8,7 +8,7 @@
     }
   },
   "engines": {
-    "node": ">=24.15.0"
+    "node": ">=24.20.0"
   },
   "workspaces": [
     "apps/*"
@@ -16,6 +16,7 @@
   "scripts": {
     "qa:e2e": "node --env-file=.env node_modules/@playwright/test/cli.js test",
     "qa:regression": "node scripts/qa-regression.mjs",
+    "test:qa-web": "node scripts/test-qa-web-server.mjs",
     "qa:typecheck": "tsc -p tsconfig.qa.json",
     "qa:report": "node scripts/qa-report.mjs",
     "db:local:start": "node scripts/local-postgres.mjs start",
@@ -25,6 +26,7 @@
     "test:authentication": "node --env-file=.env scripts/test-authentication.mjs",
     "test:login": "npm run build && node --env-file=.env scripts/test-login.mjs",
     "test:team": "node --env-file=.env scripts/test-team.mjs",
+    "test:employees": "node --env-file=.env scripts/test-employees.mjs",
     "test:fx": "node --env-file=.env scripts/test-fx-rates.mjs",
     "test:country-currency": "node --env-file=.env scripts/test-country-currency.mjs",
     "test:references": "node --env-file=.env scripts/test-organization-references.mjs",

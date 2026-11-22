@@ -20,7 +20,9 @@ try {
   assert.equal(ready.status, 503);
   assert.equal((await ready.json()).reason, 'schema_not_verified');
   const privateRoute = await fetch(`http://127.0.0.1:${port}/api/v1/employees`);
-  assert.equal(privateRoute.status, 404);
+  assert.equal(privateRoute.status, 401);
+  assert.equal((await privateRoute.json()).message,'Sign in required');
+  assert.equal(privateRoute.headers.get('cache-control'),'no-store');
   assert.ok(!output.includes(process.env.OTP_HMAC_SECRET || 'impossible-secret'));
-  console.log('Health API smoke checks passed: liveness, headers, closed readiness, no domain data route');
+  console.log('Health API smoke checks passed: liveness, headers, closed readiness, anonymous employee access denied');
 } finally { child.kill(); }

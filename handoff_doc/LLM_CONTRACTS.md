@@ -2,7 +2,7 @@
 
 **Purpose:** Prevent agents from assuming runtime AI functionality exists.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Explain allowed transitions, side effects and forbidden shortcuts.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -167,3 +167,7 @@ flowchart LR
 ~~~
 
 Cancel saves nothing. Readers can browse all prior revisions and resolve historical rates, including deactivated currency history. Writes require active currencies and HR; no overwrite/delete, per-salary override or automatic retry. Future rows apply only on/after their effective date. Lookup is direct, inverse, then USD; every leg must meet configured staleness or422. Same configured currency factor1 needs no FX row. Existing salary/report snapshot provenance stays unchanged after correction. The unit-factor preview does not implement reports/payroll. See [FX module](../acme-salary-app/docs/FX_MODULE.md).
+
+## P5a directory checkpoint
+
+Read-only employee directory/profile integrates GET employees,employees/filters,employees/:id with fresh HR/read checks; no salary payload or mutation. Current assignment excludes future dates,removed employees excluded,literal wildcard search and fixed sorting/paging. No migration/schema/config/external service added. test:employees plus fifth isolated test:login Chromium group (4827/4828,SMTP4325 sequential),artifacts employees. Local19 directory DB /3 directory Chromium and34 scoped browser checks passed; exact-head CI/review pending; see QA_EXECUTION_REPORT.md. [Employee contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). ADR-005 linkage and initial salary approval are approved future integration requirements; do not treat this directory as employee creation/approval completion.

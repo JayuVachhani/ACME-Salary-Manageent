@@ -39,7 +39,7 @@ FX administration now supports immutable HR revisions, read-permission history/a
 
 ## Not implemented yet
 
-Employee/salary/approval screens, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
+Employee creation/edit/removal/transfer and salary/approval screens, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
 
 The authoritative progress plan is `../DEVELOPMENT_PLAN.md`; approved decision details are in `docs/DECISIONS.md`. No hosting is configured or authorized by this foundation.
 
@@ -52,3 +52,5 @@ The first actual browser audit is documented in `QA_TEST_PLAN.md`, `TEST_CASES.m
 Run `npm run build`, then `npm run qa:e2e`. Playwright starts isolated API/web instances on ports 4318/4317 and stops them after testing. Chromium is installed in `.local/browsers`; to install on another machine, set `PLAYWRIGHT_BROWSERS_PATH` to that absolute directory and run `node node_modules/@playwright/test/cli.js install chromium`. Do not reuse production data or a production connection for QA.
 
 Run `npm run qa:regression` for instrumented existing PostgreSQL/service suites, `npm run qa:typecheck` for browser-test TypeScript, and `npm run qa:report` to regenerate the per-case ledger and execution report from retained initial/final JSON and regression evidence. `qa-artifacts` is ignored in source control but retained locally, including screenshots, HTML reports, traces and initial failure evidence. Changes to the test catalogue should be reviewed alongside the requirement traceability file; do not delete unmet-requirement checks to obtain a green summary.
+
+Employee directory/profile is now implemented as a read-only non-salary slice; see [contract](docs/EMPLOYEE_DIRECTORY_MODULE.md). Run npm run test:employees. Employee creation/linkage/edit/removal/transfer and salary/band integration remain pending; ADR-005 records approved linkage and initial salary approval rules.

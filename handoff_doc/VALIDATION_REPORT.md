@@ -2,7 +2,7 @@
 
 **Purpose:** Record documentation coverage against the merged implementation and distinguish static verification from runtime tests.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -67,3 +67,15 @@ Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth
 ## P4c current verification
 
 Fresh static validation:644 checks PASS,14 required files,207 relative links/anchors,27 concrete routes,23 models/178 scalar fields,18 migrations/28 SQL functions/two views and16 API settings. Existing11 tooling/service settings remain unchanged. Scoped runtime:23 FX +27 country/currency +23 organization-reference +22 team PostgreSQL checks,authentication persistence,72 foundation-domain PostgreSQL checks,22 units,Prisma/health,lint/type/build,QA typing and19 authenticated Chromium cases passed. Mobile axe failure was fixed and retested without suppressing the assertion; failed setup/native-crash attempts remain recorded in QA_EXECUTION_REPORT.md. Foundation Chromium and GitHub current-head checks are separately reported there and in the PR. No complete salary-management/production acceptance is claimed.
+
+## P5a directory checkpoint
+
+Read-only employee directory/profile integrates GET employees,employees/filters,employees/:id with fresh HR/read checks; no salary payload or mutation. Current assignment excludes future dates,removed employees excluded,literal wildcard search and fixed sorting/paging. No migration/schema/config/external service added. test:employees plus fifth isolated test:login Chromium group (4827/4828,SMTP4325 sequential),artifacts employees. Local19 directory DB /3 directory Chromium and34 scoped browser checks passed; exact-head CI/review pending; see QA_EXECUTION_REPORT.md. [Employee contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). ADR-005 linkage and initial salary approval are approved future integration requirements; do not treat this directory as employee creation/approval completion.
+
+Browser runtime update: Playwright now serves built web assets through scripts/qa-web-server.mjs (loopback Node HTTP,strict port,existing QA_API_PORT proxy); npm run dev remains development only. Build before qa:e2e; test:login builds itself. Repeated native dev/preview exits3221226505 are retained failures,root cause unproven. See [browser test runtime](../acme-salary-app/docs/BROWSER_TEST_RUNTIME.md); no deployment or retry/assertion change.
+
+CI also runs `npm.cmd run test:qa-web` to verify real built-static path/MIME/HEAD protections and API proxy method/query/Origin/body/cookies/health/error behavior. No new config or dependency.
+
+P5a fresh static verification:669 checks PASS,14 files,222 relative links/anchors,30 concrete routes,23 models/178 scalar fields,18 migrations/28 functions/two views,16 API settings unchanged. Scoped local execution19 employee DB,4 QA-WEB HTTP groups,22 units,72 foundation DB,Prisma/health/lint/types/build/QA typing,and34 Chromium checks PASS. Existing local runtime URL mismatch handled only in ignored test subprocess override; .env unchanged. Earlier native/axe/locator/startup failures remain retained; independent PR review and current-head CI still required.
+
+Runtime follow-up:CI4705f3b failed before FX/employee browser execution; c378a3d passed independently on old runtime. Both outcomes are retained. Minimum/CI runtime now24.20.0 for relevant upstream Windows libuv fix; exact crash match remains inference. Local official executable checksum verified in ignored tooling,global Node/.env unchanged. Current24.20-head CI/review required; static schema/route counts unchanged.
