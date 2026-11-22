@@ -1,6 +1,6 @@
 # Country and currency administration (P4b)
 
-Status: locally tested; PR pending. 27 isolated PostgreSQL and 3 country/currency Chromium cases pass; existing unit/database/auth/team/reference/foundation regressions also pass. Approved client continuation on 22 November 2026 accepts the catalogue interpretation recorded below. Does not include FX administration (P4c), employee/salary/reporting screens, or deferred salary bands.
+Status: locally tested; PR #7 open; independent approval pending. 27 isolated PostgreSQL and 3 country/currency Chromium cases pass; existing unit/database/auth/team/reference/foundation regressions also pass. Approved client continuation on 22 November 2026 accepts the catalogue interpretation recorded below. Does not include FX administration (P4c), employee/salary/reporting screens, or deferred salary bands.
 
 ## Catalogue contract and provenance
 

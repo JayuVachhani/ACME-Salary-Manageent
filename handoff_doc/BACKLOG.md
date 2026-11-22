@@ -15,7 +15,7 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 | ID | Item | Priority | Status | Notes / primary touchpoints |
 |---|---|---|---|---|
 | A1a | Department/designation administration (P4a) | High | done | Merged PR #5; migrations 013/014, real API/UI, 23 PostgreSQL and 4 reference Chromium cases |
-| A1b | Country/currency administration (P4b) | Critical | stub/partial | Locally tested (27 DB / 3 Chromium); PR pending. ADR-004, pinned SIX catalogue, country-currency module, migrations 015..017 |
+| A1b | Country/currency administration (P4b) | Critical | stub/partial | Locally tested (27 DB / 3 Chromium); PR #7 open; independent approval pending. ADR-004, pinned SIX catalogue, country-currency module, migrations 015..017 |
 | A1c | Immutable historical FX administration (P4c) | High | not started | HR-only maintenance, historical revisions/source/actor, no per-entry overrides; money.ts |
 | A2 | Verify and administer employee/user linkage before public salary access | Critical | blocked | Nullable mapping currently permits incomplete self-subject protection; users, policy.ts, employee workflows |
 | A3 | Employee create/directory/edit/removal with initial salary atomicity | Critical | not started | Dated assignments, validation, permissions, holds and unique keys; employee schemas/UI/API |

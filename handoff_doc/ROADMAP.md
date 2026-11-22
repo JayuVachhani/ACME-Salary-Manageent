@@ -24,7 +24,7 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Auth | Verified user-to-employee association | not started | nullable users.employee_id exists; no delivered verification workflow |
 | Reference | Country/currency/reference/FX/hold data foundations | done | migration 002 and domain tests; no admin workflow implied |
 | Reference | Department/designation administration | done | P4a merged in PR #5; 23 DB / 4 reference Chromium cases and exact-head CI passed |
-| Reference | Country/currency administration | stub/partial | P4b locally tested (27 DB / 3 Chromium); PR pending; ADR-004 and COUNTRY_CURRENCY_MODULE.md |
+| Reference | Country/currency administration | stub/partial | P4b locally tested (27 DB / 3 Chromium); PR #7 open; independent approval pending; ADR-004 and COUNTRY_CURRENCY_MODULE.md |
 | Reference | FX administration | not started | Immutable domain foundation exists; public maintenance UI/API absent |
 | Reference | Salary bands | deferred | Overlap/validation/conflict policies await approval |
 | Reference | Pinned ISO currency catalogue | done | SIX publication 2026-09-17, 178 codes, migration 015 + provenance JSON; read-only runtime |
