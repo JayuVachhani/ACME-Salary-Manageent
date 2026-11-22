@@ -12,7 +12,7 @@ Use this guide from the acme-salary-app/ working directory unless a command says
 
 | Item | Actual requirement |
 |---|---|
-| Node/npm | Node >=24.15.0; CI uses 24.15.0 and npm workspaces |
+| Node/npm | Node >=24.20.0; CI uses 24.20.0 and npm workspaces |
 | OS | Windows for bundled @embedded-postgres/windows-x64 local launcher and current CI |
 | PostgreSQL | 17 family; project-local pinned package 17.12.0-beta.19 provides PostgreSQL 17.12 |
 | Browser tests | Installed project-local Chromium through Playwright 1.65.1 |
@@ -196,7 +196,7 @@ Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 30 concr
 
 ## 8. CI verification
 
-Actual pipeline: [pr-validation.yml](../.github/workflows/pr-validation.yml), windows-latest, 20-minute job, Node 24.15.0, exact PR SHA, contents-read token, pinned actions, allowed prefix and no stored checkout credentials. From app root, in order:
+Actual pipeline: [pr-validation.yml](../.github/workflows/pr-validation.yml), windows-latest, 20-minute job, Node 24.20.0, exact PR SHA, contents-read token, pinned actions, allowed prefix and no stored checkout credentials. From app root, in order:
 
 ~~~powershell
 npm.cmd ci --ignore-scripts --no-fund --no-audit

@@ -428,3 +428,7 @@ Final Node-server default runner:22 authenticated Chromium cases PASS (9+4+3+3+3
 | REQ-API | Business APIs | All named real domain endpoints deny anonymous |401/403 for actual endpoints | Reports/audit still404 | FAIL | Missing endpoints remain blockers |
 
 Current14-case probe:6PASS/8FAIL,zero skips,exit1. All IDs retained. Privacy-correct anonymous probes for delivered modules replace wrong public-control assumptions; actual authorized directory/country/FX browser cases run in the SMTP suites. Full-system acceptance remains open.
+
+Node24.20 retest checkpoint:all19 employee DB cases,4 QA-WEB groups,22 units,72 foundation DB,Prisma/health/build/lint/typing and all22 authenticated Chromium cases executed PASS. Logs associate every browser-group start with nodeVersion:v24.20.0. Foundation/requirement-probe retest and current-head GitHub result recorded separately in QA_EXECUTION_REPORT.md. Earlier native failure did not execute FX/employee cases in run45015008854 and is not a pass.
+
+Node24.20 final local gate:34 scoped Chromium PASS (22authenticated+12foundation),zero retries;19 directory +22team+23reference+27country+23FX PostgreSQL checks,authentication persistence,72 foundation DB,22units,4 QA-WEB HTTP groups,Prisma/health/lint/types/build/QA typing PASS. Full requirement probes executed6PASS/8FAIL,exit1; expected unfinished workflows remain disclosed. No native exit in this execution. Logs:employee-node24-*.log and node24-*.log; current-head CI must pass independently.

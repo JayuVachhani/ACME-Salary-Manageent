@@ -52,7 +52,7 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 
 | Layer | Pinned implementation |
 |---|---|
-| Runtime | Node >=24.15.0; CI exactly 24.15.0; npm workspaces |
+| Runtime | Node >=24.20.0; CI exactly 24.20.0; npm workspaces |
 | API | NestJS 12.6.0, TypeScript 6.0.3, Zod 4.6.7, pg 8.23.1 |
 | Data | PostgreSQL 17; local binary 17.12; Prisma/client/adapter 7.10.1 |
 | Web | React/ReactDOM 19.3.1, Vite 8.3.8 |

@@ -31,7 +31,7 @@ npm.cmd run test:login
 npm.cmd run db:local:stop
 ~~~
 
-Before these commands, CI validates the PR prefix, checks out exact SHA and sets Node 24.15.0. After tests it uploads seven-day synthetic diagnostics and always attempts DB shutdown when startup succeeded. Do not disable version/rate/security checks or add retries to get a green run. Full npm run qa:e2e includes requirement probes and is intentionally nonzero until remaining modules exist. Historical baseline and newer 3-pass/11-fail probes must remain visible. qa:regression instruments five older DB/health commands and is not a substitute for auth/team/browser gates.
+Before these commands, CI validates the PR prefix, checks out exact SHA and sets Node 24.20.0. After tests it uploads seven-day synthetic diagnostics and always attempts DB shutdown when startup succeeded. Do not disable version/rate/security checks or add retries to get a green run. Full npm run qa:e2e includes requirement probes and is intentionally nonzero until remaining modules exist. Historical baseline and newer 3-pass/11-fail probes must remain visible. qa:regression instruments five older DB/health commands and is not a substitute for auth/team/browser gates.
 
 ## 1. Health and readiness
 

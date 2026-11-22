@@ -65,3 +65,7 @@ Historical EMP-QA-NATIVE attempt:repeat Windows Vite dev exit3221226505 interrup
 Historical EMP-QA-LOCATOR attempt:after axe label fix,the focused third case reached screenshot and hit ambiguous substring region names; exact region matching fixed,all assertions/screenshot retained,retest pending. First preview startup native exit also retained; preview is built-artifact testing,not a proven cure for every native process failure.
 
 Current P5a disposition:Node built-static server replaced the failed Vite dev/preview attempts; default all-group Chromium22 plus foundation12 PASS. Exact region locator/accessibility fixes retested PASS,including screenshot. Native root cause remains unproven; no claim of a universal platform fix. Employee CRUD/linkage/initial salary and other full-system gaps remain open.
+
+EMP-QA-CI-NATIVE (blocking PR check):run45015008854 failed at FX child startup with3221226505; FX/employee browser results absent,not passes. Node24.20.0 includes a relevant Windows libuv fix; pin/minimum upgraded and runtime diagnostic added,exact native cause unproven. Full local/CI retest required; PR remains draft.
+
+EMP-QA-CI-NATIVE mitigation local verification:Node24.20 complete local gates and34 scoped Chromium PASS; no retries/assertion changes. The upstream fix is relevant but exact native cause remains unproven. Original failed run retained; final GitHub check/review disposition belongs to PR #9 and GIT_CHANGELOG.md,not an inference from a local pass.
