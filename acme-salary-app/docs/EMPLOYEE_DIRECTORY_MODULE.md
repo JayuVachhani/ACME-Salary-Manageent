@@ -1,6 +1,6 @@
 # Employee directory — P5a
 
-Status: locally verified19 PostgreSQL and3 employee Chromium cases; PR review/CI pending. This is the first read-only employee slice, not complete employee management. Supports FR-EMP-03/08 and the non-salary portions of FR-EMP-04/07. Approved ADR-005 linkage and initial-salary rules remain implementation work; no employee/salary mutations or account linking endpoint is exposed here.
+Status: P5a merged in PR #9 (`1e0e65f`). This is the read-only employee slice, not complete employee management. Supports FR-EMP-03/08 and non-salary FR-EMP-04/07. The subsequent backend-linkage increment implements ADR-005 account linkage through the team endpoint (TEAM_MODULE.md, migration019); no employee/salary writes or linkage UI are delivered. Initial salary integration remains pending.
 
 ## Contracts and permissions
 
@@ -18,6 +18,6 @@ The UI uses explicit Apply/Clear filters,25/50/100 page sizes,sorting,paging,pro
 
 npm run test:employees uses a unique disposable synthetic PostgreSQL database; employee browser group in npm run test:login uses web/API4827/4828 and SMTP4325 sequentially with its own isolated DB. CI runs both and retains qa-artifacts/employees. Exact executed results are in QA_EXECUTION_REPORT.md and TEST_CASES.md; traces/runtime secrets are ignored.
 
-Pending: verified linkage,atomic employee plus pending initial-salary request,independent approval,employee edits/lease/history/removal/transfer,authorized salary values/band filtering,10k/15k load qualification and full security/UAT/production acceptance. Initial-salary approval conflicts with existing backdated-only request constraints; a reviewed forward migration is required before creation,not a bypass or silently active initial ledger row.
+Pending: linkage UI,atomic employee plus pending initial-salary request,independent approval,employee edits/lease/history/removal/transfer,authorized salary values/band filtering,10k/15k load qualification and full security/UAT/production acceptance. Initial-salary approval conflicts with existing backdated-only request constraints; a reviewed forward migration is required before creation,not a bypass or silently active initial ledger row.
 
 QA serving uses the built-static Node proxy described in BROWSER_TEST_RUNTIME.md. For focused diagnostics npm run test:login -- employees selects that isolated group; default test:login/CI execute all groups. Invalid selectors fail before DB access. Focused results are not counted as all-group passes.

@@ -1,5 +1,7 @@
 # ACME — feature status matrix
 
+Current checkpoint: employee reads merged in PR #9 (`1e0e65f`). Verified linkage backend is implemented on feature/backend-linkage (migration019, team employee-link endpoint, SQL/service/HTTP regressions); linkage UI is not started. Atomic employee/pending-initial creation, authenticated salary/lease/idempotency integration and reporting/audit/analytics remain pending. Salary bands and unresolved definitions stay blocked/deferred. Earlier tables describe the pre-019 snapshot; no full-backend or production completion is claimed.
+
 **Purpose:** Record implementation status by scope without duplicating backlog priority.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

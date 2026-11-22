@@ -1,5 +1,7 @@
 # ACME — handoff validation report
 
+22 November 2026 backend delta supersedes earlier linkage-absent inventories: migration019 adds two SQL functions/two row triggers, no columns/tables; PATCH team/:id/employee-link adds one HTTP operation, GET team adds employee_id. Sources: TEAM_MODULE.md, team.ts, team-controller.ts and 019_verified_employee_linkage.sql. No new env/dependency/provider/deployment boundary. Executed evidence belongs to QA_EXECUTION_REPORT.md and GIT_CHANGELOG.md; these documentation updates alone do not establish application passes.
+
 **Purpose:** Record documentation coverage against the merged implementation and distinguish static verification from runtime tests.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

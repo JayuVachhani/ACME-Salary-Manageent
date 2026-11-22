@@ -1,5 +1,7 @@
 # ACME — roles, permissions and route authorization
 
+Migration019: PATCH `/api/v1/team/:id/employee-link` is independent active HR only with session/CSRF/Origin, confirmed reason and expectedVersion. Self target, actor's own employee identity, system/deleted targets and unavailable subjects are denied. Unique nondeleted-account mapping includes invited accounts. GET team now returns employee_id. No salary permission is added; public salary writes remain absent until subsequent ADR-005 integration. Earlier linkage-absent statements are historical. See TEAM_MODULE.md.
+
 **Purpose:** Map real security checks without inventing framework guards.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

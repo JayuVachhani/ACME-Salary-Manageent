@@ -1,5 +1,13 @@
 # ACME QA execution report
 
+## Verified linkage backend — 22 November 2026
+
+Branch feature/backend-linkage from origin/main `1e0e65f`. Node24.20.0, verified restricted acme_app runtime; existing .env/data preserved. `test:employee-linkage` PASS17 real isolated PostgreSQL/service/HTTP checks: role/CSRF/origin/self denial, strict confirmation/reason/version DTO, direct SQL guard, competing mappings, revocation, selective snapshots, audit and injected failure rollback, safe real Nest route/list projection. `verify:database` PASS (lint/types/22 unit/build,11 identity +23 rules +38 approvals,Prisma,health). `test:team` PASS22; `test:employees` PASS19; `test:authentication` PASS. qa:typecheck PASS. test:login all five Chromium groups completed successfully:9 auth/team,4 references,3 country/currency,3 FX,3 employees (22 total,zero retries). Current-head CI/review remains required.
+
+Expanded linkage run initially stopped after13 records without a final summary. Investigation found a test-baseline error: login audit events were captured after the rollback baseline, so the equality assertion was invalid. Moved baseline capture after login and explicitly set nonzero status in the test catch to resist local Console Ninja error interception. Corrected run completed all17 assertions and final summary. No earlier partial run is counted as a pass. Local Nest dependency instrumentation was inspected but left untouched.
+
+No linkage UI/browser acceptance, public salary write, full backend completion or production readiness is claimed. Historical unmet-requirement failures/blocked workflows below remain.
+
 Executed 21 November 2026, Asia/Calcutta. **Release decision: NOT READY. Login now has dedicated SMTP/Chromium evidence; complete business E2E acceptance remains blocked by team and domain APIs/screens. Historical execution rows below are preserved and do not represent a new full-system pass.**
 
 ## Actual execution

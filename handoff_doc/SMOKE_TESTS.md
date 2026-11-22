@@ -1,5 +1,7 @@
 # ACME — manual and automated smoke verification
 
+Linkage backend: build first (`npm run build`), then `npm run test:employee-linkage` from acme-salary-app using Node >=24.20.0, restricted DATABASE_URL and owner MIGRATION_DATABASE_URL. The command creates/drops only a unique synthetic database and runs real loopback HTTP. Covers anonymous/non-HR/CSRF/origin/self/stale/duplicate/removed denials, confirmed independent link/unlink, immutable audit, competing assignments, revocation and audit-failure rollback. CI includes this gate. No linkage screen or salary-write pass is claimed.
+
 **Purpose:** Provide executable checks without implying missing workflows passed.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

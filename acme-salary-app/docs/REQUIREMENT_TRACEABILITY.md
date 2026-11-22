@@ -31,5 +31,5 @@ Paths in this table are relative to `apps/api` for TypeScript files and project 
 | Requirement | Implementation | Verification | Status |
 |---|---|---|---|
 | FR-EMP-03/08,non-salary FR-EMP-04/07 | Employees service/controller/UI; literal search,UTC assignment,filters,sort,pages,removed exclusion,profile | test-employees.mjs;employees.spec.ts | Locally verified19 PostgreSQL /3 employee Chromium checks; salary band filtering and all mutations not delivered |
-| ADR-005 linkage | Approved independent HR/reason/confirmation/unique active link/session+snapshot invalidation/no unlinked salary writes | Future schema/service/UI/security regressions | Approved; not implemented |
+| ADR-005 linkage | TeamService.linkEmployee; PATCH team/:id/employee-link; migration019 confirmed independent HR guard, audit, revocation and snapshot invalidation | test-employee-linkage.mjs: isolated SQL/service/HTTP security and concurrency regressions | Backend implemented; UI pending; no public salary writes exposed. Full salary guard integration remains pending |
 | ADR-005 initial salary | Initial salaries pending until independent HR approval,original effective date/provenance preserved | Future atomic employee/request/schema/UI tests | Approved; not implemented; existing initial/backdated-only constraints need forward migrations |

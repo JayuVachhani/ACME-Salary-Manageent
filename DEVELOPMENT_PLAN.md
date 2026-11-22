@@ -4,6 +4,8 @@ Review date: 21 November 2026 (Asia/Calcutta)
 Status: CORE DEVELOPMENT AUTHORIZED — FOUNDATION VERIFIED; DATABASE MODULE IN PROGRESS  
 Implementation progress: foundation and core database/domain safeguards implemented in `acme-salary-app`; backdated approval backend tested. Authenticated API/UI modules are not yet complete.
 
+Current backend checkpoint (22 November 2026): PR #9 employee reads merged at `1e0e65f`. Full approved backend scope requested; client explicitly keeps unresolved business rules blocked. Next delivery on `feature/backend-linkage` implements ADR-005 confirmed independent-HR account linkage, migration019, revocation/audit/snapshot invalidation and isolated SQL/HTTP verification. Pending initial salary/employee creation, salary writes/leases/idempotency, reports and audit/analytics remain separate undelivered work. Salary bands remain deferred. No production completion claim; dependent work follows the root review/merge gate. See TEAM_MODULE.md, DEVELOPMENT_PROGRESS.md and GIT_CHANGELOG.md for current evidence; original planning observations below remain historical.
+
 Approval update (21 November 2026): the client approved Section 6 recommendations and requested fresh development in a new folder. Concrete accepted directions and remaining details are recorded in `acme-salary-app/docs/DECISIONS.md`. The original review findings below remain as the historical baseline; recommendations are approved where stated, while questions with no proposed answer remain open until answered. No additional permission is required to continue the authorized core build.
 
 ## 1. Review scope and evidence
