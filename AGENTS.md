@@ -15,6 +15,15 @@ Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Pres
 - Review the actual head SHA with MCP, inspect code/requirements/tests and GitHub check results, fix issues on the same PR branch, then repeat review after updates. Recheck the exact head and checks immediately before approval/merge. Use an expected-head SHA for merge. A missing CI result is not a passing result. Maintain PR links, findings, approval/merge disposition in GIT_CHANGELOG.md; synchronize locally and continue dependent work only after a successful merge.
 - Never commit runtime `.env`, credentials, local databases, browser binaries, dependencies, QA traces or real employee data. `.env.example` is a non-secret template.
 
+## Ongoing documentation maintenance
+
+- Documentation maintenance is part of every project change, not a separate final phase. Before completing any significant task, review whether its implementation changes require documentation updates and complete the relevant updates.
+- For added, changed or removed features, modules, APIs, configuration, database structures, workflows or architectural decisions, update the existing canonical documents in the same delivery increment. Document actual implementation and distinguish delivered, partial, planned and blocked scope; never retain removed behavior as current.
+- Keep the root development plan and Git ledger, applicable requirements/decision addenda, application module/progress/traceability/QA documents, and the relevant files in `handoff_doc/` consistent. Preserve clearly labelled historical evidence rather than presenting it as current state.
+- Prefer updating existing documents to creating duplicates. The handoff entry point is `handoff_doc/AGENTS.md`; its context/runbook, data model, workflows, RBAC, integration/deployment references, roadmap/backlog and smoke tests must follow their source contracts.
+- Verify affected route, environment, schema, permission and status coverage, source links and documented commands before handoff. Report discrepancies or unresolved decisions explicitly. Documentation-only verification must not be described as a new application test pass.
+- Apply the current task's commit instructions: documentation changes follow normal feature delivery unless the user has explicitly requested an uncommitted documentation task. Never stage unrelated user files or an unapproved documentation pack merely to satisfy the general commit policy.
+
 ## Quality and status
 
 The current implementation is incomplete. Chromium audit records 12 passes, 14 failed unmet-requirement checks and 45 blocked workflows. Do not hide/skip these failures or describe the baseline as a completed production system. Backend/domain passes do not substitute for browser E2E. Use synthetic data only and isolated/transactional PostgreSQL tests; do not reset existing data.

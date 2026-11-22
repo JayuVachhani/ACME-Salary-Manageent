@@ -1,0 +1,202 @@
+# ACME — setup, run and operations
+
+**Purpose:** Run the delivered application and its verification gates safely.
+
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), merged source `8ae97b3b3a1ec70802fc17ca6b97f205d25e9d3b` (PR #5).
+
+## Executive summary
+
+Use this guide from the acme-salary-app/ working directory unless a command says repository root. Prefer the project-local PostgreSQL launcher on Windows. It creates a private environment file only if none exists. Working product path: bootstrap HR → email OTP login → invite/manage/offboard team → administer departments/designations. Employee/salary/reporting journeys are not yet available. Start with [AGENTS.md](AGENTS.md), then [CONTEXT.md](CONTEXT.md).
+
+## 1. Prerequisites and layout
+
+| Item | Actual requirement |
+|---|---|
+| Node/npm | Node >=24.15.0; CI uses 24.15.0 and npm workspaces |
+| OS | Windows for bundled @embedded-postgres/windows-x64 local launcher and current CI |
+| PostgreSQL | 17 family; project-local pinned package 17.12.0-beta.19 provides PostgreSQL 17.12 |
+| Browser tests | Installed project-local Chromium through Playwright 1.65.1 |
+| SMTP | Loopback capture or authorized SMTP relay; optional Docker for Mailpit |
+| Git/GitHub | Approved branch prefixes, protected main, independent review; PR actions via GitHub MCP |
+
+API: apps/api; frontend: apps/web; schema: database; operations/tests: scripts; browser suites: e2e and e2e-auth; decisions and progress: docs. There is no Python venv/backend, Redis worker or separate package lock per workspace.
+
+## 2. Backend/workspace setup
+
+Fresh Windows checkout, from repository root:
+
+~~~powershell
+cd acme-salary-app
+npm.cmd ci --ignore-scripts --no-fund --no-audit
+npm.cmd run db:local:start
+npm.cmd run db:migrate
+npm.cmd run db:generate
+npm.cmd run build
+~~~
+
+Do not copy .env.example over the generated .env. If .env already exists, the launcher leaves it untouched: reconcile its runtime/owner URL, database port and secret privately against the launcher configuration. Never print connection URLs/credentials into chat. Do not delete existing DB data or .local to resolve a connection mismatch. The owner URL is required for migrations and is deliberately not a runtime API credential.
+
+Illustrative configuration only; replace angle-bracket placeholders privately. The fresh launcher writes actual random local values for you:
+
+~~~dotenv
+# Runtime, restricted role; no literal sample passwords
+NODE_ENV=development
+PORT=3001
+APP_ORIGIN=http://localhost:5173
+DATABASE_URL=postgresql://acme_app:<RUNTIME_PASSWORD>@127.0.0.1:55432/acme
+MIGRATION_DATABASE_URL=postgresql://acme_owner:<OWNER_PASSWORD>@127.0.0.1:55432/acme
+OTP_HMAC_SECRET=<GENERATE_PRIVATELY_AT_LEAST_32_CHARACTERS>
+OTP_TTL_MINUTES=15
+SESSION_IDLE_MINUTES=30
+SESSION_ABSOLUTE_HOURS=12
+FX_MAX_STALENESS_DAYS=7
+DEV_INSECURE_COOKIES=true
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_FROM="ACME <no-reply@acme.test>"
+SMTP_SECURE=false
+# Optional, both together; never commit filled values
+SMTP_USER=
+SMTP_PASSWORD=
+~~~
+
+Environment checklist, including script/container-only settings:
+
+| Variable | Required/default | Consumer and caveat |
+|---|---|---|
+| NODE_ENV | development; development/test/production | config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
+| PORT | 3001, positive integer | API listens on 127.0.0.1 only |
+| APP_ORIGIN | Required URL | Exact Origin equality for mutations; use browser origin without a path or trailing slash |
+| DATABASE_URL | Required PostgreSQL URL | Runtime pg pool and Prisma adapter; use restricted acme_app |
+| OTP_HMAC_SECRET | Required, at least 32 characters | Keyed OTP/session/CSRF/rate/audit digests; generate privately, never reuse sample text |
+| OTP_TTL_MINUTES | 15; positive integer at most 15 | Auth challenge expiry and mail text |
+| SESSION_IDLE_MINUTES | 30; positive integer at most 30 | Server idle expiry; valid session reads refresh last_seen_at |
+| SESSION_ABSOLUTE_HOURS | 12; positive integer at most 12 | Server absolute expiry; cookie maxAge remains fixed at 12 hours |
+| FX_MAX_STALENESS_DAYS | 7, positive integer | Validated; no public FX consumer yet. Internal approval service has its own constructor default 7 |
+| DEV_INSECURE_COOKIES | false; true/false | Explicit development opt-in for HTTP. Production rejects true |
+| SMTP_HOST | Required | Nodemailer server; loopback capture for synthetic testing |
+| SMTP_PORT | 1025, positive integer | Configure for chosen relay; production transport requires TLS |
+| SMTP_FROM | Required string | Mail sender. Quote display-name values in Node env files |
+| SMTP_SECURE | false; true/false | Implicit TLS option; does not disable certificate checks |
+| SMTP_USER | Optional | Must be paired with SMTP_PASSWORD; omitted for local capture/authorized relay |
+| SMTP_PASSWORD | Optional secret | Must be paired with SMTP_USER; never log or commit |
+| MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
+| QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428 |
+| QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login |
+| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
+| ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team browser fixtures verify URL database matches it |
+| QA_ASSERT_REPORT | Optional | qa-assert-observer.mjs output path, supplied by qa-regression.mjs |
+| CI | true in Actions | Test/tool noninteractive mode; not a business feature flag |
+| PR_BRANCH | Supplied from GitHub head_ref in workflow | Prefix validation; not a runtime setting |
+| POSTGRES_USER | Compose sets development owner | Container initialization only; not consumed by API config |
+| POSTGRES_PASSWORD | Compose development value | Container initialization only; existing dev literal is not a production secret strategy |
+| POSTGRES_DB | Compose sets acme | Container initialization only; does not create restricted runtime role |
+
+
+## 3. Frontend and optional services
+
+The same root npm install provisions both workspaces. No frontend .env.example or VITE_* API URL is implemented. apps/web/vite.config.ts proxies relative /api, /healthz and /readyz to loopback API port 3001, or QA_API_PORT when explicitly set. Vite serves loopback 5173 with strictPort. Production static files need an approved same-origin API reverse proxy; development proxy settings are not a production server.
+
+For optional local mail capture, with Docker available, run only the mail service if using bundled PostgreSQL:
+
+~~~powershell
+docker --version
+docker compose up -d mailpit
+~~~
+
+Mailpit is on SMTP 1025 and inbox http://localhost:8025. The Compose postgres service is a separate development DB on 5432, not the launcher DB on 55432. Running the whole Compose file does not create acme_app or apply domain migrations. See [SMTP_INTEGRATION.md](SMTP_INTEGRATION.md).
+
+## 4. Start, first manager and first login
+
+After building, from app root:
+
+~~~powershell
+node --env-file=.env scripts/bootstrap-manager.mjs synthetic.manager@acme.test "Synthetic HR Manager" --confirm
+npm.cmd run dev
+~~~
+
+The bootstrap CLI is audited and refuses when a live HR manager already exists; do not bypass it or directly seed privileged users in an operational database. Its example is synthetic. There is no delivered 10k seed command. The system identity is migration-owned and cannot log in or appear on Team.
+
+Open exactly APP_ORIGIN (normally http://localhost:5173), enter the registered synthetic email, retrieve the code from local SMTP inbox, verify it and use Team. Unregistered emails still receive the generic HTTP success message but no usable code. Production delivery is not demonstrated by localhost capture.
+
+## 5. Happy path and recovery
+
+1. HR signs in with actual delivered OTP; current /me mounts Team.
+2. Enter member name/email, HR role or six granular permissions. Submit opens a native modal showing the target and access; Cancel writes nothing, Confirm saves and sends invitation.
+3. Pending invitee requests OTP with their invited email within seven days; verification activates the account. Non-HR cannot see or call private Team administration.
+4. Refresh Team after another person's first login; open Edit using current version. Confirm permission changes; existing sessions read updated rights on the next request.
+5. HR removes departed member after confirmation. Access is revoked immediately while historical user attribution remains. Rejoin uses a fresh ID/invitation.
+6. Last active HR cannot be removed/demoted; own role/permission changes are rejected. Own name changes are allowed. Conditional self-offboarding clears the UI's old challenge/state.
+
+Recovery controls: resend replaces earlier OTP and consumes the same limits; Reinvite renews only pending invites and invalidates their open codes. On version conflict, refresh and reopen Edit (do not drop expectedVersion or silently merge fields). On SMTP failure the invitation remains saved with visible warning; fix relay and use Reinvite. No salary rewind/approval override, account reactivation endpoint, full payroll run or database reset control exists. [WORKFLOW_RULES.md](WORKFLOW_RULES.md) defines boundaries.
+
+### Department/designation happy path
+
+As HR, open Organization references, choose Departments or Designations, enter a synthetic name, Review reference, inspect the native confirmation and confirm. Cancel must save nothing. Edit supports rename and an active checkbox; deactivation preserves the entry/history, and reactivation retains its ID. Duplicate names ignore case and remain reserved while inactive. For a stale 409, refresh and reopen the edit. Country/currency/FX administration is not available yet; salary bands are deferred. Detailed semantics are in [WORKFLOW_RULES §7](WORKFLOW_RULES.md#7-departmentdesignation-administration--done-for-p4a).
+
+## 6. Stop/restart and troubleshooting
+
+Stop dev command normally; restart after a build when dist/main.js is absent. Stop project-local DB with npm run db:local:stop; restart with db:local:start. Never remove .local/postgres to troubleshoot. Compose service controls are separate. API startup does not run migrations.
+
+| Symptom | Check / safe next action |
+|---|---|
+| ECONNREFUSED 55432 | Start local DB; verify existing .env uses chosen instance; do not reset data |
+| API exits with Invalid configuration | Supply required keys and valid ranges; keep error values redacted |
+| 401 /me | Session expired/revoked, invite/user not eligible or cookie absent; sign in again |
+| 403 mutation | Exact Origin/CSRF/current HR restriction or own permissions; no blanket CORS bypass |
+| HTTPS/Secure cookie mismatch | Explicit development HTTP cookie opt-in; production must stay secure |
+| Generic OTP 202 but no code | Unknown/expired invite, rate limit, SMTP down or delivery invalidation; check sanitized audit/capture |
+| 429 verify | IP auth budget reached; wait for window, do not disable throttle |
+| 409 edit/reinvite/remove | Refresh/reopen latest account; final-manager/system conflicts are intentional |
+| dist/main.js missing | npm run build before dev; watcher is not an initial-build guarantee |
+| Checksum mismatch | Restore applied migration file and add a new migration; never rewrite checksums |
+| Browser port already in use / server disappeared | Stop only owned test processes; run browser suites sequentially with existing configs |
+| /readyz 503 while /healthz 200 | Deliberate incomplete-readiness contract; not a healthy production release |
+
+## 7. API route reference
+
+Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 18 concrete operations:
+
+| ID | Method | Path | Guard / response |
+|---|---|---|---|
+| H01 | GET | /healthz | Public; 200 status ok |
+| H02 | GET | /readyz | Public; 503 schema_not_verified or database_unavailable |
+| A01 | POST | /api/v1/auth/otp/request | Origin + strict email DTO + rate limits; generic 202 |
+| A02 | POST | /api/v1/auth/otp/resend | Same handler/guards as A01; generic 202 |
+| A03 | POST | /api/v1/auth/otp/verify | Origin, strict challenge/code and IP throttle; 200 with cookies, 401 or 429 |
+| A04 | GET | /api/v1/auth/me | Current valid session; 200 identity or 401 |
+| A05 | POST | /api/v1/auth/logout | Origin + bound CSRF/session; 200 or 403 |
+| T01 | GET | /api/v1/team | Current HR session; 20 records/page; 401 or 403 denial |
+| T02 | POST | /api/v1/team | Origin + CSRF + current HR + strict DTO; 201 account/delivery |
+| T03 | PATCH | /api/v1/team/:id | Same + UUID/version/self/continuity checks; 200 |
+| T04 | DELETE | /api/v1/team/:id | Same + version/last-active-HR protection; 200 soft removal |
+| T05 | POST | /api/v1/team/:id/reinvite | Same + INVITED/version check; 200 account/delivery |
+| O01 | GET | /api/v1/organization-references/departments | Current HR; strict offset; 20 rows/page; includes inactive; 401/403 denial |
+| O02 | POST | /api/v1/organization-references/departments | HR + Origin/CSRF + strict name; 201 reference; duplicate 409 |
+| O03 | PATCH | /api/v1/organization-references/departments/:id | Same + UUID/name/isActive/expectedVersion; 200 or stale 409 |
+| O04 | GET | /api/v1/organization-references/designations | Same list guard/shape as O01 |
+| O05 | POST | /api/v1/organization-references/designations | Same creation guard/shape as O02 |
+| O06 | PATCH | /api/v1/organization-references/designations/:id | Same edit/deactivation guard/shape as O03 |
+
+## 8. CI verification
+
+Actual pipeline: [pr-validation.yml](../.github/workflows/pr-validation.yml), windows-latest, 20-minute job, Node 24.15.0, exact PR SHA, contents-read token, pinned actions, allowed prefix and no stored checkout credentials. From app root, in order:
+
+~~~powershell
+npm.cmd ci --ignore-scripts --no-fund --no-audit
+npm.cmd run db:local:start
+npm.cmd run verify:database
+npm.cmd run test:authentication
+npm.cmd run test:team
+npm.cmd run test:references
+npm.cmd run qa:typecheck
+# Run the next two from repository root, as CI does:
+# node acme-salary-app/scripts/test-git-safety.mjs
+# node acme-salary-app/scripts/verify-staged.mjs
+node node_modules/@playwright/test/cli.js install chromium
+npm.cmd run qa:e2e -- e2e/foundation.spec.ts
+npm.cmd run test:login
+npm.cmd run db:local:stop
+~~~
+
+verify:database expands to migrations, Prisma generation, lint/type/unit/build, identity checks, country/FX/hold/snapshot checks, approval checks, Prisma adapter and health smoke. test:login builds again and runs SMTP + multi-account auth/team Chromium in one disposable database and reference Chromium in a second disposable database. Do not parallelize browser commands. Full qa:e2e includes explicit unfinished-requirement failures and is not the passing foundation CI slice. Merged PR #5 verification evidence (run 44997876398, job 137132754960): 22 unit tests, 72 existing logical DB checks, 22 team plus 23 reference DB checks, 12 foundation Chromium, 9 auth/team Chromium and 4 reference Chromium; 3/11 pass/fail requirement probes are a separate run, not full-system acceptance. This documentation task did not rerun application tests. See [SMOKE_TESTS.md](SMOKE_TESTS.md), [DEPLOYMENT.md](DEPLOYMENT.md).
