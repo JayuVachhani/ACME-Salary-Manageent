@@ -4,6 +4,15 @@
 
 Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Preserve user work. Use the approved development plan, companion requirements and latest decision addenda; never silently invent critical salary, FX, approval, retention or permission rules.
 
+## Current engineering and verification rules
+
+- Apply the user's supplied full-stack engineering standards: cohesive feature modules, strict TypeScript, thin HTTP/presentation boundaries, centralized transport/errors, focused reusable logic and no speculative infrastructure or business rules.
+- Frontend global state uses Redux Toolkit; RTK Query owns server data/cache/lifecycle/invalidation. Keep UI drafts local. Never put OTP codes, session tokens or other credentials in Redux actions/cache, browser storage or logs. Authentication still follows the approved passwordless cookie-session contract.
+- NestJS uses capability modules, native injected providers and one strict global DTO validation pipeline. Reuse the approved Zod schemas for validation/OpenAPI; preserve transactional session authorization and OTP attempt auditing. Keep local/test-only OpenAPI, middleware, filters and transport guards in their proper boundaries.
+- Implementation comes first. Do not inspect test cases or run tests, lint, typechecks, builds, browser QA, safety scans or other verification until the user explicitly requests verification. Source inspection and dependency setup are implementation work; never describe them as test passes.
+- The user requested pushing the current code on 22 November 2026; this authorizes the required verification, in-scope failure fixes, commits and normal pushes to existing PR branches. Do not merge or self-approve. The implementation-first rule remains the default for future work.
+- While verification is deferred, leave edits uncommitted and unpublished. The existing required pre-commit/pre-push checks still apply before delivery, once verification is authorized. Record the deferred status and preserve historical failures.
+
 ## Git delivery
 
 - Fetch and inspect the remote before starting work. New development branches start from `origin/main` and must begin with `feature/`, `bugfix/` or `chore/`.

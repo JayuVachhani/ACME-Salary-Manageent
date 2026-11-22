@@ -1,5 +1,27 @@
 # ACME Git change ledger
 
+## NestJS publication preparation — 22 November 2026
+
+Existing PR #11 / chore/nestjs-backend-structure. Native DTO/global validation, OpenAPI response contracts, safe HTTP boundaries, typed database results, transaction cleanup and invitation delivery handling are ready for publication. Local lint/types/builds, 27 units, isolated database suites, architecture/OpenAPI/production-doc checks, HTTP health, QA typing, 12 foundation and 22 delivered browser cases passed. Initial FX email-capture timeout passed its isolated group rerun; no timeouts were increased. Indexed scan passed before final documentation refresh; final scan is required before commit. Commit, confirmed push and exact-head GitHub checks will be recorded after they occur. Independent review/user merge remains pending.
+
+## Earlier checkpoint records
+
+## Audit finding fixes — uncommitted — 22 November 2026
+
+Audit remediation checkpoint — 22 November 2026: the ten source-audit findings have implementation changes in the existing React and NestJS working copies. **Implemented, not verified**: no test cases inspected, no tests/lint/typechecks/builds/browser checks/safety scans run, no staging/commit/push/new CI/approval/merge. Published PR checks are historical and do not validate these edits. Preserve unrelated handoff-document-prompt.md. React stays in the primary checkout on chore/react-frontend-architecture; backend stays in .worktrees/nestjs-rules on chore/nestjs-backend-structure. No reset, schema migration or new financial/permission/retention policy is introduced.
+
+This checkout implements pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes. No new commit hash, push result or CI result exists. Required verification and independent review remain pending; preserve PR #10/#11/#12 branches and their published heads. See the current architecture audit for the repair-to-finding mapping.
+
+## Earlier ledger records
+
+## NestJS rules alignment — uncommitted — 22 November 2026
+
+Branch `chore/nestjs-backend-structure` remains at published head `cfbac9ac8b86b3ae6346ce58bc9148a26e1c2320`; isolated checkout `.worktrees/nestjs-rules` preserves primary React changes. Origin fetched before work. Global DTO pipe, schema-based input/output/error API contracts, dedicated request middleware, catch-all safe HTTP filter, explicit APP_ORIGIN CORS and service-owned invitation orchestration implemented; Swagger 12.1.2 pinned, docs local/test only. No business/schema/permission/session rule changes. Dependency metadata/install only (--ignore-scripts --no-audit --no-fund); npm reported host Node24.15.0 versus required>=24.20.0. No tests/lint/type/build/browser/safety checks, staging, commit, push, new CI, approval or merge. New hash: none. Historical CI does not validate current edits. Independent review/publication checks remain pending; PR #10 and PR #12 work preserved.
+
+Exact unchanged published head: `cfbac9ac8b86b3ae6346ce58bc9148a26e1c2320`; [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11). Current source and deferred verification are in acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md inside the NestJS checkout.
+
+## Earlier ledger records
+
 ## Nest backend audit and refactor — 22 November 2026
 
 Fetched origin and started chore/nestjs-backend-structure from origin/main 1e0e65f. Preserved feature/backend-linkage/PR #10 and unrelated handoff-document-prompt.md. Audit confirmed medium hidden-DI/module composition and lifecycle-cleanup findings, repaired with capability modules/providers and ordered shutdown. Source references, script consumers, technical decisions, progress/roadmap and handoff updated. See docs/BACKEND_STRUCTURE_AUDIT.md under acme-salary-app for audit evidence and limitations. Current verification: foundation PASS22 units/lint/types/build; auth/team22/references23/country27/FX23/employees19 PASS; approvals38/rules23/Prisma/health/QA typing PASS. Final lifecycle, browser, commit/push and exact-head CI disposition will be recorded below after verification; no pushed/merged result inferred. No self-approval or merge authorized at this checkpoint.

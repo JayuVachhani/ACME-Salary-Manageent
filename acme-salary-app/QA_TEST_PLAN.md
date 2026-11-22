@@ -1,5 +1,15 @@
 # ACME QA test plan
 
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
+
+## Earlier checkpoint records
+
+Current NestJS audit remediation (22 November 2026): pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
+
+Current NestJS rules increment is implemented but unverified. The user explicitly deferred tests, lint, typechecks, builds, safety scans and browser checks until requested. No checks or new CI ran. Existing pass/failure records below are historical. Global DTO metadata/guard order, malformed OTP audit/throttling, response/error contracts, read-only OpenAPI generation and production route absence require later verification; existing architecture assertions must follow the new global pipeline without suppressing real failures. See acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md.
+
 Date: 21 November 2026. Scope: current local implementation, not a hypothetical completed release.
 
 ## Basis and inventory

@@ -1,10 +1,16 @@
 import { z } from 'zod';
 
 const positiveInteger = (value: number) => z.coerce.number().int().positive().default(value);
+const browserOrigin = z.url().refine(value => {
+  try {
+    const parsed = new URL(value);
+    return ['http:', 'https:'].includes(parsed.protocol) && parsed.origin === value;
+  } catch { return false; }
+}, 'Use an exact HTTP(S) origin without credentials, path, trailing slash, query or fragment');
 const environment = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: positiveInteger(3001),
-  APP_ORIGIN: z.url(),
+  APP_ORIGIN: browserOrigin,
   DATABASE_URL: z.string().regex(/^postgres(?:ql)?:\/\//),
   OTP_HMAC_SECRET: z.string().min(32),
   OTP_TTL_MINUTES: positiveInteger(15).pipe(z.number().max(15)),

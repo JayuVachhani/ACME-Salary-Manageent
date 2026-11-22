@@ -1,3 +1,4 @@
+import { withTransaction } from '../database/transaction.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { CLOCK, FX_STALE_DAYS } from '../config/config.module.js';
 import { randomUUID } from 'node:crypto';
@@ -20,21 +21,8 @@ export class SalaryApprovalService {
   @Inject(Pool) private readonly pool: Pool,
   @Inject(CLOCK) private readonly now: () => Date = () => new Date(),
   @Inject(FX_STALE_DAYS) private readonly maxStaleDays = 7) { }
-  private async transaction<T>(work: (client: PoolClient) => Promise<T>): Promise<T> {
-    const client = await this.pool.connect();
-    try {
-      await client.query('BEGIN');
-      const result = await work(client);
-      await client.query('COMMIT');
-      return result;
-    }
-    catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    }
-    finally {
-      client.release();
-    }
+  private transaction<T>(work: (client: PoolClient) => Promise<T>): Promise<T> {
+    return withTransaction(this.pool, work);
   }
   // actorId is resolved by the future session guard, never accepted from a request body.
   async submit(actorId: string, input: BackdatedRequestInput): Promise<string> {

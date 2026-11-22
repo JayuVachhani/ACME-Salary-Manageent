@@ -1,27 +1,29 @@
 import 'reflect-metadata';
-import { randomUUID } from 'node:crypto';
 import { NestFactory } from '@nestjs/core';
-import type { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module.js';
-/** Build the real module graph without listening, for runtime wiring tests. */
+import { APP_CONFIG, type AppConfig } from './config/config.module.js';
+import { configureOpenApi } from './common/http/openapi.js';
+
+/** Composition and HTTP setup only; feature behavior lives in injected providers. */
 export async function createApp() {
   const app = await NestFactory.create(AppModule, { logger: false, abortOnError: false });
-  app.use(helmet());
-  app.use('/api/v1', (_req: Request, res: Response, next: NextFunction) => { res.setHeader('Cache-Control', 'no-store'); next(); });
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    const requestId = randomUUID();
-    res.setHeader('X-Request-Id', requestId);
-    const started = performance.now();
-    res.on('finish', () => {
-      // Allowlist metadata: never log bodies, query strings, cookies or headers.
-      process.stdout.write(JSON.stringify({
-        event: 'http_request', requestId,
-        method: req.method, status: res.statusCode, durationMs: Math.round(performance.now() - started)
-      }) + '\n');
+  try {
+    const config = app.get<AppConfig>(APP_CONFIG);
+    app.use(helmet());
+    app.enableCors({
+      origin: config.APP_ORIGIN,
+      credentials: true,
+      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'X-CSRF-Token'],
+      exposedHeaders: ['X-Request-Id'],
     });
-    next();
-  });
-  app.enableShutdownHooks();
-  return app;
+    // API documentation is local/test only; production exposes no documentation routes.
+    if (config.NODE_ENV !== 'production') configureOpenApi(app);
+    app.enableShutdownHooks();
+    return app;
+  } catch (error) {
+    await app.close();
+    throw error;
+  }
 }

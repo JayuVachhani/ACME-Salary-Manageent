@@ -1,5 +1,9 @@
 # Team invitations and permissions
 
+Current delivery outcome contract (implemented/unverified): sent means delivery succeeded; failed means SMTP failed and the failure audit insert succeeded; failed_audit_unavailable means the invitation transaction committed but both SMTP and failure-audit recording failed. The last case emits only redacted operational telemetry and must never be presented as an unsaved invitation or a persisted audit event. Reinvite remains the explicit recovery action; no automatic account mutation retry. Public response validation uses the shared invitation schema/typed records.
+
+Current unverified architecture alignment: TeamController delegates invitation/reinvitation to native TeamInvitationsService, which awaits the existing TeamService transaction before calling TeamNotifications. Delivery failure still retains the committed invitation and audit/result contract. Global DTO validation and schema-derived OpenAPI replace repeated parameter-pipe bindings; expectedVersion/role/lock rules remain unchanged. No tests or checks ran for this increment.
+
 Implements FR-AUTH-07/08/10/11/14/15/18/19, approved OD-03/04/05 and transactional user audit requirements FR-AUD-01/02. HR Managers may invite other managers or members, assign any of the six approved permissions, modify names/roles/permissions, renew pending invitations and soft-remove access. Business modules still enforce `read` in addition to their specific privileges; this screen does not silently add permissions. HR status implies all privileges.
 
 ## Contracts

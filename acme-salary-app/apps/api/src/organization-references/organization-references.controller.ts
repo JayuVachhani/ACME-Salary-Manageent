@@ -1,21 +1,45 @@
 import { Body, Controller, Get, Inject, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { z } from 'zod';
-import { offsetQuery } from '../common/dto/pagination.dto.js';
 import { RequestSecurity } from '../common/http/request-security.service.js';
 import { MutationRequestGuard } from '../common/http/mutation-request.guard.js';
-import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe.js';
+import { ApiErrors, ApiInput, ApiMutation, ApiResult, ApiSession } from '../common/http/api-contract.decorators.js';
 import { OrganizationReferencesService } from './organization-references.service.js';
-import { referenceKind, referenceCreate, referenceChange, type ReferenceKind } from './dto/organization-references.dto.js';
-const invalid = 'Invalid reference details';
+import { CreateReferenceDto, ChangeReferenceDto, ReferenceKindParamsDto, ReferenceParamsDto, ReferenceOffsetQueryDto } from './dto/organization-references.dto.js';
+import { referenceResponse, referencePageResponse } from './dto/organization-references-response.dto.js';
+
+@ApiTags('Organization references')
+@ApiSession()
+@ApiErrors(400, 401, 403, 409, 500)
 @Controller('/api/v1/organization-references')
 @UseGuards(MutationRequestGuard)
 export class OrganizationReferencesController {
-  constructor(@Inject(RequestSecurity) private readonly security: RequestSecurity, @Inject(OrganizationReferencesService) private readonly service: OrganizationReferencesService) {}
+  constructor(@Inject(RequestSecurity) private readonly security: RequestSecurity,
+    @Inject(OrganizationReferencesService) private readonly service: OrganizationReferencesService) {}
+
   @Get(':kind')
-  list(@Req() req: Request, @Param('kind', new ZodValidationPipe(referenceKind, invalid)) kind: ReferenceKind, @Query(new ZodValidationPipe(offsetQuery, invalid)) query: z.infer<typeof offsetQuery>) { return this.service.list(this.security.token(req), kind, query.offset); }
+  @ApiInput(ReferenceKindParamsDto, 'path')
+  @ApiInput(ReferenceOffsetQueryDto, 'query')
+  @ApiResult(referencePageResponse)
+  list(@Req() req: Request, @Param() params: ReferenceKindParamsDto, @Query() query: ReferenceOffsetQueryDto) {
+    return this.service.list(this.security.token(req), params.kind, query.offset);
+  }
+
   @Post(':kind')
-  create(@Req() req: Request, @Param('kind', new ZodValidationPipe(referenceKind, invalid)) kind: ReferenceKind, @Body(new ZodValidationPipe(referenceCreate, invalid)) body: z.infer<typeof referenceCreate>) { return this.service.create(this.security.token(req), this.security.csrf(req), kind, body); }
+  @ApiMutation()
+  @ApiInput(ReferenceKindParamsDto, 'path')
+  @ApiInput(CreateReferenceDto, 'body')
+  @ApiResult(referenceResponse, 201)
+  create(@Req() req: Request, @Param() params: ReferenceKindParamsDto, @Body() body: CreateReferenceDto) {
+    return this.service.create(this.security.token(req), this.security.csrf(req), params.kind, body);
+  }
+
   @Patch(':kind/:id')
-  change(@Req() req: Request, @Param('kind', new ZodValidationPipe(referenceKind, invalid)) kind: ReferenceKind, @Param('id', new ZodValidationPipe(z.uuid(), invalid)) id: string, @Body(new ZodValidationPipe(referenceChange, invalid)) body: z.infer<typeof referenceChange>) { return this.service.change(this.security.token(req), this.security.csrf(req), kind, id, body); }
+  @ApiMutation()
+  @ApiInput(ReferenceParamsDto, 'path')
+  @ApiInput(ChangeReferenceDto, 'body')
+  @ApiResult(referenceResponse)
+  change(@Req() req: Request, @Param() params: ReferenceParamsDto, @Body() body: ChangeReferenceDto) {
+    return this.service.change(this.security.token(req), this.security.csrf(req), params.kind, params.id, body);
+  }
 }

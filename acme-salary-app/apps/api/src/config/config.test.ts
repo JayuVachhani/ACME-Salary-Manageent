@@ -31,4 +31,10 @@ describe('startup security boundary', () => {
     expect(() => loadConfig({ ...valid, SMTP_USER: 'synthetic' })).toThrow('configured together');
     expect(() => loadConfig({ ...valid, SMTP_PASSWORD: 'synthetic' })).toThrow('configured together');
   });
+  it('rejects URL values that a browser cannot send as an exact Origin', () => {
+    for (const APP_ORIGIN of ['https://acme.test/path', 'https://acme.test/', 'https://acme.test?x=1', 'https://acme.test#x', 'https://user:password@acme.test', 'ftp://acme.test']) {
+      expect(() => loadConfig({ ...valid, APP_ORIGIN })).toThrow('exact HTTP(S) origin');
+    }
+  });
+
 });

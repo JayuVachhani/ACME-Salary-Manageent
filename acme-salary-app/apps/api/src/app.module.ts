@@ -1,6 +1,11 @@
+import { ResponseContractInterceptor } from './common/http/response-contract.interceptor.js';
 import { SalaryModule } from './salary/salary.module.js';
-import { APP_FILTER } from '@nestjs/core';
-import { ApplicationErrorFilter } from './common/filters/application-error.filter.js';
+import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
+import { RequestValidationPipe } from './common/pipes/request-validation.pipe.js';
+import { HttpModule } from './common/http/http.module.js';
+import { RequestContextMiddleware } from './common/http/request-context.middleware.js';
+import type { NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ApplicationLifecycle } from './app-lifecycle.service.js';
 import { MailModule } from './mail/mail.module.js';
 import { Module } from '@nestjs/common';
@@ -14,8 +19,20 @@ import { FxRatesModule } from './fx-rates/fx-rates.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { HealthModule } from './health/health.module.js';
 @Module({
-  providers: [ApplicationLifecycle, { provide: APP_FILTER, useClass: ApplicationErrorFilter }], imports: [SalaryModule, MailModule, ConfigModule, DatabaseModule, AuthModule, TeamModule,
-    OrganizationReferencesModule, CountryCurrencyModule, FxRatesModule, EmployeesModule, HealthModule]
+  imports: [
+    HttpModule, ConfigModule, DatabaseModule, MailModule, AuthModule, TeamModule,
+    OrganizationReferencesModule, CountryCurrencyModule, FxRatesModule,
+    EmployeesModule, HealthModule, SalaryModule,
+  ],
+  providers: [
+    ApplicationLifecycle,
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_PIPE, useClass: RequestValidationPipe },
+    { provide: APP_INTERCEPTOR, useClass: ResponseContractInterceptor },
+  ],
 })
-export class AppModule {
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RequestContextMiddleware).forRoutes('{*splat}');
+  }
 }

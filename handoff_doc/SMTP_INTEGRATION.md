@@ -1,5 +1,7 @@
 # ACME — SMTP integration contract
 
+Unverified invitation failure repair: if SMTP and its failure-audit insert fail after the invitation commits, HTTP still reports the saved account with delivery=failed_audit_unavailable. Operational log event invitation_failure_audit_unavailable excludes account/email/credentials. The result does not claim a persisted delivery-failure audit; explicit Reinvite retries notification through the existing versioned workflow. OTP issuance/delivery invalidation policy is unchanged.
+
 **Purpose:** Describe real OTP/invitation transport, configuration, errors and verification.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

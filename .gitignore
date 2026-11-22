@@ -16,3 +16,6 @@
 *.pfx
 .DS_Store
 Thumbs.db
+
+# Isolated local development checkouts.
+/.worktrees/

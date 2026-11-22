@@ -27,6 +27,8 @@ pool.end = async () => { closed = true; await end(); };
 pool.connect = async () => ({ query: async () => ({ rows: [], rowCount: 0 }), release() {} });
 pool.query = async () => { throw Error('Architecture test must not query a database'); };
 try {
+  assert.equal(pool.listenerCount('error'), 1, 'The shared pool must handle background connection errors');
+  assert.doesNotThrow(() => pool.emit('error', Object.assign(new Error('synthetic background failure'), { code: '08006' })));
   assert.equal(team.auth, auth);
   assert.equal(employees.auth, auth);
   assert.equal(team.pool, pool);
@@ -51,6 +53,11 @@ try {
     assert.equal(response.status, status, url);
     assert.equal(response.headers.get('cache-control'), 'no-store', url);
   }
+  const spec = await fetch(`${base}/api/openapi.json`);
+  assert.equal(spec.status, 200);
+  const document = await spec.json();
+  assert.ok(document.paths['/api/v1/employees']);
+  assert.ok(document.paths['/api/v1/auth/otp/verify'].post.requestBody);
   const malformed = await fetch(`${base}/api/v1/auth/otp/request`, { method: 'POST', headers: { Origin: process.env.APP_ORIGIN, 'Content-Type': 'application/json' }, body: '{}' });
   assert.equal(malformed.status, 400);
   assert.deepEqual(await malformed.json(), { statusCode: 400, message: 'Enter a valid email address' });
@@ -93,3 +100,24 @@ for (const relative of readdirSync(root, { recursive: true }).filter(name => nam
   }
 }
 console.log('Architecture boundaries PASS: native providers, injected services, thin controllers, transport error separation');
+
+// Production must not register the local/test API documentation routes.
+const savedEnvironment = { NODE_ENV: process.env.NODE_ENV, APP_ORIGIN: process.env.APP_ORIGIN, DEV_INSECURE_COOKIES: process.env.DEV_INSECURE_COOKIES };
+let production;
+try {
+  process.env.NODE_ENV = 'production';
+  process.env.APP_ORIGIN = 'https://acme.test';
+  process.env.DEV_INSECURE_COOKIES = 'false';
+  production = await createApp();
+  await production.listen(0, '127.0.0.1');
+  const base = await production.getUrl();
+  for (const path of ['/api/docs', '/api/openapi.json', '/api/openapi.yaml']) {
+    assert.equal((await fetch(`${base}${path}`)).status, 404, `Production must omit ${path}`);
+  }
+  console.log('Production documentation isolation PASS: UI/JSON/YAML routes absent');
+} finally {
+  await production?.close();
+  for (const [key, value] of Object.entries(savedEnvironment)) {
+    if (value === undefined) delete process.env[key]; else process.env[key] = value;
+  }
+}

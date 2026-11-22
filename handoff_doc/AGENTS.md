@@ -1,6 +1,14 @@
 # ACME handoff â€” start here
 
-Current architecture (22 November2026): The backend conversion now uses native @Injectable services registered directly in feature modules, feature DTO folders, shared ZodValidationPipe/RequestSecurity, ApplicationErrorFilter, MailService and composition-root lifecycle cleanup. AuthService owns OTP orchestration; TeamNotifications owns post-commit notifications; HealthService owns readiness. No controller imports pg or constructs services. Only config values and the external pool use factory providers. Internal SalaryModule registers the approval service without an HTTP controller. SQL transaction/authorization safeguards and business contracts remain unchanged. Earlier first-pass factory-provider descriptions below are historical and superseded by this checkpoint.
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
+
+## Earlier checkpoint records
+
+Current NestJS audit remediation (22 November 2026): pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
+
+NestJS rules alignment (22 November 2026), implemented but unverified: the existing capability modules/native injectable services remain. Concrete request DTO classes feed one APP_PIPE RequestValidationPipe and schema-derived OpenAPI input contracts. All delivered controllers use this path; the old per-parameter ZodValidationPipe is removed. OTP verification alone defers parsing to AuthService to preserve malformed-attempt throttling/audit. APP_FILTER HttpExceptionFilter handles application/framework/unknown failures with a safe 5xx fallback and preserves readiness's intentional 503 body. RequestContextMiddleware owns correlation/logging/no-store; CORS is limited to configured APP_ORIGIN. Development/test-only /api/docs, /api/openapi.json and /api/openapi.yaml document delivered routes using Swagger 12.1.2. No financial/schema/permission/session policy changes. No tests, lint, typechecks, builds, safety scans or browser checks ran for this increment, per user instruction. Changes remain uncommitted/unpublished; historical passes do not validate this working tree.
 
 **Purpose:** Onboard developers and coding agents without inventing functionality.
 
@@ -36,8 +44,9 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 
 ### Backend
 
-- NestJS 12 ESM/Node16 module resolution, TypeScript 6 strict checks, Zod 4 strict DTOs, pg parameterized SQL. UUIDs are strings; money is decimal text/Decimal, not JavaScript floating-point arithmetic.
+- NestJS 12 ESM/Node16 module resolution, TypeScript 6 strict checks, Zod 4 strict DTO classes/global APP_PIPE, Swagger 12.1.2 local/test reference, pg parameterized SQL. UUIDs are strings; money is decimal text/Decimal, not JavaScript floating-point arithmetic.
 - There is no Passport/JWT/session AuthGuard/@Roles implementation. MutationRequestGuard enforces Origin/CSRF transport preconditions, not session authorization. Feature modules register controllers and native injectable class providers; DatabaseModule owns the shared pool and AuthModule exports one AuthenticationService. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
+- Follow root implementation-first rules: do not inspect test cases or run verification until requested; do not commit/push unverified edits. Global DTO schemas remain the single validation authority; Malformed OTP verification must reach attempt accounting and rejection audit before HTTP rejection.
 - Match current identity/session lock order and team advisory lock. Always commit/rollback/release; failed OTP attempts must commit. Notifications run after database commit.
 - SQL migrations are forward-only/checksummed. Prisma is an introspected client/schema, not a replacement for triggers/checks. Never use prisma db push.
 - Internal SalaryApprovalService/readSalarySnapshot are not HTTP endpoints. Employee linkage is incomplete; do not expose internal actor-parameter services directly.

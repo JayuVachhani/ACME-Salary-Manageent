@@ -1,5 +1,23 @@
 # Technical decision index
 
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
+
+## Earlier checkpoint records
+
+Current NestJS audit remediation (22 November 2026): pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
+
+## Current NestJS rules alignment — 22 November 2026
+
+NestJS rules alignment (22 November 2026), implemented but unverified: the existing capability modules/native injectable services remain. Concrete request DTO classes feed one APP_PIPE RequestValidationPipe and schema-derived OpenAPI input contracts. All delivered controllers use this path; the old per-parameter ZodValidationPipe is removed. OTP verification alone defers parsing to AuthService to preserve malformed-attempt throttling/audit. APP_FILTER HttpExceptionFilter handles application/framework/unknown failures with a safe 5xx fallback and preserves readiness's intentional 503 body. RequestContextMiddleware owns correlation/logging/no-store; CORS is limited to configured APP_ORIGIN. Development/test-only /api/docs, /api/openapi.json and /api/openapi.yaml document delivered routes using Swagger 12.1.2. No financial/schema/permission/session policy changes. No tests, lint, typechecks, builds, safety scans or browser checks ran for this increment, per user instruction. Changes remain uncommitted/unpublished; historical passes do not validate this working tree.
+
+TeamInvitationsService owns post-commit invitation orchestration; controllers only adapt HTTP and delegate. Preserve direct TeamService transaction contracts and TeamNotifications failure accounting.
+
+Keep one validation authority: existing strict Zod schemas now provide concrete runtime DTO classes, global APP_PIPE validation and OpenAPI input contracts. Do not add a second class-validator model or a no-op ValidationPipe merely for naming. Preserve transaction-bound session/permission checks and OTP malformed-attempt audit semantics. Shared middleware owns protocol preprocessing; one exception filter owns final HTTP mapping. Response DTO schemas document existing projections without adding response fields. Swagger is local/test only with no interactive submissions or persisted credentials. No JWT/password/queue/cache conversion or new business rule is authorized by generic conditional guidance. See BACKEND_STRUCTURE_AUDIT.md for source ownership and deferred checks.
+
+## Historical decisions — superseded where noted above
+
 Authoritative decisions are recorded in [DECISIONS.md](DECISIONS.md), including ADR-002 (21 November 2026).
 
 ## Implementation choices

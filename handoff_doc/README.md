@@ -1,5 +1,9 @@
 # ACME — setup, run and operations
 
+Backend implementation checkpoint (unverified): existing dependency setup is unchanged. Use exact APP_ORIGIN without trailing slash/path. Pool error/transaction rollback handling and response-schema validation are now centralized; see audit mapping and delivery outcome details in TEAM_MODULE/SMTP_INTEGRATION. No tests/build/type/lint/safety checks ran.
+
+Backend rules increment: implemented/unverified in the isolated NestJS worktree. After normal local startup, API reference is available only in development/test at `/api/docs`, `/api/openapi.json`, `/api/openapi.yaml`. Production does not register them. No test/build/type/lint/safety/browser command was run; runbook commands below remain deferred until requested. See acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md.
+
 **Purpose:** Run the delivered application and its verification gates safely.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

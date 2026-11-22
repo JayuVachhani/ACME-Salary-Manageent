@@ -25,7 +25,7 @@ write means create, edit means modify, delete means soft-remove. Business writes
 
 | Function / dependency | Actual allowed scope |
 |---|---|
-| authController origin() | Exact APP_ORIGIN on auth POSTs; no blanket CORS enablement |
+| authController origin() | Exact APP_ORIGIN on auth POSTs; explicit CORS allows only APP_ORIGIN and does not replace Origin/CSRF/session authorization |
 | AuthenticationService.authenticate / authenticateWithin | ACTIVE non-system user, valid hashed cookie session, nonrevoked/unexpired; optional bound CSRF comparison |
 | TeamService.run | Same-transaction current HR; global team lock; bound CSRF for mutations; sets trusted DB actor locally |
 | protect_team_identity | Current trusted HR context; no own role/permission changes, no system mutation/permanent delete, last active HR retained |
