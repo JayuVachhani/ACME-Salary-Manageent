@@ -26,7 +26,7 @@ describe('same-origin API transport', () => {
       .mockResolvedValueOnce(new Response('{"message":{"internal":"detail"}}', { status: 503 }));
     vi.stubGlobal('fetch', fetcher);
     await expect(requestJson('/api/v1/employees', { errorMessage: 'Employee request failed' })).rejects.toThrow('Employee request failed');
-    await expect(requestJson('/api/v1/employees')).rejects.toThrow('Request failed. Please try again.');
+    await expect(requestJson('/api/v1/employees')).rejects.toThrow('Service unavailable. Please try again.');
   });
 
   it('forwards cancellation and does not attach CSRF headers to reads', async () => {

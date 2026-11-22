@@ -1,1 +1,1 @@
-export type Identity = { id: string; isHrManager: boolean; permissions: string[] };
+export type { Identity } from '../../shared/api/base-api';

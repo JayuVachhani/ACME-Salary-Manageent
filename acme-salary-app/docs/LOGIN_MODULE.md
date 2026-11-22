@@ -1,5 +1,7 @@
 # Email OTP login increment
 
+Current UI controls (implemented/unverified): Login uses shared Form/TextInput/Button, linked OTP help text, structured local feedback and separate session-query errors. Successful sign-in announces one toast; OTP codes remain local and do not enter Redux actions/cache. The server auth policy is unchanged.
+
 Scope: SMTP delivery, login/resend/logout, current-session endpoint, first-manager bootstrap, abuse limits and browser sign-in form. Team invitation/permission administration and all compensation screens remain separate work. This increment does not establish production readiness.
 
 ## API and security
@@ -26,4 +28,4 @@ Scope: SMTP delivery, login/resend/logout, current-session endpoint, first-manag
 
 ## React ownership and session restoration — 22 November2026
 
-features/auth owns the typed auth API, identity contract, SessionProvider, useLogin workflow and Login view. app/workspace.tsx composes business features from the provider identity; Login imports none of them. Mount always checks /me, including a live HttpOnly session without a readable CSRF hint. A401 means anonymous; other failures are shown. Successful verification refreshes identity once; no second signedIn-driven fetch is used. CSRF remains required by the server for logout/mutations; this restoration fix does not weaken that requirement. AUTH-E2E-01 now tests no-hint restoration and one completed /me response, then restores the synthetic hint before checking normal logout.
+Current implementation, unverified: features/auth owns the local OTP API/workflow, shared identity contract re-export, useSession facade and Login view. Identity is RTK Query-owned in shared/api/base-api.ts; AppProviders supplies Redux. OTP codes are never dispatched or cached in Redux. app/workspace.tsx composes business features from query-owned identity; Login imports none of them. Mount always checks /me, including a live HttpOnly session without a readable CSRF hint. A401 means anonymous; other failures are shown. Successful verification refreshes identity once; no second signedIn-driven fetch is used. CSRF remains required by the server for logout/mutations; this restoration fix does not weaken that requirement. Historical PR #12 verification: AUTH-E2E-01 tested no-hint restoration and one completed /me response, then restores the synthetic hint before checking normal logout.

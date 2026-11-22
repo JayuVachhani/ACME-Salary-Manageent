@@ -1,17 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useResource } from '../../shared/hooks/use-resource';
-import { employeesApi } from './api';
+import { queryState } from '../../shared/api/query-state';
+import { useEmployeesQuery, useEmployeeFiltersQuery } from './api';
 import { initialFilters } from './types';
-import type { Employee, EmployeeQuery, Filters } from './types';
+import type { EmployeeQuery } from './types';
 export function useEmployees() {
   const [draft, setDraft] = useState(initialFilters), [query, changeQuery] = useState<EmployeeQuery>({ ...initialFilters, page: 1 });
   const [selectedId, setSelectedId] = useState('');
-  const loader = useCallback(async (signal: AbortSignal) => {
-    const [rows, filters] = await Promise.all([employeesApi.list(query, signal), employeesApi.filters(signal)]);
-    return { ...rows, filters };
-  }, [query]);
-  const resource = useResource(loader, { items: [] as Employee[], total: 0, filters: { countries: [], departments: [] } as Filters });
+  const rowsQuery = queryState(useEmployeesQuery(query), { items: [], total: 0 });
+  const filtersQuery = queryState(useEmployeeFiltersQuery(), { countries: [], departments: [] });
+  const resource = { data: { ...rowsQuery.data, filters: filtersQuery.data },
+    error: rowsQuery.error || filtersQuery.error, loading: rowsQuery.loading || filtersQuery.loading,
+    refresh: () => Promise.all([rowsQuery.refresh(), filtersQuery.refresh()]) };
   function setQuery(value: EmployeeQuery) { setSelectedId(''); changeQuery(value); }
   function applyFilters(event: FormEvent) { event.preventDefault(); setQuery({ ...draft, page: 1 }); }
   function clearFilters() { setDraft(initialFilters); setQuery({ ...initialFilters, page: 1 }); }

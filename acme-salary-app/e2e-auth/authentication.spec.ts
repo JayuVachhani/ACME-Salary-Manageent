@@ -42,7 +42,7 @@ test('AUTH-E2E-01 real SMTP OTP login, HttpOnly session, CSRF logout and revocat
   await page.screenshot({ path: 'qa-artifacts/login/signed-in.png', fullPage: true });
   expect((await page.request.post('/api/v1/auth/logout', { headers: { Origin: origin }, data: {} })).status()).toBe(403);
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page.getByRole('alert')).toHaveText('Signed out.');
+  await expect(page.getByLabel('Notifications').getByText('Signed out.', {exact:true})).toBeVisible();
   expect((await page.request.get('/api/v1/auth/me')).status()).toBe(401);
 });
 test('AUTH-E2E-02 origin, DTO, generic responses and unknown-user verification', async ({ request }) => {

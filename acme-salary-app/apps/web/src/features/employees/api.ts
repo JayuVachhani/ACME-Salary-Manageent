@@ -1,7 +1,9 @@
-import { queryString, requestJson } from '../../shared/api/client';
+import { baseApi } from '../../shared/api/base-api';
+import { queryString } from '../../shared/api/client';
 import type { Employee, EmployeeQuery, Filters } from './types';
-export const employeesApi = {
-  list: (query: EmployeeQuery, signal: AbortSignal) => requestJson<{ items: Employee[]; total: number }>(`/api/v1/employees?${queryString(query)}`, { signal, errorMessage: 'Employee request failed' }),
-  filters: (signal: AbortSignal) => requestJson<Filters>('/api/v1/employees/filters', { signal, errorMessage: 'Employee request failed' }),
-  detail: (id: string, signal: AbortSignal) => requestJson<Employee>(`/api/v1/employees/${id}`, { signal, errorMessage: 'Employee request failed' }),
-};
+export const employeesApi = baseApi.injectEndpoints({ endpoints: build => ({
+  employees: build.query<{ items: Employee[]; total: number }, EmployeeQuery>({ query: query => ({ path: `/api/v1/employees?${queryString(query)}` }), providesTags: ['Employees'] }),
+  employeeFilters: build.query<Filters, void>({ query: () => ({ path: '/api/v1/employees/filters' }), providesTags: ['EmployeeFilters'] }),
+  employee: build.query<Employee, string>({ query: id => ({ path: `/api/v1/employees/${id}` }), providesTags: ['Employees'] }),
+}) });
+export const { useEmployeesQuery, useEmployeeFiltersQuery, useLazyEmployeeQuery } = employeesApi;

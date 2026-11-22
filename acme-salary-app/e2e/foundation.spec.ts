@@ -6,7 +6,7 @@ test('UI-001 foundation renders against the actual API', async ({ page }, info) 
   await expect(page).toHaveTitle('ACME Salary Management');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('API is online');
-  await expect(page.getByText('No employee data is displayed.')).toBeVisible();
+  await expect(page.getByText('Sign in to access your permitted workspace.')).toBeVisible();
   await info.attach('inventory', { body: JSON.stringify(await page.evaluate(() => ({
     buttons: [...document.querySelectorAll('button')].map(e=>e.textContent),
     forms: document.forms.length, inputs: document.querySelectorAll('input').length,

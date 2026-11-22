@@ -20,7 +20,7 @@ async function login(page:Page,email='refs.hr@acme.test'){
   await expect(page.getByRole('button',{name:'Sign out',exact:true})).toBeVisible();
 }
 const section=(page:Page)=>page.getByRole('region',{name:'Organization references'});
-async function confirm(page:Page){await page.getByRole('button',{name:'Confirm reference change',exact:true}).click();await expect(section(page).getByRole('alert')).toHaveText('Reference saved.');}
+async function confirm(page:Page){await page.getByRole('button',{name:'Confirm reference change',exact:true}).click();await expect(page.getByLabel('Notifications').getByText('Reference saved.', {exact:true})).toBeVisible();}
 
 test('REF-E2E-01 confirmed creation, duplicate rejection, rename, deactivate and reactivate for both lists',async({page})=>{
   await login(page);const area=section(page);
@@ -31,7 +31,7 @@ test('REF-E2E-01 confirmed creation, duplicate rejection, rename, deactivate and
     expect((await pool.query(`SELECT count(*)::int n FROM ${kind.toLowerCase()} WHERE name=$1`,[`Synthetic ${kind}`])).rows[0].n).toBe(0);
     await area.getByRole('button',{name:'Review reference',exact:true}).click();await confirm(page);
     await area.getByLabel('Reference name').fill(`synthetic ${kind.toLowerCase()}`);await area.getByRole('button',{name:'Review reference',exact:true}).click();
-    await page.getByRole('button',{name:'Confirm reference change',exact:true}).click();await expect(area.getByRole('alert')).toContainText('already exists');
+    await page.getByRole('button',{name:'Confirm reference change',exact:true}).click();await expect(page.getByLabel('Notifications')).toContainText('already exists');
     await area.getByRole('button',{name:`Edit reference Synthetic ${kind}`,exact:true}).click();await area.getByLabel('Reference name').fill(`Renamed ${kind}`);
     await area.getByLabel('Reference active').uncheck();await area.getByRole('button',{name:'Review reference',exact:true}).click();await confirm(page);
     await expect(area.getByRole('row').filter({hasText:`Renamed ${kind}`})).toContainText('Inactive');
@@ -64,7 +64,7 @@ test('REF-E2E-03 loading, error, whitespace validation, responsive layout and ac
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));await login(page);const area=section(page);
   await area.getByLabel('Reference name').fill('   ');await area.getByRole('button',{name:'Review reference',exact:true}).click();await expect(area.getByRole('alert')).toHaveText('Enter a reference name.');
   await page.route('**/api/v1/organization-references/departments?offset=*',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({message:'Synthetic reference outage'})}));
-  await area.getByRole('button',{name:'Refresh references'}).click();await expect(area.getByRole('alert')).toHaveText('Synthetic reference outage');
+  await area.getByRole('button',{name:'Refresh references'}).click();await expect(area.getByRole('alert')).toHaveText('Service unavailable. Please try again.');
   await page.unroute('**/api/v1/organization-references/departments?offset=*');
   await area.getByRole('button',{name:'Refresh references'}).click();await expect(area.getByRole('table',{name:'Departments',exact:true})).toBeVisible();
   await page.setViewportSize({width:375,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);

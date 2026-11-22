@@ -1,5 +1,35 @@
 # ACME Git change ledger
 
+## React publication preparation — 22 November 2026
+
+Existing PR #12 / chore/react-frontend-architecture. Redux Toolkit/RTK Query conversion, shared accessible controls/tables/pagination/states, typed notifications, dependency invalidation and post-login identity race fix are complete for delivered features. Local lint/types/builds, 31 units, QA typing, architecture71/7549, isolated database suites, 12 foundation and all22 delivered Chromium cases passed. Initial reference race was fixed and covered; a later cold login request stalled, then the complete serial browser run passed unchanged. No timeouts/protections weakened. Final indexed scan and publication are pending below. PR #11 backend final57830fb passed exact-head GitHub run45044639345. No self-approval or merge; unrelated handoff-document-prompt.md remains excluded.
+
+## Earlier checkpoint records
+
+## Audit finding fixes — uncommitted — 22 November 2026
+
+Audit remediation checkpoint — 22 November 2026: the ten source-audit findings have implementation changes in the existing React and NestJS working copies. **Implemented, not verified**: no test cases inspected, no tests/lint/typechecks/builds/browser checks/safety scans run, no staging/commit/push/new CI/approval/merge. Published PR checks are historical and do not validate these edits. Preserve unrelated handoff-document-prompt.md. React stays in the primary checkout on chore/react-frontend-architecture; backend stays in .worktrees/nestjs-rules on chore/nestjs-backend-structure. No reset, schema migration or new financial/permission/retention policy is introduced.
+
+This checkout implements shared controls/tables/pagination/request states, employee dependency invalidation, typed notification feedback and accurate delivered-scope copy. No new commit hash, push result or CI result exists. Required verification and independent review remain pending; preserve PR #10/#11/#12 branches and their published heads. See the current architecture audit for the repair-to-finding mapping.
+
+## Earlier ledger records
+
+## NestJS rules alignment — uncommitted — 22 November 2026
+
+Branch `chore/nestjs-backend-structure` remains at published head `cfbac9ac8b86b3ae6346ce58bc9148a26e1c2320`; isolated checkout `.worktrees/nestjs-rules` preserves primary React changes. Origin fetched before work. Global DTO pipe, schema-based input/output/error API contracts, dedicated request middleware, catch-all safe HTTP filter, explicit APP_ORIGIN CORS and service-owned invitation orchestration implemented; Swagger 12.1.2 pinned, docs local/test only. No business/schema/permission/session rule changes. Dependency metadata/install only (--ignore-scripts --no-audit --no-fund); npm reported host Node24.15.0 versus required>=24.20.0. No tests/lint/type/build/browser/safety checks, staging, commit, push, new CI, approval or merge. New hash: none. Historical CI does not validate current edits. Independent review/publication checks remain pending; PR #10 and PR #12 work preserved.
+
+Exact unchanged published head: `cfbac9ac8b86b3ae6346ce58bc9148a26e1c2320`; [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11). Current source and deferred verification are in acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md inside the NestJS checkout.
+
+## Earlier ledger records
+
+## Rules alignment — uncommitted working tree, 22 November 2026
+
+Rules alignment in progress (22 November 2026): frontend global state now uses Redux Toolkit 2.15.0 / React Redux 9.3.1 and one RTK Query API/cache. Feature-owned endpoints replace custom remote-state effects; server identity is read through useSession from the query cache. Session Context and useResource are removed. Forms, confirmation snapshots and OTP inputs stay local; OTP credentials bypass Redux actions/cache through the same shared secure transport. AppProviders owns store/error-boundary/notification composition; the authenticated workspace is lazy loaded with Suspense. Logout/self-removal/established-session 401 clears cached protected data; 403 refreshes current identity. No API/schema/financial rule changes. **Uncommitted and unverified: no tests, lint, typechecks, builds, safety scans or browser checks were run for this increment, at the user's request.** Existing PR #12 checks cover its published head only; PR #11 backend and PR #10 linkage remain separate pending work.
+
+Branch: `chore/react-frontend-architecture`; published baseline remains `7d6bc1555d2cbd241c86e1f1459bca25c47cd31f` / [PR #12](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/12). Origin fetched; main remains `1e0e65f`. Dependency metadata lookup/install only (`--ignore-scripts --no-audit --no-fund`); npm warned host Node is 24.15.0 versus required >=24.20.0. No tests/verification/safety scans, staging, commit, push, new CI, approval or merge for this increment. New hash: none. Existing exact-head CI run45033885312 is historical and does not validate these edits. Required checks and independent review remain pending. Unrelated `handoff-document-prompt.md` preserved.
+
+## Historical published React architecture record
+
 ## React frontend architecture — 22 November 2026
 
 Fetched approved origin and started chore/react-frontend-architecture from main1e0e65f, preserving chore/nestjs-backend-structure/PR #11, feature/backend-linkage/PR #10 and unrelated handoff-document-prompt.md. Audit identified mixed app/auth/feature ownership, repeated untyped transport and inconsistent asynchronous resource lifetimes. Full feature conversion is implemented; foundation lint/types/build and28unit tests passed, React architecture54source/6008checks and QA typing passed. Updated Chromium and final publication checks are in progress; no push/CI/approval/merge result inferred. Scope is frontend architecture and related lifecycle fixes, not full salary/reporting delivery or production acceptance.

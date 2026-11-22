@@ -1,5 +1,9 @@
 # ACME — setup, run and operations
 
+UI implementation checkpoint (unverified): all delivered forms use shared native-backed controls; tables/pagination/request states and typed notifications are centralized. Native labels/constraints and business confirmation snapshots remain feature-owned at their call sites. No additional install/setup command is required; no execution checks ran.
+
+Current increment: Redux Toolkit/RTK Query, session-cache lifecycle, lazy workspace and error-boundary changes are implemented but unverified (22 November 2026). The user requested implementation first and checks only when explicitly requested. No tests, lint, typechecks, builds, browser QA or safety scans ran for this increment; existing pass records below are historical and do not cover the working tree. Do not commit/push until required verification is authorized and completed. See FRONTEND_ARCHITECTURE_AUDIT.md in acme-salary-app/docs for the current source map.
+
 **Purpose:** Run the delivered application and its verification gates safely.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

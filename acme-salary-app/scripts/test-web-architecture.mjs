@@ -43,6 +43,12 @@ for (const name of files) {
     if (ts.isPropertyAccessExpression(node) || ts.isIdentifier(node)) {
       check(!/^(?:localStorage|sessionStorage|window\.localStorage|window\.sessionStorage)$/.test(node.getText(ast)), `${name}: session credentials must not be persisted in browser storage`);
     }
+    if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const tag = node.tagName.getText(ast);
+      if (['input', 'select', 'textarea', 'button', 'form', 'table'].includes(tag)) {
+        check(name.startsWith('shared/ui/'), `${name}: reusable controls/table primitives belong in shared UI`);
+      }
+    }
     if (ts.isJsxOpeningElement(node) && node.tagName.getText(ast) === 'dialog') check(name === 'shared/ui/confirmation-dialog.tsx', `${name}: native dialog lifecycle must be shared`);
     ts.forEachChild(node, visit);
   }

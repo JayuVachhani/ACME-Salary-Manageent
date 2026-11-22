@@ -37,7 +37,7 @@ export async function requestJson<T>(path: string, options: RequestOptions = {})
   try { data = await response.json(); }
   catch { throw new ApiError(options.errorMessage ?? 'Service unavailable. Please try again.', response.status); }
   if (!response.ok) {
-    const message = data && typeof data === 'object' && 'message' in data && typeof data.message === 'string'
+    const message = response.status >= 500 ? 'Service unavailable. Please try again.' : data && typeof data === 'object' && 'message' in data && typeof data.message === 'string'
       ? data.message : options.errorMessage ?? 'Request failed. Please try again.';
     throw new ApiError(message, response.status);
   }
@@ -54,5 +54,9 @@ export function queryString(values: Record<string, string | number | undefined>)
 }
 
 export function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+  if (error instanceof TypeError) return fallback;
+  if (error instanceof DOMException && error.name === 'TimeoutError') return 'Service unavailable. Please try again.';
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') return error.message;
+  return fallback;
 }

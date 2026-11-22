@@ -1,5 +1,54 @@
 # React frontend architecture audit and conversion
 
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this React branch: lint, workspace typechecks/builds, 31 unit tests, QA typing, architecture gate (71 source files / 7,549 assertions), isolated PostgreSQL integrity/authorization/concurrency suites, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The initial reference run exposed a startup identity/OTP race; fresh post-login identity retrieval now cancels and settles the older anonymous query, with a regression test. A later cold login request stalled; the complete 22-case serial rerun passed without relaxed timeouts or authorization checks. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md. No self-approval, merge or production deployment; broader unmet/blocked requirements remain open.
+
+Setup history: incomplete dependencies and a Windows PostgreSQL DLL lock required a clean dependency reinstall and preserved local-instance restart; Prisma was regenerated. An overlapping disposable-database migration hit shared-role contention and the database suites passed serially. No existing database was reset. Historical deferred-check snapshots below do not describe this publication checkpoint.
+
+## Earlier checkpoint records
+
+## Current audit remediation — implementation only
+
+Audit remediation checkpoint — 22 November 2026: the ten source-audit findings have implementation changes in the existing React and NestJS working copies. **Implemented, not verified**: no test cases inspected, no tests/lint/typechecks/builds/browser checks/safety scans run, no staging/commit/push/new CI/approval/merge. Published PR checks are historical and do not validate these edits. Preserve unrelated handoff-document-prompt.md. React stays in the primary checkout on chore/react-frontend-architecture; backend stays in .worktrees/nestjs-rules on chore/nestjs-backend-structure. No reset, schema migration or new financial/permission/retention policy is introduced.
+
+| Audit ID | Implementation | Status |
+|---|---|---|
+| ARCH-001 React controls | All delivered feature form inputs/selects/textareas/checkboxes/forms use shared form-controls.tsx; Button owns button defaults/busy/variants. Native tags remain inside the shared primitives. Labels, native constraints, IDs and change handlers are preserved; optional hint/error ARIA links are centralized | Implemented, unverified |
+| RUN-002 cache dependencies | Employees list/profile provide Employees tags; reference/country writes invalidate Employees and EmployeeFilters after success. Failed mutations retain form concurrency versions | Implemented, unverified |
+| RUN-003 feedback masking | Separate local ActionFeedback and query RequestState; query failures render independently, prevent false empty-state rendering and do not compete with retained success text. Explicit refresh errors have one inline owner | Implemented, unverified |
+| ARCH-002 notifications | Bounded/deduplicated typed success/error/info/warning queue, individual dismissal and persistent assertive/polite regions. Significant actions announce once; local validation/instructions stay inline | Implemented, unverified |
+| RUN-007 stale copy | Foundation copy now identifies delivered employee/admin scope and unfinished salary/approval/reporting scope; signed-in status no longer says employee data is absent | Implemented, unverified |
+
+Shared `DataTable` supplies semantic captions/head/body and keyboard-focusable horizontal scrolling for all six tables. `Pagination`/`OffsetPagination` serve all five paged lists; CurrencySelect serves country defaults and FX pairs, retaining unavailable-current selections. `RequestState`, `ErrorState`, `LoadingState`, `EmptyState` and `ActionFeedback` separate query and action lifecycles. `shared/format/date.ts` owns invitation timestamp date display. Field state/business handlers remain feature-local; no generic business form engine, table query engine or extra runtime package is added.
+
+The additive backend delivery value `failed_audit_unavailable` is represented by the React Delivery union. Team feedback distinguishes sent, delivery failed, and delivery plus audit recording failed, while making clear the invitation was saved. Existing sent/failed responses remain supported by this branch. Cross-branch integration and real behavior are still pending.
+
+Later verification must cover every control label/constraint/disabled state, native date/numeric/checkbox behavior, dialog keyboard focus, mobile scrolling, pagination labels, typed notifications/deduplication, employee label invalidation and successful-save/failed-refresh scenarios. Existing architecture assertions may need adapting to shared UI hooks/components; do not exempt real boundary violations or relabel historical checks as current passes.
+
+### Earlier checkpoint — superseded where it describes removed UI/feedback behavior
+
+
+## Current rules alignment — implemented, verification deferred
+
+Rules alignment in progress (22 November 2026): frontend global state now uses Redux Toolkit 2.15.0 / React Redux 9.3.1 and one RTK Query API/cache. Feature-owned endpoints replace custom remote-state effects; server identity is read through useSession from the query cache. Session Context and useResource are removed. Forms, confirmation snapshots and OTP inputs stay local; OTP credentials bypass Redux actions/cache through the same shared secure transport. AppProviders owns store/error-boundary/notification composition; the authenticated workspace is lazy loaded with Suspense. Logout/self-removal/established-session 401 clears cached protected data; 403 refreshes current identity. No API/schema/financial rule changes. **Uncommitted and unverified: no tests, lint, typechecks, builds, safety scans or browser checks were run for this increment, at the user's request.** Existing PR #12 checks cover its published head only; PR #11 backend and PR #10 linkage remain separate pending work.
+
+- `app/providers.tsx` composes the Redux Provider, accessible notification region and render error boundary. `app/app.tsx` loads Workspace only after server identity is available; Suspense covers bundle loading. Existing single-page workflows do not require an invented route hierarchy.
+- `shared/state/store.ts` wires the API reducer/middleware, focus/reconnect listeners and session lifecycle listeners. `shared/state/hooks.ts` provides typed hooks; `notifications.ts` owns global feedback. Redux DevTools and browser persistence are disabled to avoid retaining employee records outside the live in-memory UI.
+- `shared/api/base-api.ts` provides the common transport adapter, serializable safe errors, health/session reads and protected-data tags. Feature `api.ts` modules inject typed list/detail/mutation endpoints. Success invalidates relevant tags; conflicts and failed mutations do not silently replace form versions. Country/FX share the currency query, and employee filters have their own query/tag.
+- `shared/api/query-state.ts` only maps query results into view models; it owns no state/effect/cache. `run-request.ts` connects local action cancellation to RTK Query without serializing AbortSignal. `shared/hooks/use-action.ts` still owns local submission locks/inline feedback, not server data. No parallel `useResource` or session Context remains.
+- OTP request/verify use the same centralized transport directly from the local login workflow. This deliberate security boundary prevents OTP codes entering RTK action arguments/cache; it is not a second cache or HTTP client. Session identity remains query-owned; logout uses a regular RTK mutation and the same session-expiry handling. Cookies/CSRF, response contracts, decimal strings and optimistic versions remain authoritative.
+- Unsubscribed protected results expire immediately; focus/reconnect/mount revalidate active queries. Session loss aborts in-flight requests and clears the API cache before recording anonymous identity. Profile selection cleanup explicitly aborts its selected-ID request. Lookup resolution derives from its RTK query result rather than a second local data copy.
+- Server errors at 5xx use a generic message; network/cancellation/HTTP outcomes share the transport adapter. Authenticated 401 clears session data with one notification; anonymous /me 401 is normal. Forbidden requests keep their feature error and revalidate identity. Render failures show a safe reload fallback; existing inline form feedback remains local instead of generating a toast on every field/list update.
+
+Dependencies were installed with lifecycle scripts/audit disabled. npm reported the host Node 24.15.0 is below the repository's >=24.20.0 requirement; no runtime validation was attempted. Required checks, architecture regression updates if needed, browser behavior and independent review remain pending until authorized. No current increment pass is claimed, and no commit/push/CI was initiated.
+
+Official references used: [RTK Query custom base queries](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries), [feature endpoint injection](https://redux-toolkit.js.org/rtk-query/usage/code-splitting), [cache behavior](https://redux-toolkit.js.org/rtk-query/usage/cache-behavior), [React error boundaries](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary).
+
+## Historical published React conversion — before the new Redux requirement
+
+The following report and pass records describe published PR #12 at `7d6bc1555d2cbd241c86e1f1459bca25c47cd31f`, not the unverified working-tree changes above. References to SessionProvider/useResource/no Redux below are historical implementations that have now been superseded.
+
 22 November2026 (Asia/Calcutta). Scope: the complete implemented apps/web/src, Vite/TypeScript/QA consumers and affected source documentation. Base: origin/main1e0e65f; branch chore/react-frontend-architecture. Read-only source/contract inspection preceded implementation. Verdict: **pass with documented scope limits** after remediation and final verification. This is not full salary/reporting or production acceptance.
 
 ## Baseline and project profile

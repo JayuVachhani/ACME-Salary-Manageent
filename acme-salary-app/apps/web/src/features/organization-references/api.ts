@@ -1,10 +1,10 @@
-import { requestJson } from '../../shared/api/client';
+import { baseApi } from '../../shared/api/base-api';
 import type { Reference, Kind, PendingReference } from './types';
 const root = '/api/v1/organization-references';
-export const referencesApi = {
-  list: (kind: Kind, offset: number, signal?: AbortSignal) => requestJson<{ items: Reference[]; total: number }>(`${root}/${kind}?offset=${offset}`, { signal, errorMessage: 'Reference request failed' }),
-  save: (pending: PendingReference, signal: AbortSignal) => requestJson<Reference>(`${root}/${pending.kind}${pending.editing ? `/${pending.editing.id}` : ''}`, {
-    method: pending.editing ? 'PATCH' : 'POST', signal,
-    body: pending.editing ? { name: pending.name, isActive: pending.isActive, expectedVersion: pending.editing.version } : { name: pending.name },
-  }),
-};
+export const referencesApi = baseApi.injectEndpoints({ endpoints: build => ({
+  references: build.query<{ items: Reference[]; total: number }, { kind: Kind; offset: number }>({ query: ({ kind, offset }) => ({ path: `${root}/${kind}?offset=${offset}` }), providesTags: (_data, _error, { kind }) => [{ type: 'References', id: kind }] }),
+  saveReference: build.mutation<Reference, PendingReference>({ query: pending => ({ path: `${root}/${pending.kind}${pending.editing ? `/${pending.editing.id}` : ''}`,
+    method: pending.editing ? 'PATCH' : 'POST', body: pending.editing ? { name: pending.name, isActive: pending.isActive, expectedVersion: pending.editing.version } : { name: pending.name } }),
+    invalidatesTags: (_data, error, { kind }) => error ? [] : [{ type: 'References', id: kind }, 'EmployeeFilters', 'Employees'] }),
+}) });
+export const { useReferencesQuery, useSaveReferenceMutation } = referencesApi;

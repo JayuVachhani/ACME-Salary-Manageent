@@ -1,12 +1,14 @@
 # ACME Salary Management
 
-Frontend architecture: apps/web/src/main.tsx mounts App; app/ composes the page and server-session feature gates; features/ owns typed APIs, workflow hooks and UI; shared/ owns transport, cancellation and native dialogs. Run `npm run test:web-architecture` for import/ownership/cycle checks. See [frontend audit](docs/FRONTEND_ARCHITECTURE_AUDIT.md) and [technical decisions](docs/TECHNICAL_DECISIONS.md). Existing missing salary/reporting workflows remain incomplete; this structural conversion does not change API/business rules.
+Current React source uses shared accessible controls, Button, CurrencySelect, DataTable, pagination and request-state components. RTK Query employee data invalidates after reference/country changes; typed notifications are separate from inline query errors. All changes are uncommitted/unverified; runbook checks remain deferred until requested.
+
+Frontend architecture: apps/web/src/main.tsx mounts App; app/ composes the page and server-session feature gates; features/ owns typed APIs, workflow hooks and UI; shared/ owns the Redux store, RTK Query API/cache, transport, cancellation, notifications and native dialogs. AppProviders composes the store and render boundary; authenticated Workspace is lazy loaded. Verification is deferred until requested; `npm run test:web-architecture` is a required later import/ownership/cycle gate, not a current pass. See [frontend audit](docs/FRONTEND_ARCHITECTURE_AUDIT.md) and [technical decisions](docs/TECHNICAL_DECISIONS.md). Existing missing salary/reporting workflows remain incomplete; this structural conversion does not change API/business rules.
 
 Fresh local implementation of the approved ACME plan. **Foundation stage, not a completed salary application.** No mock employee statistics, fake authentication or permissive data endpoints are supplied.
 
 ## Requirements
 
-- Node.js 24.15 or newer and npm.
+- Node.js 24.20.0 or newer and npm.
 - Docker Compose for the isolated PostgreSQL and Mailpit services, or equivalent locally supplied services.
 
 ## Project-local PostgreSQL setup (Windows)
