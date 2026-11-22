@@ -20,9 +20,15 @@ describe('startup security boundary', () => {
     expect(() => loadConfig({ ...valid, OTP_HMAC_SECRET: '' })).toThrow('Invalid configuration');
     expect(() => loadConfig({ ...valid, OTP_TTL_MINUTES: '1440' })).toThrow('Invalid configuration');
     expect(() => loadConfig({ ...valid, PORT: '-1' })).toThrow('Invalid configuration');
+    expect(() => loadConfig({ ...valid, SESSION_IDLE_MINUTES: '31' })).toThrow('Invalid configuration');
+    expect(() => loadConfig({ ...valid, SESSION_ABSOLUTE_HOURS: '13' })).toThrow('Invalid configuration');
   });
   it('does not disclose submitted credentials in errors', () => {
     try { loadConfig({ ...valid, DATABASE_URL: 'secret-sensitive-connection' }); }
     catch (error) { expect(String(error)).not.toContain('secret-sensitive-connection'); }
+  });
+  it('requires SMTP credentials as a pair', () => {
+    expect(() => loadConfig({ ...valid, SMTP_USER: 'synthetic' })).toThrow('configured together');
+    expect(() => loadConfig({ ...valid, SMTP_PASSWORD: 'synthetic' })).toThrow('configured together');
   });
 });

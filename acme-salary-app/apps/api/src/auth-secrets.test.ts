@@ -22,5 +22,6 @@ describe('authentication secrets', () => {
     expect(sessionExpired(start, start, new Date(+start + 30 * 60_000))).toBe(true);
     const end = new Date(+start + 12 * 60 * 60_000);
     expect(sessionExpired(start, end, end)).toBe(true);
+    expect(sessionExpired(start, start, new Date(+start + 5 * 60_000), 5, 1)).toBe(true);
   });
 });
