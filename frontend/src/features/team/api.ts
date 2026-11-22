@@ -3,6 +3,36 @@ import type { Account, MemberInput, InvitationResult } from './types';
 const root = '/api/v1/team';
 export const teamApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    linkableEmployees: build.query<
+      {
+        items: { id: string; employee_code: string; first_name: string; last_name: string }[];
+        total: number;
+      },
+      { search: string; page: number }
+    >({
+      query: (q) => ({
+        path: `/api/v1/employees?search=${encodeURIComponent(q.search)}&page=${q.page}&pageSize=25`,
+      }),
+      providesTags: ['Employees'],
+    }),
+    linkMemberEmployee: build.mutation<
+      Account,
+      {
+        id: string;
+        employeeId: string | null;
+        expectedVersion: number;
+        reason: string;
+        confirmed: true;
+      }
+    >({
+      query: ({ id, ...body }) => ({
+        path: `${root}/${id}/employee-link`,
+        method: 'PATCH',
+        body,
+        timeoutMs: 20000,
+      }),
+      invalidatesTags: (_data, error) => (error ? [] : ['Team', 'Session', 'SalaryRequests']),
+    }),
     team: build.query<{ items: Account[]; total: number }, number>({
       query: (offset) => ({ path: `${root}?offset=${offset}`, timeoutMs: 20000 }),
       providesTags: ['Team'],
@@ -45,3 +75,4 @@ export const {
   useRemoveMemberMutation,
   useReinviteMutation,
 } = teamApi;
+export const { useLinkableEmployeesQuery, useLinkMemberEmployeeMutation } = teamApi;

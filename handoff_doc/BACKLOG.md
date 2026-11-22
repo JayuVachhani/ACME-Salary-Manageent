@@ -1,3 +1,7 @@
+## Employee / initial salary checkpoint — 23 November 2026
+
+A2 linkage UI and part of A3/A4 now have unverified source. Ordinary salary changes, full employee management, reporting and 10k/15k qualification remain pending. Full current contracts and deferred acceptance scenarios: [employee module](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # ACME — prioritized product and engineering backlog
 
 ## Combined React/NestJS reconciliation — 22 November 2026

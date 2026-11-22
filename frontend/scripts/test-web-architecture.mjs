@@ -92,7 +92,7 @@ for (const name of files) {
     }
     if (ts.isJsxOpeningElement(node) && node.tagName.getText(ast) === 'dialog')
       check(
-        name === 'shared/ui/confirmation-dialog.tsx',
+        ['shared/ui/confirmation-dialog.tsx', 'shared/ui/modal.tsx'].includes(name),
         `${name}: native dialog lifecycle must be shared`,
       );
     ts.forEachChild(node, visit);

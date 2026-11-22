@@ -1,3 +1,7 @@
+## Current publication verification — 23 November 2026
+
+The current push request authorizes checks and in-scope fixes. Backend format/lint/types/native build,27 units,7 migration regressions,native architecture/OpenAPI,32 new employee SQL/real-HTTP checks and legacy identity/auth/team/reference/country/FX/directory/linkage/approval/retention/Prisma/health gates passed on disposable databases. Frontend9 units,lint/types/build and architecture90/11480 passed; all12 corrected foundation Chromium cases passed; all23 delivered Chromium cases passed across the final corrected groups (9auth/team,4references,3country,3FX,4employees), with no skipped/flaky cases. Seed replay preserved the existing 10,000-record demo. An ambiguous lease SQL column caused HTTP500 and was fixed; new UI contrast/mobile-overflow failures were corrected; old loading-label expectations/session-response races were updated without dropping assertions or relaxing timeouts. Missing local Chromium path and initial sandbox EPERM are environment failures, not passes. No full-system/10k load acceptance or production deployment. Checksum fix45e0ac7 is committed locally; feature publication and exact-head GitHub CI remain pending. Historical implementation-first snapshots below predate this authorization.
+
 # ACME QA execution report
 
 ## Independent package publication checks — 23 November 2026

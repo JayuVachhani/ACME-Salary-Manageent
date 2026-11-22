@@ -81,4 +81,70 @@ export class EmployeesService {
       ).rows,
     }));
   }
+  salary(token: string, id: string, page: number) {
+    employeeId.parse(id);
+    return withTransaction(this.pool, async (client) => {
+      const actor = await this.auth.authenticateWithin(client, token);
+      if (!actor) throw new ApplicationError('Sign in required', 401);
+      if (
+        !actor.isHrManager &&
+        !(actor.permissions.includes('read') && actor.permissions.includes('salary:view'))
+      )
+        throw new ApplicationError('Salary view permission required', 403);
+      if (
+        !(await client.query('SELECT id FROM employees WHERE id=$1 AND removed_at IS NULL', [id]))
+          .rowCount
+      )
+        throw new ApplicationError('Employee unavailable', 404);
+      type Entry = {
+        id: string;
+        amount: string;
+        currency: string;
+        effectiveFrom: string;
+        reason: string;
+      };
+      const current =
+        (
+          await client.query<Entry>(
+            `SELECT id,monthly_amount::text amount,currency,effective_from::text "effectiveFrom" FROM salary_in_force((CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date) WHERE employee_id=$1`,
+            [id],
+          )
+        ).rows[0] ?? null;
+      const history = (
+        await client.query<Entry>(
+          `SELECT id,monthly_amount::text amount,currency,effective_from::text "effectiveFrom",change_reason reason FROM salary_records WHERE employee_id=$1 ORDER BY effective_from DESC,created_at DESC,id LIMIT 25 OFFSET $2`,
+          [id, (page - 1) * 25],
+        )
+      ).rows;
+      const pending = (
+        await client.query<Entry>(
+          `SELECT id,monthly_amount::text amount,currency,effective_from::text "effectiveFrom" FROM salary_request_status WHERE employee_id=$1 AND status='PENDING' ORDER BY created_at DESC LIMIT 25`,
+          [id],
+        )
+      ).rows;
+      const total = (
+        await client.query<{ n: number }>(
+          'SELECT count(*)::int n FROM salary_records WHERE employee_id=$1',
+          [id],
+        )
+      ).rows[0]!.n;
+      const canResubmitInitial =
+        total === 0 &&
+        Boolean(
+          (
+            await client.query(
+              'SELECT u.employee_id FROM users u JOIN employees e ON e.id=u.employee_id WHERE u.id=$1 AND e.removed_at IS NULL AND e.id<>$2',
+              [actor.id, id],
+            )
+          ).rowCount,
+        ) &&
+        !(
+          await client.query(
+            `SELECT id FROM salary_request_status WHERE employee_id=$1 AND status<>'REJECTED' LIMIT 1`,
+            [id],
+          )
+        ).rowCount;
+      return { current, history, pending, total, page, canResubmitInitial };
+    });
+  }
 }

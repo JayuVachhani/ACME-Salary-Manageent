@@ -84,6 +84,8 @@ jobs:
         run: npm run test:employees
       - name: Verify independent employee linkage and HTTP protections
         run: npm run test:employee-linkage
+      - name: Verify employee creation, salary approval and edit sessions
+        run: npm run test:employee-workflow
       - name: Verify built QA web server and API proxy
         working-directory: qa
         run: npm run test:qa-web

@@ -146,60 +146,69 @@ export class SalaryApprovalService {
     decision: 'APPROVED' | 'REJECTED',
     comment: string,
   ): Promise<string | null> {
+    return this.transaction((client) =>
+      this.decideWithin(client, actorId, requestId, decision, comment),
+    );
+  }
+  async decideWithin(
+    client: PoolClient,
+    actorId: string,
+    requestId: string,
+    decision: 'APPROVED' | 'REJECTED',
+    comment: string,
+  ): Promise<string | null> {
     if (!['APPROVED', 'REJECTED'].includes(decision))
       throw new SalaryApprovalError('INVALID_DECISION');
     if (!comment.trim()) throw new SalaryApprovalError('COMMENT_REQUIRED');
-    return this.transaction(async (client) => {
-      const request = (
+    const request = (
+      await client.query<{
+        employee_id: string;
+        country_code: string;
+        country_rule_version: number;
+        currency: string;
+      }>(
+        'SELECT employee_id,country_code,country_rule_version,currency FROM salary_change_requests WHERE id=$1',
+        [requestId],
+      )
+    ).rows[0];
+    if (!request) throw new SalaryApprovalError('REQUEST_UNAVAILABLE');
+    await client.query('SELECT id FROM employees WHERE id=$1 FOR UPDATE', [request.employee_id]);
+    if (decision === 'APPROVED') {
+      const country = (
         await client.query<{
-          employee_id: string;
-          country_code: string;
-          country_rule_version: number;
-          currency: string;
-        }>(
-          'SELECT employee_id,country_code,country_rule_version,currency FROM salary_change_requests WHERE id=$1',
-          [requestId],
-        )
+          version: number;
+        }>('SELECT version FROM country_rules WHERE country_code=$1 FOR SHARE', [
+          request.country_code,
+        ])
       ).rows[0];
-      if (!request) throw new SalaryApprovalError('REQUEST_UNAVAILABLE');
-      await client.query('SELECT id FROM employees WHERE id=$1 FOR UPDATE', [request.employee_id]);
-      if (decision === 'APPROVED') {
-        const country = (
-          await client.query<{
-            version: number;
-          }>('SELECT version FROM country_rules WHERE country_code=$1 FOR SHARE', [
-            request.country_code,
+      if (country?.version !== request.country_rule_version)
+        throw new SalaryApprovalError('STALE_COUNTRY_POLICY');
+      // Hold a shared row lock until commit so deactivation cannot race this decision.
+      if (
+        !(
+          await client.query('SELECT 1 FROM currencies WHERE code=$1 AND is_active FOR SHARE', [
+            request.currency,
           ])
-        ).rows[0];
-        if (country?.version !== request.country_rule_version)
-          throw new SalaryApprovalError('STALE_COUNTRY_POLICY');
-        // Hold a shared row lock until commit so deactivation cannot race this decision.
-        if (
-          !(
-            await client.query('SELECT 1 FROM currencies WHERE code=$1 AND is_active FOR SHARE', [
-              request.currency,
-            ])
-          ).rowCount
-        ) {
-          throw new SalaryApprovalError('INVALID_CURRENCY');
-        }
+        ).rowCount
+      ) {
+        throw new SalaryApprovalError('INVALID_CURRENCY');
       }
-      await client.query(
-        'INSERT INTO salary_approval_decisions(request_id,decision,decided_by,comment) VALUES($1,$2,$3,$4)',
-        [requestId, decision, actorId, comment.trim()],
-      );
-      if (decision === 'REJECTED') return null;
-      const salaryId = randomUUID();
-      await client.query(
-        `INSERT INTO salary_records(id,employee_id,corrects_id,approval_request_id,monthly_amount,currency,
+    }
+    await client.query(
+      'INSERT INTO salary_approval_decisions(request_id,decision,decided_by,comment) VALUES($1,$2,$3,$4)',
+      [requestId, decision, actorId, comment.trim()],
+    );
+    if (decision === 'REJECTED') return null;
+    const salaryId = randomUUID();
+    await client.query(
+      `INSERT INTO salary_records(id,employee_id,corrects_id,approval_request_id,monthly_amount,currency,
     country_code,default_currency,country_rule_version,decimal_places,rounding_mode,effective_from,submitted_business_date,
     approval_status,change_reason,conversion_meta,created_by)
     SELECT $1,employee_id,corrects_id,id,monthly_amount,currency,country_code,default_currency,country_rule_version,
      decimal_places,rounding_mode,effective_from,submitted_business_date,'ACTIVE',reason,conversion_meta,requested_by
     FROM salary_change_requests WHERE id=$2`,
-        [salaryId, requestId],
-      );
-      return salaryId;
-    });
+      [salaryId, requestId],
+    );
+    return salaryId;
   }
 }

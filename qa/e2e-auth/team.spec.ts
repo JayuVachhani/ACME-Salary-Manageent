@@ -35,6 +35,7 @@ async function signIn(page: Page, email: string) {
   await page.getByLabel('One-time code').fill(message.match(/code is (\d{6})/)![1]!);
   await page.getByRole('button', { name: 'Verify code' }).click();
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await page.goto('/#/team');
 }
 async function mutate(page: Page, path: string, method: string, body: object) {
   return page.evaluate(

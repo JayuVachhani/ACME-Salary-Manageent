@@ -1,3 +1,11 @@
+## Demo data and navigation — 23 November 2026
+
+Executed the explicit synthetic seed in local acme_app: 10,000 DEMO employees, 9,990 independently approved initial salaries, 8 pending and 2 rejected requests, using existing active INR. Demo HR accounts are independently linked; existing accounts/data remain preserved. Script owns a transaction/advisory lock and completed-seed audit marker; no reset or overwrite. Sidebar/Home are grouped by People, Salary and Settings with existing permission filtering. Accounts, sample codes, fictional policy labels and repeat command are in [the current runbook](../README.md). Seeding is not a test/load pass; verification, commit and push remain deferred. No full salary-product completion claimed.
+
+## Employee / initial salary checkpoint — 23 November 2026
+
+Create requires read+write+salary:view or HR; personal edit read+edit or HR; salary read read+salary:view or HR; salary decisions independently linked HR. Later initial resubmission also requires live linkage. Full current contracts and deferred acceptance scenarios: [employee module](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # ACME — roles, permissions and route authorization
 
 Migration019: PATCH `/api/v1/team/:id/employee-link` is independent active HR only with session/CSRF/Origin, confirmed reason and expectedVersion. Self target, actor's own employee identity, system/deleted targets and unavailable subjects are denied. Unique nondeleted-account mapping includes invited accounts. GET team now returns employee_id. No salary permission is added; public salary writes remain absent until subsequent ADR-005 integration. Earlier linkage-absent statements are historical. See TEAM_MODULE.md.

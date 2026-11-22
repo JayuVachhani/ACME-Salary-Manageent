@@ -34,6 +34,7 @@ async function login(page: Page, email = 'country.hr@acme.test') {
   await page.getByLabel('One-time code').fill(mail.match(/code is (\d{6})/)![1]!);
   await page.getByRole('button', { name: 'Verify code' }).click();
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await page.goto('/#/countries');
 }
 const area = (page: Page) => page.getByRole('region', { name: 'Countries and currencies' });
 async function confirm(page: Page) {
