@@ -269,10 +269,9 @@ Executed PostgreSQL run: npm run test:references, isolated synthetic database; 2
 | REF-DB-18 | Designations: SQL tab whitespace and max length | 23514 | Executed assertions satisfied | PASS | None |
 | REF-DB-19 | Assignments: Inactive department | New assignment rejected; previous row retained | Executed assertions satisfied | PASS | None |
 | REF-DB-20 | Assignments: Inactive designation | New assignment rejected | Executed assertions satisfied | PASS | None |
+| REF-DB-21 | Assignments: concurrent deactivation | New insert waits for department update | Lock timeout 55P03 observed while other transaction held row | PASS | None |
 | REF-DB-22 | Audit: Before/after snapshots | Names preserved; session actor recorded | Executed assertions satisfied | PASS | None |
 | REF-DB-23 | Audit: Forced audit failure | Reference row and version unchanged | Executed assertions satisfied | PASS | None |
-
-| REF-DB-21 | Assignments: concurrent deactivation | New insert waits for department update | Lock timeout 55P03 observed while other transaction held row | PASS | None |
 
 Final isolated browser run: 4/4 reference cases PASS, plus 9/9 existing auth/team cases PASS in a separate database; 0 retries/skips.
 
