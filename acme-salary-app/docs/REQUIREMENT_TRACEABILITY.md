@@ -4,6 +4,7 @@ Status reflects verified scope, not planned completeness. Full module acceptance
 
 | Requirement | Implementation | Verification | Status |
 |---|---|---|---|
+| ND-08 / ADR-003, FR-EMP-01 prerequisite | OrganizationReferences service/controller/UI; migrations 013/014 | test-organization-references.mjs, e2e-auth/organization-references.spec.ts | Locally tested: 23 DB / 4 reference Chromium cases. Countries/currencies/FX and bands excluded |
 | FR-AUTH-07/08/10/11/15/19, OD-03/04/05 | Team service/controller/UI, migration 011 continuity/version and migration 012 audit snapshots | `test-team.mjs` and multi-account `e2e-auth/team.spec.ts` | Implemented; verification evidence recorded in QA report |
 | FR-AUTH-01..06, OD-01 | SMTP adapter, auth controller, Login form and persistent challenge/session service | `e2e-auth/authentication.spec.ts`, `test-authentication.mjs` | Login increment tested; broader team module pending |
 | FR-AUTH-12/14/17/18 | DB rate events, identity revocation trigger, bootstrap CLI, invitation eligibility | Concurrent rate/OTP tests, current-permission checks, CLI repeat rejection, expired/first-login invite checks | Implemented; deployment/proxy policy and full team workflow acceptance pending |

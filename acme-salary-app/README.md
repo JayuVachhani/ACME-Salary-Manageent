@@ -30,10 +30,12 @@ Migrations now cover identity/audit, countries/reference foundations, historical
 - Liveness endpoint and fail-closed readiness response. Readiness intentionally remains 503 until migrations and runtime-role verification are implemented; a connected empty database never reports ready.
 - Tested permission policy primitives for distinct create/edit, compensation visibility, export, disabled/system accounts and self-edit restrictions. These are not advertised as endpoint protection before the domain endpoints are implemented.
 - Local service configuration, accessible frontend foundation and decision/progress documentation.
+- SMTP OTP login, sessions, bootstrap and HR team invitations/permissions/offboarding; see docs/LOGIN_MODULE.md and docs/TEAM_MODULE.md.
+- HR department/designation administration with confirmations, pagination, audited versioned edits and soft deactivation; see [organization reference contracts](docs/ORGANIZATION_REFERENCES_MODULE.md).
 
 ## Not implemented yet
 
-Bootstrap, OTP delivery and sessions, authenticated domain APIs, employee/salary/approval screens, reference administration, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
+Employee/salary/approval screens, country/currency/FX administration, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
 
 The authoritative progress plan is `../DEVELOPMENT_PLAN.md`; approved decision details are in `docs/DECISIONS.md`. No hosting is configured or authorized by this foundation.
 

@@ -8,6 +8,7 @@ import { Pool } from 'pg';
 import { loadConfig } from './config.js';
 import { authController } from './auth-controller.js';
 import { teamController } from './team-controller.js';
+import { organizationReferencesController } from './organization-references-controller.js';
 
 async function bootstrap() {
   const config = loadConfig(process.env);
@@ -29,7 +30,7 @@ async function bootstrap() {
     }
   }
   const authentication = authController(pool, config);
-  @Module({ controllers: [HealthController, authentication.controller, teamController(pool,config)] })
+  @Module({ controllers: [HealthController, authentication.controller, teamController(pool,config), organizationReferencesController(pool,config)] })
   class AppModule {}
   const app = await NestFactory.create(AppModule, { logger: false });
   app.use(helmet());
@@ -37,6 +38,7 @@ async function bootstrap() {
     res.setHeader('Cache-Control', 'no-store'); next();
   });
   app.use('/api/v1/team', (_req: Request, res: Response, next: NextFunction) => { res.setHeader('Cache-Control','no-store'); next(); });
+  app.use('/api/v1/organization-references', (_req: Request, res: Response, next: NextFunction) => { res.setHeader('Cache-Control','no-store'); next(); });
   app.use((req: Request, res: Response, next: NextFunction) => {
     const requestId = randomUUID();
     res.setHeader('X-Request-Id', requestId);

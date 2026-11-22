@@ -17,11 +17,11 @@ QA update: actual Chromium execution completed. Final result: 12 passed / 14 fai
 | Prisma | Tested internally | Introspection, client generation and runtime restricted-role queries pass; SQL migrations retain unsupported constraints/triggers |
 | Backdated salary approvals | Backend/database tested | Request/decision service, atomic ledger/history/audit, pending/rejected exclusion, no self-approval, duplicate/stale handling. API/UI/lease/idempotency integration pending |
 | Retention and snapshots | Guard/database tested | Holds block removal; every snapshot read checks current identity/permissions/owner/version/expiry. Generation/export/admin UI pending |
-| Authentication/team | Tested increment; PR review pending | Login plus team invitation/permission/offboarding API and UI implemented. 22 team PostgreSQL checks and 9 auth/team Chromium cases pass, including independent accounts, concurrency, before/after audit, pagination/mobile/axe and delivery failures. See LOGIN_MODULE.md and TEAM_MODULE.md. Employee linkage and full production/security acceptance remain pending |
-| Remaining product modules | Not started | Reference administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
+| Authentication/team | Merged in PR #4 | Login plus team invitation/permission/offboarding API and UI implemented. 22 team PostgreSQL checks and 9 auth/team Chromium cases pass, including independent accounts, concurrency, before/after audit, pagination/mobile/axe and delivery failures. See LOGIN_MODULE.md and TEAM_MODULE.md. Employee linkage and full production/security acceptance remain pending |
+| Remaining product modules | Not started | Country/currency/FX administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
 | Production readiness | Not achieved | Infrastructure/legal/migration gates and full security/performance/UAT remain pending |
 
-## Latest verification
+## Historical foundation verification
 
 `npm run verify:database` passed:
 
@@ -35,3 +35,7 @@ QA update: actual Chromium execution completed. Final result: 12 passed / 14 fai
 - Approval tests create a unique synthetic database and drop only that database; other fixture suites roll back their synthetic rows.
 
 After this gate, npm audit identified an Effect advisory in Prisma tooling. Scoped override to patched `effect@3.22.1` applied; Prisma generation rechecked successfully and final npm audit reports zero known advisories. This does not replace full application security testing.
+
+## Reference increment — 22 November 2026
+
+PR #4 merged at fa2cbc4867994dcde5e81ba0ee3d5b417d2ac8b8, confirmed through GitHub MCP. ADR-003 approved. P4a department/designation API/UI, migrations 013/014, stale-edit/deactivation/history/audit safeguards implemented; locally verified: 23 reference PostgreSQL checks, 13 SMTP/auth/team/reference Chromium cases and 12 foundation Chromium cases pass; PR #5 open; independent approval pending; current-head CI is tracked in PR checks. Countries/currencies/FX remain pending and salary bands are explicitly deferred. Current results are recorded in QA_EXECUTION_REPORT.md; historical counts above describe their original checkpoints.

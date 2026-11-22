@@ -1,4 +1,6 @@
 # Statement of Work (SOW)
+> Current approved precedence (22 November 2026): [DECISIONS.md](../acme-salary-app/docs/DECISIONS.md) supersedes original baseline text: OTP maximum 15 minutes; distinct create/edit rights plus read; separate salary:view/export; no own salary revisions or own permission changes; independent approval for backdated salary. ADR-003 now approves trimmed case-insensitive department/designation names, immutable codes, soft deactivation and referenced-currency precision protection. Salary bands are deferred pending policy approval. Historical option tables below are not current unresolved alternatives for already approved decisions.
+
 > Approved scope change, 21 November 2026: a minimal backdated-salary HR Manager approve/reject workflow is now included, superseding the blanket exclusion of approval actions for that case only. See BRD/FRD/SDD approved addenda and ADR-002. Broad approval workflows, payroll, production infrastructure and migration remain excluded. Re-estimate the affected work after implementation design; no new fixed delivery date is agreed.
 ## ACME Salary Management Platform
 

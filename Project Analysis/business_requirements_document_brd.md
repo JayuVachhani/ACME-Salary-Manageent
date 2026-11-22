@@ -1,4 +1,6 @@
 # Business Requirements Document (BRD)
+> Current approved precedence (22 November 2026): [DECISIONS.md](../acme-salary-app/docs/DECISIONS.md) supersedes original baseline text: OTP maximum 15 minutes; distinct create/edit rights plus read; separate salary:view/export; no own salary revisions or own permission changes; independent approval for backdated salary. ADR-003 now approves trimmed case-insensitive department/designation names, immutable codes, soft deactivation and referenced-currency precision protection. Salary bands are deferred pending policy approval. Historical option tables below are not current unresolved alternatives for already approved decisions.
+
 > Approved change, 21 November 2026: the addendum at the end supersedes conflicting approval, FX, reporting and retention language in the original baseline.
 ## ACME Salary Management Platform
 

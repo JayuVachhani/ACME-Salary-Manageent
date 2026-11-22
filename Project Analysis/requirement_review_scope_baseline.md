@@ -1,4 +1,6 @@
 # ACME Salary Management Platform: Requirement Review & Scope Baseline
+> Current approved precedence (22 November 2026): [DECISIONS.md](../acme-salary-app/docs/DECISIONS.md) supersedes original baseline text: OTP maximum 15 minutes; distinct create/edit rights plus read; separate salary:view/export; no own salary revisions or own permission changes; independent approval for backdated salary. ADR-003 now approves trimmed case-insensitive department/designation names, immutable codes, soft deactivation and referenced-currency precision protection. Salary bands are deferred pending policy approval. Historical option tables below are not current unresolved alternatives for already approved decisions.
+
 > Approved change, 21 November 2026: backdated salary changes now require another HR Manager's approve/reject decision and remain outside calculations while pending/rejected. This supersedes the blanket deferred-approval and immediate-effect statements for backdated entries only. Historical FX versions, precision rejection, 30-minute permission-revalidated snapshots and retention holds are confirmed. See ADR-002 in `acme-salary-app/docs/DECISIONS.md` and the BRD/FRD/SDD addenda.
 
 **Project:** ACME Salary Management Platform  
