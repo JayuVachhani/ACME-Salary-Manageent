@@ -2,7 +2,7 @@
 
 **Purpose:** Record implementation status by scope without duplicating backlog priority.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
@@ -13,7 +13,7 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Area | Feature | Status | Source/evidence |
 |---|---|---|---|
 | Infrastructure | npm workspace, API/web builds, typed config, local DB | done | package.json, main.ts, local-postgres.mjs; Windows dev scope |
-| Infrastructure | Schema integrity/checksummed migrations | done | migrations 001..017, migrate.mjs, schema.prisma |
+| Infrastructure | Schema integrity/checksummed migrations | done | migrations 001..018, migrate.mjs, schema.prisma |
 | Infrastructure | Health liveness | done | main.ts H01 |
 | Infrastructure | Operational readiness | stub/partial | H02 always 503; compatibility contract not finalized |
 | Infrastructure | PR CI and synthetic test harness | done | .github/workflows/pr-validation.yml; 22 unit, 72 foundation DB, 22 team + 23 reference DB, 12+9+4 scoped Chromium evidence |
@@ -24,8 +24,8 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Auth | Verified user-to-employee association | not started | nullable users.employee_id exists; no delivered verification workflow |
 | Reference | Country/currency/reference/FX/hold data foundations | done | migration 002 and domain tests; no admin workflow implied |
 | Reference | Department/designation administration | done | P4a merged in PR #5; 23 DB / 4 reference Chromium cases and exact-head CI passed |
-| Reference | Country/currency administration | stub/partial | P4b locally tested (27 DB / 3 Chromium); PR #7 open; independent approval pending; ADR-004 and COUNTRY_CURRENCY_MODULE.md |
-| Reference | FX administration | not started | Immutable domain foundation exists; public maintenance UI/API absent |
+| Reference | Country/currency administration | done | PR #7 merged at0e0fb86; ADR-004 and COUNTRY_CURRENCY_MODULE.md |
+| Reference | FX administration | done | P4c API/UI scoped local verification23 DB /3 FX Chromium passed; FX_MODULE.md; publication/CI tracked in GIT_CHANGELOG.md |
 | Reference | Salary bands | deferred | Overlap/validation/conflict policies await approval |
 | Reference | Pinned ISO currency catalogue | done | SIX publication 2026-09-17, 178 codes, migration 015 + provenance JSON; read-only runtime |
 | Employee | Schema and dated assignments/history guard | done | migrations 002/005 |

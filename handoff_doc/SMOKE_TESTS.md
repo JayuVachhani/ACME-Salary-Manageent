@@ -2,7 +2,7 @@
 
 **Purpose:** Provide executable checks without implying missing workflows passed.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
@@ -20,6 +20,7 @@ npm.cmd run test:authentication
 npm.cmd run test:team
 npm.cmd run test:references
 npm.cmd run test:country-currency
+npm.cmd run test:fx
 npm.cmd run qa:typecheck
 # Repository root:
 # node acme-salary-app/scripts/test-git-safety.mjs
@@ -103,4 +104,6 @@ Automated equivalents: test:references (23 real PostgreSQL checks) and test:logi
 
 Use synthetic HR/read-member contexts. Verify catalogue search, numeric minor units vs N.A., HR-only currency activation confirmation/cancel, country creation, immutable code, versioned precision/rounding/notes edits, deactivate/reactivate and stale conflicts. Member sees catalogue without administration; direct country/config API denies member. Inactivate a currency then confirm new assignment/salary/FX/report use fails through isolated test:country-currency, preserving old history. UI warns about inactive defaults, descriptive notes and no legal automation. Check pagination, outages/recovery, mobile/axe and console. New country-currency browser group uses its own disposable database/artifact folder; do not run against shared data.
 
-Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
+
+FX smoke: use synthetic HR to load a pair/date revision, enter positive decimal/source/reason, cancel confirmation (no write), then confirm first quote and append a correction. Verify prior row/audit before/after and stale conflict. Read member sees history/lookup, cannot POST. Resolve a historical direct/inverse/USD path with revision/source/date; reject missing/stale paths. Test pagination, negative DTO/Origin/CSRF, inactive currency, outage/error recovery and mobile/axe. Automated test:fx plus FX test:login group (4727/4728, own disposable DB). Full application remains incomplete.

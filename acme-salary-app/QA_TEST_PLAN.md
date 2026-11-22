@@ -41,3 +41,7 @@ Review ADR-003 and ORGANIZATION_REFERENCES_MODULE.md. Test both department/desig
 ## Country/currency increment
 
 Execute test:country-currency on a disposable PostgreSQL database; verify catalogue read permissions, HR-only config, N.A./precision protection, inactive country/currency references, concurrency, immutable codes/history, stale updates and audit rollback. Execute country-currency.spec.ts through test:login with independent HR/read-member contexts, actual SMTP, confirmations/cancel, CRUD/lifecycle, negative DTO/Origin/CSRF, pagination, mobile/axe and visible outage recovery. Retain existing gates and do not claim full-system acceptance.
+
+## FX administration increment
+
+Execute test:fx in a unique synthetic database: role/CSRF/strict DTO boundaries, exact rate precision, immutable correction chain, before/after provenance, independent-HR conflicts, concurrent deactivation, audit rollback, historical/future/direct/inverse/USD/stale lookup and configured staleness. Execute FX Chromium group through test:login (4727/4728, independent HR/member accounts): confirm/cancel, correct, history/filter/paging, provenance, negative API/form states, outages, mobile/axe and console. Keep existing gates and missing-requirement failures.

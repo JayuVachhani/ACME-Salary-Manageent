@@ -327,3 +327,43 @@ Earlier 9 auth/team + 4 organization-reference and 12 foundation Chromium cases 
 CI scope note: run 45006454596 failed before CTRY-E2E-01..03 could execute; those cases were BLOCKED for that CI run, not passed. Earlier local entries above describe their executed local runs. Port-isolation retest and subsequent current-head CI results are recorded separately in QA_EXECUTION_REPORT.md and PR #7 reviews.
 
 Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.
+
+## P4c FX database execution
+
+| ID | Module | Scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|---|
+| FX-DB-01 | FX | anonymous and no-read access denied | Anonymous401 and no-read403 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-02 | FX | read member views empty history | Read member receives empty permitted history | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-03 | FX | member writes and invalid CSRF rejected | Member write403; missing/invalid CSRF403 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-04 | FX | strict DTO rejects invalid rate, date, pair, reason/source and actor spoof | Invalid rate/date/pair/provenance/actor rejected | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-05 | FX | numeric(18,8) exact boundary rates allowed | Minimum and maximum NUMERIC(18,8) input accepted | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-06 | FX | first revision uses exact rate and session actor | Revision1 exact0.80000000 with authenticated actor | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-07 | FX | duplicate expected revision rejected | Stale expectedRevision0 rejected409 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-08 | FX | correction appends without changing prior record | Revision2 appends0.90000000; original remains0.80000000 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-09 | FX | audit contains exact before/after revision provenance | Before/after IDs, values and provenance retained | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-10 | FX | SQL update/delete/truncate blocked | UPDATE/DELETE/TRUNCATE rejected55000 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-11 | FX | historical lookup uses latest same-day revision | As-of lookup selects latest same-date revision0.9 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-12 | FX | inverse lookup preserves leg provenance | Inverse path retains rate ID and inverse flag | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-13 | FX | missing pair resolves through USD | EUR/INR selects two eligible USD legs | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-14 | FX | future effective rate excluded from earlier as-of valuation | Later effective date excluded from earlier valuation | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-15 | FX | stale or missing historical paths rejected | Missing and stale paths return422 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-16 | FX | identity conversion requires configured currency | Configured identity factor1; unknown currency422 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-17 | FX | constructor staleness policy honored | Configured1-day limit excludes older quote | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-18 | FX | inactive currency blocks new rates but historical reads still work | Inactive currency write409; historical rate still0.9 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-19 | FX | independent HR competing revisions have exactly one winner | Exactly one competing independent HR append succeeds | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-20 | FX | concurrent deactivation rechecked after lock wait | In-flight deactivation causes waiting append409 | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-21 | FX | audit failure rolls back rate append | Audit failure leaves total FX rows unchanged | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-22 | FX | pair/date filtering retains full revision history | Pair/date filter retains all3 same-date revisions | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+| FX-DB-23 | FX | invalid list/resolution inputs rejected | Negative offset/malformed resolution rejected | Executed assertion satisfied on isolated PostgreSQL | PASS | None |
+
+## P4c FX Chromium final retest
+
+| ID | Module | Scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|---|
+| FX-E2E-01 | FX authoring/history | OTP HR login, revision load, cancel/confirm, immutable correction, historical lookup | Cancel writes nothing; confirmed revisions preserve exact old values and provenance | Actual UI/API/PostgreSQL assertions satisfied | PASS | Earlier accessible-name locator corrected |
+| FX-E2E-02 | FX access/validation | Anonymous/read-member/independent HR, stale writer, malformed DTO, Origin/CSRF, no-store and stale path | 401/403/400/409/422 boundaries and no unauthorized write | Actual browser/HTTP assertions satisfied | PASS | None |
+| FX-E2E-03 | FX states/accessibility | Pagination, empty filters, missing rate, simulated503/recovery,375px,axe,page errors | Correct pages/errors/recovery; no page overflow,axe violation or pageerror | Actual UI/API assertions satisfied; synthetic outage explicitly simulated | PASS | Keyboard-focusable history scroll fix retested |
+
+Final authenticated runner:9 auth/team +4 organization-reference +3 country/currency +3 FX passed; zero retries/skips. Each group uses a separate disposable synthetic database. Earlier failures and their actual outcomes remain in QA_EXECUTION_REPORT.md.
+
+Foundation Chromium regression also executed PASS12/12 after the FX accessibility fix (fx-foundation-browser.log). Total scoped browser execution:31 passing cases, zero retries/skips; not a full-system acceptance run.

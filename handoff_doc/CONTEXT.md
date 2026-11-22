@@ -2,7 +2,7 @@
 
 **Purpose:** Describe implementation contracts, architecture, source evidence and pitfalls.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
@@ -20,7 +20,7 @@ flowchart LR
   Prisma[Prisma runtime smoke/client] --> PG
 ~~~
 
-Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Compose instead exposes PostgreSQL 5432, Mailpit SMTP 1025 and inbox 8025. Foundation QA uses web/API 4317/4318; isolated QA uses auth/team 4427/4428, organization references 4527/4528, country/currency 4627/4628, with sequential SMTP 4325. No Redis, remote storage or worker ports exist.
+Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Compose instead exposes PostgreSQL 5432, Mailpit SMTP 1025 and inbox 8025. Foundation QA uses web/API 4317/4318; isolated QA uses auth/team 4427/4428, organization references 4527/4528, country/currency 4627/4628, FX4727/4728, with sequential SMTP 4325. No Redis, remote storage or worker ports exist.
 
 ## 2. Directory structure
 
@@ -38,8 +38,8 @@ Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Co
    ├─ compose.yaml                Development PostgreSQL and Mailpit only
    ├─ .env.example                Template; lacks owner migration URL
    ├─ apps/api/src/               NestJS entry, factories, services and unit tests
-   ├─ apps/web/src/               main.tsx, login.tsx, team.tsx, organization-references.tsx and styles.css
-   ├─ database/migrations/        001..017 authoritative SQL, no down migrations
+   ├─ apps/web/src/               main.tsx, login.tsx, team.tsx, organization-references.tsx, country-currency.tsx, fx-rates.tsx and styles.css
+   ├─ database/migrations/        001..018 authoritative SQL, no down migrations
    ├─ database/schema.prisma      Introspected 23-model reference/client input
    ├─ scripts/                    DB lifecycle, migration, bootstrap, regression/safety tools
    ├─ e2e/                        Foundation and unmet-requirement Chromium probes
@@ -99,7 +99,7 @@ SalaryApprovalService.submit(actorId,input) requires a backdated UTC date, manda
 
 SalaryApprovalService.decide(actorId,requestId,decision,comment) requires an independent active HR through SQL trigger checks. Rejection records only a decision. Approval locks the employee, checks current country policy version and shares-locks active currency, appends decision plus exact ledger row in one transaction. Deferred approval_salary_atomic prevents an approval committing without salary. record_salary_history creates before/after history/audit and advances employee version. Requester/subject checks rely on employee_id linkage, which is nullable and not yet verified end to end. **Block public salary exposure until linkage and trusted session-to-actor integration are implemented.**
 
-money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration, salary bands and employee HTTP/UI are absent.
+money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration is now exposed through FxRatesService; salary bands and employee HTTP/UI remain absent.
 
 Employee assignments are append-only dated organization/status records. SQL validates joining date, protects historical joining-date changes and increments employee version. Holds/releases are append-only HR-attributed records; active holds block employee removal. No user-facing transfer, hold or permanent purge workflow exists.
 
@@ -113,9 +113,15 @@ Pinned SIX publication 2026-09-17 contains 178 codes (165 numeric and 13 N.A.). 
 
 Country inputs configure name/default currency, 0..4 precision, HALF_UP/FLOOR/CEIL and two descriptive notes. Editing merges notes without dropping existing metadata; holds remain separate, not inferred legal automation. Codes are immutable, versions auto-advance, no delete/truncate. Inactive-country or currency checks are locked for new assignment/request/ledger/FX/snapshot writes. Existing history/policy snapshots are unchanged. An inactive currency may block a still-active country until HR changes policy or reactivates; the UI confirms this consequence. Deactivating a country remains possible while its default currency is inactive.
 
+### FX administration — P4c
+
+Sources: fx-rates-controller.ts, fx-rates.ts, web fx-rates.tsx and [FX module](../acme-salary-app/docs/FX_MODULE.md). HR or read members can list historical revisions/resolve as-of rates. Only HR can POST, using current-session transaction/Origin/CSRF and no actor override. A revision authoring form must load the current pair/date revision, require positive decimal rate/source/reason, show concrete confirmation, and handle stale409 without automatic merge/retry.
+
+POST locks active pair currencies in code order and the existing advisory pair/date key, compares expectedRevision then appends current+1. SQL still enforces HR/sequence/active currencies/immutability. Migration018 writes before/after audit for NEW events while preserving all earlier audit rows. A failed audit undoes the append. Lookup is historically readable even after currency deactivation and returns exact unit factor plus IDs/dates/sources/inverse flags. It uses the existing direct/inverse/USD resolver and configured FX_MAX_STALENESS_DAYS. Future-effective quotes are excluded from earlier as-of selection; missing/stale paths422. This is rate preview/maintenance, not a completed salary or report generator.
+
 ## 7. Frontend architecture and data shapes
 
-main.tsx renders the sole root screen, skip link, health panel and Login. Health fetch aborts after 8 seconds. login.tsx holds email/code/challenge/message/busy/signedIn/identity in local React state. An existing CSRF cookie only hints to call /me; backend identity remains authoritative. HR identity mounts Team, OrganizationReferences and CountryCurrency; members with read mount the catalogue-only CountryCurrency view; non-HR users do not see private Team controls. There is no React Router, path-based guard, app-wide cache or auth bearer storage.
+main.tsx renders the sole root screen, skip link, health panel and Login. Health fetch aborts after 8 seconds. login.tsx holds email/code/challenge/message/busy/signedIn/identity in local React state. An existing CSRF cookie only hints to call /me; backend identity remains authoritative. HR identity mounts Team, OrganizationReferences, CountryCurrency and FxRates; read members mount catalogue-only CountryCurrency and read-only FxRates; non-HR users do not see private Team controls. There is no React Router, path-based guard, app-wide cache or auth bearer storage.
 
 team.tsx uses native fetch, local list/editor state and expectedVersion. It displays a native HTML dialog via showModal(), focuses/traps through browser behavior, prevents closing while saving, and supports cancellation, paging and explicit delivery errors. A 409 preserves unsaved input: refresh the list and reopen Edit to load the current version. It does not silently merge concurrent permissions. CSS is system-font/ordinary classes; mobile tables scroll inside their container. Relative requests need a same-origin proxy/static hosting arrangement outside development.
 
@@ -137,7 +143,7 @@ The first is invite DTO; second is edit DTO; third is current-session identity r
 
 ## 8. API route map
 
-24 concrete method/path operations are listed below, registered by main.ts and the auth, team, organization-reference and country-currency controller factories. The latter registers three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary, employee, FX maintenance, audit, report, file or deployment endpoints are registered.
+27 concrete method/path operations are listed below, registered by main.ts and the auth, team, organization-reference, country-currency and FX controller factories. Organization references register three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary, employee, audit browser, report generator, file or deployment endpoints are registered.
 
 No deprecated registered routes or redirect targets were found. Old SDD route proposals are planned/unimplemented contracts, not legacy endpoints with working redirects.
 
@@ -167,6 +173,9 @@ No deprecated registered routes or redirect targets were found. Old SDD route pr
 | C04 | GET | /api/v1/countries | HR only; strict offset, 20 rows/page, includes inactive |
 | C05 | POST | /api/v1/countries | HR + Origin/CSRF, strict country policy, active default required; 201 |
 | C06 | PATCH | /api/v1/countries/:code | Same + expectedVersion/isActive; immutable code; stale 409 |
+| F01 | GET | /api/v1/fx-rates | HR or read member; pair/asOf filters,20-row immutable history |
+| F02 | POST | /api/v1/fx-rates | HR + Origin/CSRF; positive decimal/source/reason/expectedRevision; appends,201 |
+| F03 | GET | /api/v1/fx-rates/resolve | HR or read member; base/quote/asOf; historical direct/inverse/USD path or422 |
 
 ## 9. Bug fixes and pitfalls
 
@@ -197,7 +206,7 @@ Each entry distinguishes code-backed protections from production incidents; no p
 - policy.canManageUser rejects all self targets, while live TeamService permits own name and conditional offboarding. The helper is not wired to these routes.
 - Nullable user employee links do not meet the approved verified-link requirement. Internal salary self checks are incomplete for unlinked users; there is no public salary API yet.
 - .env.example lacks MIGRATION_DATABASE_URL; local launcher is 55432 while Compose/template use 5432. Compose provisions no acme_app role/migrations; existing .env is not repaired automatically.
-- FX_MAX_STALENESS_DAYS is validated but has no HTTP consumer; future service construction must wire it. Cookie lifetime is fixed 12 hours even with shorter server expiry. sumConverted uses HALF_UP regardless of a future target-country policy.
+- FX_MAX_STALENESS_DAYS is wired to public FX resolution; future salary/report integration must also pass the configured value rather than silently using an internal constructor default. Cookie lifetime is fixed 12 hours even with shorter server expiry. sumConverted uses HALF_UP regardless of a future target-country policy.
 - /readyz intentionally always reports not ready, even with DB connectivity; do not fake success for deployment checks.
 - No approved hosting, TLS/proxy, backup/restore, durable mail queue, external FX provider, LLM, storage/upload or production CI/CD implementation exists.
 
@@ -217,7 +226,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 | OTP_TTL_MINUTES | 15; positive integer at most 15 | Auth challenge expiry and mail text |
 | SESSION_IDLE_MINUTES | 30; positive integer at most 30 | Server idle expiry; valid session reads refresh last_seen_at |
 | SESSION_ABSOLUTE_HOURS | 12; positive integer at most 12 | Server absolute expiry; cookie maxAge remains fixed at 12 hours |
-| FX_MAX_STALENESS_DAYS | 7, positive integer | Validated; no public FX consumer yet. Internal approval service has its own constructor default 7 |
+| FX_MAX_STALENESS_DAYS | 7, positive integer | Public FxRatesService resolution policy; internal approval service still has constructor default7 until exposed/configured |
 | DEV_INSECURE_COOKIES | false; true/false | Explicit development opt-in for HTTP. Production rejects true |
 | SMTP_HOST | Required | Nodemailer server; loopback capture for synthetic testing |
 | SMTP_PORT | 1025, positive integer | Configure for chosen relay; production transport requires TLS |
@@ -272,9 +281,13 @@ There is no HTTP idempotency-key, edit-lease-token, session-list/revoke-other-se
 
 C01 returns {items:[{code,currency_name,minor_units,published_on,source,is_active,version,supported,configured_minor_units}]}. minor_units/configured_minor_units may be null. C02 returns configured {code,minor_units,is_active,version}. C03 takes strict {isActive,expectedVersion}; 0 is only valid for first activation. C04 uses strict offset 0..100000 and returns {items,total}, pages of 20 sorted name/code. C05 takes {countryCode,countryName,defaultCurrency,decimalPlaces,roundingMode,regulatoryNotes,retentionNotes}; C06 omits countryCode and adds {isActive,expectedVersion}. Names trim 1..200; notes trim/max4000; uppercase codes length2/3, precision0..4, rounding enum. Country output uses snake_case and derived regulatory_notes/retention_notes. Invalid DTO400; Origin/CSRF/role403; anonymous read401; stale/duplicate/inactive-default conflict409. Policy notes do not enforce legal retention.
 
+### FX detailed DTOs
+
+F01 strict query: optional base/quote three uppercase letters, asOf valid calendar date, offset0..100000; returns {items,total}, page20 sorted date descending,base/quote,revision descending,ID. Row: id,base_currency,quote_currency,effective_date,revision,rate decimal string,source,reason,created_by,recorded_at. F02 strict {base,quote,effectiveDate,rate,source,reason,expectedRevision}; different pair, positive plain NUMERIC(18,8) string (<=10 integer/8 fractional digits), source/reason trimmed1..500/1..2000, expectedRevision>=0. Returns201 row. F03 strict {base,quote,asOf}; returns {base,quote,asOf,maxStalenessDays,rate,path:[{rate:{id,base,quote,effectiveDate,revision,rate,source},inverse}]}. Same configured currency yields1/empty path. No eligible path/unknown currency422; invalid DTO400; denied role/CSRF/Origin403; anonymous read401; stale/inactive409. No PATCH/DELETE or per-salary override exists.
+
 ## Appendix A. Source inventory at merged implementation snapshot
 
-The following 112 tracked files capture the PR #5 implementation baseline. Current additions include the published handoff pack and P4b country-currency API/service/UI, catalogue JSON, migrations 015..017, module contract and DB/browser tests. The pack adds its 14 Markdown deliverables separately; ignored runtime state and the local uploaded brief are excluded.
+The following 112 tracked files capture the PR #5 implementation baseline. Current additions include the handoff pack, country-currency API/service/UI/catalogue/migrations015..017, and FX API/service/UI, migration018, module contract and DB/browser tests. The pack adds its 14 Markdown deliverables separately; ignored runtime state and the local uploaded brief are excluded.
 
 ~~~text
 .gitattributes
@@ -391,4 +404,4 @@ acme-salary-app/tsconfig.qa.json
 acme-salary-app/vitest.config.ts
 ~~~
 
-Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628, FX4727/4728; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
