@@ -11,7 +11,7 @@ No runtime LLM integration exists in this checkout. This explicit not-applicable
 | Requested contract area | Actual implementation |
 |---|---|
 | Providers/factory/default/project override | None |
-| LLM/API-key environment variables | None in config.ts or .env.example |
+| LLM/API-key environment variables | None in config/config.ts or .env.example |
 | Runtime prompts and JSON/Markdown schemas | None |
 | Model method signatures/token limits | None |
 | Async/thread wrappers or graph generation flags | None |

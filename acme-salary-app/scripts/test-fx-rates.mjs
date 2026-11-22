@@ -3,14 +3,15 @@ import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import {readFileSync} from 'node:fs';
 import { Client,Pool } from 'pg';
-import { AuthenticationService } from '../apps/api/dist/authentication.js';
-import {FxRatesService,fxInput,fxQuery,fxResolve} from '../apps/api/dist/fx-rates.js';
+import { AuthenticationService } from '../apps/api/dist/auth/authentication.service.js';
+import { FxRatesService } from '../apps/api/dist/fx-rates/fx-rates.service.js';
+import {fxInput,fxQuery,fxResolve} from '../apps/api/dist/fx-rates/dto/fx-rates.dto.js';
 const name=`acme_test_${randomUUID().replaceAll('-','')}`;
 const ownerUrl=new URL(process.env.MIGRATION_DATABASE_URL),runtimeUrl=new URL(process.env.DATABASE_URL);
 const admin=new Client({connectionString:ownerUrl.href});await admin.connect();
 let created=false,owner,pool,passed=0;
 const ok=label=>console.log(`PASS FX-DB-${String(++passed).padStart(2,'0')} ${label}`);
-const denied=(work,status)=>assert.rejects(work,error=>error.getStatus?.()===status);
+const denied=(work,status)=>assert.rejects(work,error=>error.status===status);
 try {
   await admin.query(`CREATE DATABASE ${name}`);created=true;ownerUrl.pathname=runtimeUrl.pathname=`/${name}`;
   execFileSync(process.execPath,['scripts/migrate.mjs'],{env:{...process.env,MIGRATION_DATABASE_URL:ownerUrl.href},stdio:'pipe',windowsHide:true});

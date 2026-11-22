@@ -17,7 +17,13 @@ async function login(page:Page,email='fx.hr@acme.test'){
  const mail=capture.messages.filter(v=>v.includes(`To: ${email}`)&&/code is \d{6}/.test(v)).at(-1)!;await page.getByLabel('One-time code').fill(mail.match(/code is (\d{6})/)![1]!);await page.getByRole('button',{name:'Verify code'}).click();await expect(page.getByRole('button',{name:'Sign out',exact:true})).toBeVisible();
 }
 const area=(page:Page)=>page.getByRole('region',{name:'Exchange rates'});
-async function save(page:Page){await page.getByRole('button',{name:'Confirm FX change',exact:true}).click();await expect(page.getByLabel('Notifications').getByText('FX revision saved.', {exact:true})).toBeVisible();}
+async function save(page:Page){
+ const saved=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/v1/fx-rates'&&response.request().method()==='POST');
+ await page.getByRole('button',{name:'Confirm FX change',exact:true}).click();
+ expect((await saved).status()).toBe(201);
+ await expect(page.getByRole('dialog')).toHaveCount(0);
+ await expect(page.getByLabel('Notifications').getByText('FX revision saved.', {exact:true})).toBeVisible();
+}
 async function api(page:Page,body:object,extra:Record<string,string>={}){
  const csrf=(await page.context().cookies()).find(c=>c.name==='acme_csrf')!.value;
  return page.request.post('/api/v1/fx-rates',{headers:{Origin:new URL(page.url()).origin,'X-CSRF-Token':csrf,...extra},data:body});

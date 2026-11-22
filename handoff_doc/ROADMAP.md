@@ -1,5 +1,11 @@
 # ACME — feature status matrix
 
+## Combined React/NestJS reconciliation — 22 November 2026
+
+PR #10 linkage and PR #11 native NestJS architecture are merged to main at `8b8d7ed344d0eb1b6d05e5dd891786db0d9edc9a`. Existing PR #12 now merges this base, preserving all backend feature modules, DTO/global validation/OpenAPI, migration019 and linkage protections alongside Redux Toolkit/RTK Query and shared React controls. Both architecture commands remain in CI. React Account models the nullable employee_id response; this reconciliation adds no linkage UI or salary workflow. Lockfile contains both Swagger and Redux dependencies. Combined local lint/types/builds,36 units,QA typing,React architecture71/7550,Nest architecture/OpenAPI,serial isolated PostgreSQL suites and17 linkage SQL/HTTP checks passed. The initial FX browser assertion raced a successful second save by matching a retained toast; the helper now awaits the current POST201 and dialog closure. All3 FX cases passed unchanged application code; QA typing passed again. All22 delivered browser cases passed across the completed groups (9auth/team,4references,3country,3FX,3employees). The initial FX failure remains historical, with no relaxed timeout/assertion or application change. Final safety scan,publication and exact-head CI are in progress; earlier branch-only passes and deferred-check snapshots below are historical. No self-approval/merge/deployment; unrelated user files remain excluded.
+
+## Earlier checkpoint records
+
 ## Publication verification — 22 November 2026
 
 Required local publication checks passed on this React branch: lint, workspace typechecks/builds, 31 unit tests, QA typing, architecture gate (71 source files / 7,549 assertions), isolated PostgreSQL integrity/authorization/concurrency suites, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The initial reference run exposed a startup identity/OTP race; fresh post-login identity retrieval now cancels and settles the older anonymous query, with a regression test. A later cold login request stalled; the complete 22-case serial rerun passed without relaxed timeouts or authorization checks. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md. No self-approval, merge or production deployment; broader unmet/blocked requirements remain open.
@@ -11,6 +17,29 @@ Setup history: incomplete dependencies and a Windows PostgreSQL DLL lock require
 Current React audit remediation (22 November 2026): shared controls/tables/pagination/request states, employee dependency invalidation, typed notification feedback and accurate delivered-scope copy implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
 
 Rules alignment in progress (22 November 2026): frontend global state now uses Redux Toolkit 2.15.0 / React Redux 9.3.1 and one RTK Query API/cache. Feature-owned endpoints replace custom remote-state effects; server identity is read through useSession from the query cache. Session Context and useResource are removed. Forms, confirmation snapshots and OTP inputs stay local; OTP credentials bypass Redux actions/cache through the same shared secure transport. AppProviders owns store/error-boundary/notification composition; the authenticated workspace is lazy loaded with Suspense. Logout/self-removal/established-session 401 clears cached protected data; 403 refreshes current identity. No API/schema/financial rule changes. **Uncommitted and unverified: no tests, lint, typechecks, builds, safety scans or browser checks were run for this increment, at the user's request.** Existing PR #12 checks cover its published head only; PR #11 backend and PR #10 linkage remain separate pending work.
+## PR #10 integration — 22 November 2026
+
+PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
+
+## Earlier checkpoint records
+
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
+
+## Earlier checkpoint records
+
+Current NestJS audit remediation (22 November 2026): pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
+
+NestJS rules alignment (22 November 2026), implemented but unverified: the existing capability modules/native injectable services remain. Concrete request DTO classes feed one APP_PIPE RequestValidationPipe and schema-derived OpenAPI input contracts. All delivered controllers use this path; the old per-parameter ZodValidationPipe is removed. OTP verification alone defers parsing to AuthService to preserve malformed-attempt throttling/audit. APP_FILTER HttpExceptionFilter handles application/framework/unknown failures with a safe 5xx fallback and preserves readiness's intentional 503 body. RequestContextMiddleware owns correlation/logging/no-store; CORS is limited to configured APP_ORIGIN. Development/test-only /api/docs, /api/openapi.json and /api/openapi.yaml document delivered routes using Swagger 12.1.2. No financial/schema/permission/session policy changes. No tests, lint, typechecks, builds, safety scans or browser checks ran for this increment, per user instruction. Changes remain uncommitted/unpublished; historical passes do not validate this working tree.
+
+## Backend structure checkpoint — 22 November 2026
+
+On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.
+
+## Merged linkage checkpoint
+
+Current checkpoint: employee reads merged in PR #9 (`1e0e65f`). Verified linkage backend is implemented on feature/backend-linkage (migration019, team employee-link endpoint, SQL/service/HTTP regressions); linkage UI is not started. Atomic employee/pending-initial creation, authenticated salary/lease/idempotency integration and reporting/audit/analytics remain pending. Salary bands and unresolved definitions stay blocked/deferred. Earlier tables describe the pre-019 snapshot; no full-backend or production completion is claimed.
 
 **Purpose:** Record implementation status by scope without duplicating backlog priority.
 
@@ -26,13 +55,13 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 |---|---|---|---|
 | Infrastructure | npm workspace, API/web builds, typed config, local DB | done | package.json, main.ts, local-postgres.mjs; Windows dev scope |
 | Infrastructure | Schema integrity/checksummed migrations | done | migrations 001..018, migrate.mjs, schema.prisma |
-| Infrastructure | Health liveness | done | main.ts H01 |
+| Infrastructure | Health liveness | done | health/health.controller.ts H01 |
 | Infrastructure | Operational readiness | stub/partial | H02 always 503; compatibility contract not finalized |
 | Infrastructure | PR CI and synthetic test harness | done | .github/workflows/pr-validation.yml; 22 unit, 72 foundation DB, 22 team + 23 reference DB, 12+9+4 scoped Chromium evidence |
-| Auth | Email OTP/request/resend/login/logout/session checks | done | auth-controller.ts/authentication.ts; real loopback SMTP/Chromium |
-| Auth | Attempt/rate/expiry/replay and removal revocation | done | auth-rate.ts, migrations 007..010, tests |
+| Auth | Email OTP/request/resend/login/logout/session checks | done | auth/auth.controller.ts and auth/authentication.service.ts; real loopback SMTP/Chromium |
+| Auth | Attempt/rate/expiry/replay and removal revocation | done | auth/auth-rate.ts, migrations 007..010, tests |
 | Admin | Bootstrap/system identity | done | bootstrap-manager.mjs, migrations 001/011 |
-| Admin | HR invites/renewals/permission edits/offboarding/pagination | done | team.ts/team-controller.ts/team.tsx, migrations 011/012; PR #4 observed merged |
+| Admin | HR invites/renewals/permission edits/offboarding/pagination | done | team/team.service.ts, team/team.controller.ts and web team.tsx, migrations 011/012; PR #4 observed merged |
 | Auth | Verified user-to-employee association | not started | nullable users.employee_id exists; no delivered verification workflow |
 | Reference | Country/currency/reference/FX/hold data foundations | done | migration 002 and domain tests; no admin workflow implied |
 | Reference | Department/designation administration | done | P4a merged in PR #5; 23 DB / 4 reference Chromium cases and exact-head CI passed |
@@ -43,15 +72,15 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 | Employee | Schema and dated assignments/history guard | done | migrations 002/005 |
 | Employee | Directory/profile | stub/partial | P5a directory/profile locally verified19 DB /3 Chromium; PR pending; no salary payload/band filter |
 | Employee | Create/edit/remove/transfer workflow | not started | ADR-005 pending initial salary; linkage/approval/leases required; no10k seed |
-| Salary | Exact decimal/FX calculation helpers | done | money.ts and tests |
+| Salary | Exact decimal/FX calculation helpers | done | common/domain/money.ts and tests |
 | Salary | Append-only ledger/history/approval integrity | done | migrations 003..006 and 38 approval checks; internal scope |
 | Salary | Backdated submission/decision user workflow | stub/partial | SalaryApprovalService exists; no authenticated controller/UI; linkage gate missing |
 | Salary | Ordinary changes/correction/transfer/leases UI/API | stub/partial | Tables/checks only for some paths; record_locks has no service |
-| Reports | Snapshot ownership/version/expiry guard | done | report-access.ts and SQL invalidation; internal scope |
+| Reports | Snapshot ownership/version/expiry guard | done | reports/report-access.ts and SQL invalidation; internal scope |
 | Reports | Generation, preview, CSV and dashboard | not started | No public implementation |
 | Audit | Immutable transactional audit production in delivered flows | done | SQL audit and tested rollback |
 | Audit | Searchable HR audit screen/API | not started | No controller/UI |
-| Integrations | SMTP transport and local synthetic capture | done | otp-mail.ts, smtp-capture.ts; captured mail is not production delivery |
+| Integrations | SMTP transport and local synthetic capture | done | mail/otp-mail.ts, smtp-capture.ts; captured mail is not production delivery |
 | Integrations | Durable background delivery/worker | deferred | In-memory Promise set only; no queue |
 | Integrations | Runtime LLM, transcription, cloud storage/upload | deferred | No implementation or currently approved feature contract |
 | Scope | Full payroll, deductions, payslips/payroll runs | cancelled | Excluded salary-management baseline; reopening requires scope approval |

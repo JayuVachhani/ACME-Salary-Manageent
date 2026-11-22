@@ -1,5 +1,7 @@
 # ACME — roles, permissions and route authorization
 
+Migration019: PATCH `/api/v1/team/:id/employee-link` is independent active HR only with session/CSRF/Origin, confirmed reason and expectedVersion. Self target, actor's own employee identity, system/deleted targets and unavailable subjects are denied. Unique nondeleted-account mapping includes invited accounts. GET team now returns employee_id. No salary permission is added; public salary writes remain absent until subsequent ADR-005 integration. Earlier linkage-absent statements are historical. See TEAM_MODULE.md.
+
 **Purpose:** Map real security checks without inventing framework guards.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -25,7 +27,7 @@ write means create, edit means modify, delete means soft-remove. Business writes
 
 | Function / dependency | Actual allowed scope |
 |---|---|
-| authController origin() | Exact APP_ORIGIN on auth POSTs; no blanket CORS enablement |
+| authController origin() | Exact APP_ORIGIN on auth POSTs; explicit CORS allows only APP_ORIGIN and does not replace Origin/CSRF/session authorization |
 | AuthenticationService.authenticate / authenticateWithin | ACTIVE non-system user, valid hashed cookie session, nonrevoked/unexpired; optional bound CSRF comparison |
 | TeamService.run | Same-transaction current HR; global team lock; bound CSRF for mutations; sets trusted DB actor locally |
 | protect_team_identity | Current trusted HR context; no own role/permission changes, no system mutation/permanent delete, last active HR retained |

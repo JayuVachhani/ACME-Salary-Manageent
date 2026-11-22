@@ -1,8 +1,17 @@
 # ACME — setup, run and operations
 
+## Combined React/NestJS reconciliation — 22 November 2026
+
+PR #10 linkage and PR #11 native NestJS architecture are merged to main at `8b8d7ed344d0eb1b6d05e5dd891786db0d9edc9a`. Existing PR #12 now merges this base, preserving all backend feature modules, DTO/global validation/OpenAPI, migration019 and linkage protections alongside Redux Toolkit/RTK Query and shared React controls. Both architecture commands remain in CI. React Account models the nullable employee_id response; this reconciliation adds no linkage UI or salary workflow. Lockfile contains both Swagger and Redux dependencies. Combined local lint/types/builds,36 units,QA typing,React architecture71/7550,Nest architecture/OpenAPI,serial isolated PostgreSQL suites and17 linkage SQL/HTTP checks passed. The initial FX browser assertion raced a successful second save by matching a retained toast; the helper now awaits the current POST201 and dialog closure. All3 FX cases passed unchanged application code; QA typing passed again. All22 delivered browser cases passed across the completed groups (9auth/team,4references,3country,3FX,3employees). The initial FX failure remains historical, with no relaxed timeout/assertion or application change. Final safety scan,publication and exact-head CI are in progress; earlier branch-only passes and deferred-check snapshots below are historical. No self-approval/merge/deployment; unrelated user files remain excluded.
+
+## Earlier checkpoint records
+
 UI implementation checkpoint (unverified): all delivered forms use shared native-backed controls; tables/pagination/request states and typed notifications are centralized. Native labels/constraints and business confirmation snapshots remain feature-owned at their call sites. No additional install/setup command is required; no execution checks ran.
 
 Current increment: Redux Toolkit/RTK Query, session-cache lifecycle, lazy workspace and error-boundary changes are implemented but unverified (22 November 2026). The user requested implementation first and checks only when explicitly requested. No tests, lint, typechecks, builds, browser QA or safety scans ran for this increment; existing pass records below are historical and do not cover the working tree. Do not commit/push until required verification is authorized and completed. See FRONTEND_ARCHITECTURE_AUDIT.md in acme-salary-app/docs for the current source map.
+Backend implementation checkpoint (unverified): existing dependency setup is unchanged. Use exact APP_ORIGIN without trailing slash/path. Pool error/transaction rollback handling and response-schema validation are now centralized; see audit mapping and delivery outcome details in TEAM_MODULE/SMTP_INTEGRATION. No tests/build/type/lint/safety checks ran.
+
+Backend rules increment: implemented/unverified in the isolated NestJS worktree. After normal local startup, API reference is available only in development/test at `/api/docs`, `/api/openapi.json`, `/api/openapi.yaml`. Production does not register them. No test/build/type/lint/safety/browser command was run; runbook commands below remain deferred until requested. See acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md.
 
 **Purpose:** Run the delivered application and its verification gates safely.
 
@@ -68,7 +77,7 @@ Environment checklist, including script/container-only settings:
 
 | Variable | Required/default | Consumer and caveat |
 |---|---|---|
-| NODE_ENV | development; development/test/production | config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
+| NODE_ENV | development; development/test/production | config/config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
 | PORT | 3001, positive integer | API listens on 127.0.0.1 only |
 | APP_ORIGIN | Required URL | Exact Origin equality for mutations; use browser origin without a path or trailing slash |
 | DATABASE_URL | Required PostgreSQL URL | Runtime pg pool and Prisma adapter; use restricted acme_app |
@@ -230,6 +239,7 @@ FX smoke: use synthetic HR to load a pair/date revision, enter positive decimal/
 ## P5a employee directory integration
 
 Sources employees-controller.ts,employees.ts,web features/employees/employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
+Sources employees/employees.controller.ts,employees/employees.service.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
 
 CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on4827/4828,SMTP4325 sequential; artifacts qa-artifacts/employees. Approved ADR-005 requires independently HR-verified linkage and pending initial salaries; both need future database/API/UI integration,not inferred from directory reads.
 
