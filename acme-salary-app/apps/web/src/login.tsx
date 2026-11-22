@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import { Team } from './team';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,13 @@ export function Login() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
+  const [identity,setIdentity]=useState<{id:string;isHrManager:boolean}|null>(null);
+  useEffect(()=>{
+    const controller=new AbortController();
+    if(signedIn) fetch('/api/v1/auth/me',{signal:controller.signal}).then(async response=>{if(response.ok)setIdentity(await response.json());else{setIdentity(null);setSignedIn(false);}}).catch(()=>{});
+    else setIdentity(null);
+    return()=>controller.abort();
+  },[signedIn]);
   useEffect(() => {
     const controller = new AbortController();
     if (document.cookie.split('; ').some(value => value.startsWith('acme_csrf='))) {
@@ -40,7 +48,7 @@ export function Login() {
       else { await request('otp/verify', { challengeId, code }); setSignedIn(true); setMessage('Signed in. Business modules are still being developed.'); }
     });
   }
-  return <section className="login-panel" aria-labelledby="sign-in"><h2 id="sign-in">{signedIn ? 'Signed in to ACME' : 'Sign in to ACME'}</h2>
+  return <><section className="login-panel" aria-labelledby="sign-in"><h2 id="sign-in">{signedIn ? 'Signed in to ACME' : 'Sign in to ACME'}</h2>
     <p>Invite-only access. Use your registered work email.</p>
     {signedIn ? <button disabled={busy} onClick={() => void act(async () => {
       await request('logout', {}); setSignedIn(false); setChallenge(''); setCode(''); setMessage('Signed out.');
@@ -52,5 +60,5 @@ export function Login() {
       {challengeId && <><button type="button" disabled={busy} onClick={() => void act(send)}>Resend code</button><button type="button" disabled={busy} onClick={() => { setChallenge(''); setCode(''); setMessage(''); }}>Use another email</button></>}
     </form>}
     {message && <p role="alert">{message}</p>}
-  </section>;
+  </section>{signedIn&&identity?.isHrManager&&<Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/>}</>;
 }

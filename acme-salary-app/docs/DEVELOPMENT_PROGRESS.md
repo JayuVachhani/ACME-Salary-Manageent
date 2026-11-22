@@ -1,6 +1,6 @@
 # Development progress
 
-Last updated: 21 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
+Last updated: 22 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
 
 PR #1 merged by the user: GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`. Final pre-merge head `0c8456e` passed GitHub Actions run 44920501262 (18 unit tests, 72 logical PostgreSQL checks and 12 foundation Chromium tests) and received an MCP comment review. The agent did not approve or merge the PR. Local main is synchronized; next module branch is `feature/authentication-team-access`, created from origin/main. No authentication implementation or additional test execution is claimed by this documentation handoff.
 
@@ -17,7 +17,7 @@ QA update: actual Chromium execution completed. Final result: 12 passed / 14 fai
 | Prisma | Tested internally | Introspection, client generation and runtime restricted-role queries pass; SQL migrations retain unsupported constraints/triggers |
 | Backdated salary approvals | Backend/database tested | Request/decision service, atomic ledger/history/audit, pending/rejected exclusion, no self-approval, duplicate/stale handling. API/UI/lease/idempotency integration pending |
 | Retention and snapshots | Guard/database tested | Holds block removal; every snapshot read checks current identity/permissions/owner/version/expiry. Generation/export/admin UI pending |
-| Authentication/team | In progress | Login/resend/logout API and UI, SMTP retry/invalidation, DB abuse limits, immediate removal revocation and first-manager CLI implemented. See LOGIN_MODULE.md for contracts and local execution. Team invitations/permission administration remain pending; full module and production acceptance are not claimed |
+| Authentication/team | Tested increment; PR review pending | Login plus team invitation/permission/offboarding API and UI implemented. 22 team PostgreSQL checks and 9 auth/team Chromium cases pass, including independent accounts, concurrency, before/after audit, pagination/mobile/axe and delivery failures. See LOGIN_MODULE.md and TEAM_MODULE.md. Employee linkage and full production/security acceptance remain pending |
 | Remaining product modules | Not started | Reference administration, employee editing, ordinary salary flows, reports, analytics, audit UI and full synthetic seed |
 | Production readiness | Not achieved | Infrastructure/legal/migration gates and full security/performance/UAT remain pending |
 

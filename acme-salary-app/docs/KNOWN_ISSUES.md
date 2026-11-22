@@ -1,10 +1,10 @@
 # Known issues and remaining scope
 
-Actual Chromium QA (21 November 2026): required login/OTP and business module entry tests fail; protected API probes return 404. Final 12 pass / 14 fail; 45 dependent E2E scenarios blocked. See `../BUG_REPORT.md` for severity, reproduction and verified fix dispositions. Three frontend defects/hardening findings were fixed and rerun successfully. Existing backend/database passes do not mean the application is usable end to end.
+Historical baseline Chromium QA (21 November 2026) recorded 12 passes / 14 failures and 45 blocked downstream scenarios. Login was subsequently delivered and tested; team implementation and its detailed retests are recorded in QA_EXECUTION_REPORT.md and BUG_REPORT.md. Existing backend/database passes do not mean all compensation workflows are usable end to end.
 
-- The application is not ready for operational salary use. Authentication, sessions, invites, domain APIs/UI and real SMTP delivery are pending.
+- The application is not ready for operational salary use. Login/session and captured SMTP flows are verified; team administration is in its final verification/review increment. Reference, employee, salary and reporting APIs/UI and production SMTP/TLS deployment remain pending.
 - Approval backend and database are implemented and tested; there is no public approval endpoint or usable approval screen yet. All actor identifiers must come from authenticated session guards when APIs are added.
-- No 10k seed, complete currency catalogue, salary-band maintenance, report generation/export, dashboard, full concurrency load, browser/E2E or security scans yet.
+- No 10k seed, complete currency catalogue, salary-band maintenance, report generation/export, dashboard, full concurrency load or complete business/security acceptance yet. Delivered login/team browser tests and foundation accessibility checks are separate evidence.
 - Schema readiness intentionally returns 503 until the entire application schema/readiness contract is finalized. Liveness alone does not establish operational readiness.
 - No country-specific minimum retention durations or legal compliance policy has been supplied. Explicit holds are enforced; this does not claim jurisdiction-specific legal compliance.
 - Original SOW delivery estimate predates the newly approved backdated approval feature. Revised effort remains to be measured; no production date is promised.

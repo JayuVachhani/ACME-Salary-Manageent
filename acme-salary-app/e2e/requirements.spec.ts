@@ -13,8 +13,13 @@ test('REQ-OTP synthetic email OTP request is accepted',async ({page},info)=>{
   await info.attach('otp-probe',{body:JSON.stringify(actual,null,2),contentType:'application/json'});
   expect(actual.status).toBe(202);
 });
+test('REQ-TEAM anonymous team access is denied; authorized UI is covered by the SMTP team suite',async({page})=>{
+  await page.goto('/');
+  await expect(page.getByRole('heading',{name:'Team',exact:true})).toHaveCount(0);
+  expect((await page.request.get('/api/v1/team')).status()).toBe(401);
+});
 for(const [id,label] of [
-  ['REQ-TEAM','Team'],['REQ-EMP','Employees'],['REQ-SAL','Salary'],['REQ-HISTORY','History'],
+  ['REQ-EMP','Employees'],['REQ-SAL','Salary'],['REQ-HISTORY','History'],
   ['REQ-APPROVAL','Approvals'],['REQ-TRANSFER','Transfer'],['REQ-COUNTRY','Country'],
   ['REQ-FX','Exchange rates'],['REQ-REPORT','Reports'],['REQ-AUDIT','Audit'],['REQ-DASH','Dashboard']
 ]) {

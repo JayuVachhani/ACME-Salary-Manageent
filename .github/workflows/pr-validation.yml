@@ -52,6 +52,8 @@ jobs:
         run: npm run verify:database
       - name: Verify authentication persistence in isolated PostgreSQL
         run: npm run test:authentication
+      - name: Verify team authorization and continuity in isolated PostgreSQL
+        run: npm run test:team
       - name: Type-check browser tests
         run: npm run qa:typecheck
       - name: Test Git staging safety with synthetic credentials

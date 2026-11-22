@@ -2,12 +2,14 @@
 
 Date: 21 November 2026. Environment: real Playwright Chromium, local React/NestJS, synthetic PostgreSQL fixtures only. These are release-assessment priorities; missing features were previously documented as unfinished, not regressions falsely claimed to be complete.
 
+22 November team increment: invitation/permission/offboarding implementation now has actual database and multi-account Chromium evidence. The legacy anonymous Team navigation probe conflicted with HR-only visibility and was replaced by an anonymous-denial check plus authenticated UI coverage. Intermediate ordering, stale-fixture and server-loss failures are recorded in QA_EXECUTION_REPORT.md; final acceptance waits for its final successful retest and current-head PR CI. Domain/employee/report gaps below remain open.
+
 Login increment update: QA-001's absent-login implementation is resolved for the delivered login scope: 5 SMTP/Chromium cases passed, including logout, origin/DTO checks, resend/attempt limits, failed delivery and IP throttling. REQ-LOGIN/REQ-OTP now pass. Team/permission UI and domain workflows below remain open. Initial duplicate-server and shared-port test-harness failures were fixed and the isolated suite rerun successfully. This update does not certify production SMTP/TLS deployment or full application security.
 
 | ID | Severity | Finding | Status | Evidence / reproduction | Required fix / retest |
 |---|---|---|---|---|---|
 | QA-001 | Critical (original) | Login/OTP/session implementation was absent | RESOLVED for delivered login scope | Five actual SMTP/Chromium cases and REQ-LOGIN/REQ-OTP pass; see login increment report | Production SMTP/TLS deployment and full team/security acceptance remain release gates |
-| QA-002 | High | Team invites, roles and user offboarding not available | OPEN — incomplete implementation | REQ-TEAM: no reachable Team action; no logged-in accounts possible. | Implement session-protected team API/UI and permission-matrix E2E. |
+| QA-002 | High (original) | Team administration was unavailable | RESOLVED for delivered team scope | 22 PostgreSQL checks and actual multi-account team Chromium cases pass; see latest execution report | Cross-module permission matrix, employee linkage and production security acceptance remain future gates |
 | QA-003 | High | Employee management UI/API unavailable | OPEN — incomplete implementation | REQ-EMP fails; GET `/api/v1/employees` returns 404. | Implement directory/create/edit/removal, confirmations, validation and browser tests. |
 | QA-004 | High | Salary/history/approval/transfer user workflows unavailable | OPEN — incomplete integration | REQ-SAL/HISTORY/APPROVAL/TRANSFER fail. Internal approval services pass separate tests but no browser controls exist. | Integrate tested domain services behind real sessions, add forms/history/approval UI and dual-account E2E. Do not expose test-only unsecured endpoints. |
 | QA-005 | High | Country, currency and FX administration unavailable | OPEN — incomplete integration | REQ-COUNTRY/FX fail; country/FX GET probes return 404. | Complete reference API/UI, historical rate management and unauthorized-write E2E. |

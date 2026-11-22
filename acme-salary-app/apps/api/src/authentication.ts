@@ -73,7 +73,12 @@ export class AuthenticationService {
           VALUES($1,'AUTH',$2,'OTP_REJECTED','OTP verification failed')`, [user.id, challengeId]);
         return null; // Commit failed attempts; throwing here would undo the attempt limit.
       }
-      if (user.status === 'INVITED') await client.query("UPDATE users SET status='ACTIVE' WHERE id=$1", [user.id]);
+      if (user.status === 'INVITED') {
+        await client.query("UPDATE users SET status='ACTIVE' WHERE id=$1", [user.id]);
+        await client.query(`INSERT INTO audit_logs(actor_id,entity_type,entity_id,change_type,description,payload)
+          VALUES($1::uuid,'USER',$1::text,'INVITATION_ACCEPTED','Invitation accepted through verified email OTP',
+            '{"before":{"status":"INVITED"},"after":{"status":"ACTIVE"}}'::jsonb)`,[user.id]);
+      }
       const token = generateSessionToken(); const csrf = generateSessionToken();
       await client.query(`INSERT INTO user_sessions(token_hash,user_id,csrf_hash,created_at,last_seen_at)
         VALUES($1,$2,$3,$4,$4)`, [secretDigest(this.key, 'session', token), user.id, secretDigest(this.key, 'csrf', csrf), now]);
@@ -84,8 +89,12 @@ export class AuthenticationService {
   }
 
   async authenticate(token: string, csrf?: string) {
+    return this.transaction(client => this.authenticateWithin(client, token, csrf));
+  }
+
+  /** Caller retains the identity lock through its business transaction. */
+  async authenticateWithin(client: PoolClient, token: string, csrf?: string) {
     if (!/^[\w-]{43}$/.test(token)) return null;
-    return this.transaction(async client => {
       const tokenHash = secretDigest(this.key, 'session', token);
       const user = (await client.query(`SELECT u.* FROM users u JOIN user_sessions s ON s.user_id=u.id
         WHERE s.token_hash=$1 FOR UPDATE OF u`, [tokenHash])).rows[0];
@@ -97,6 +106,5 @@ export class AuthenticationService {
         (csrf !== undefined && !matchesSecret(this.key, 'csrf', csrf, session.csrf_hash))) return null;
       await client.query('UPDATE user_sessions SET last_seen_at=$2 WHERE token_hash=$1', [session.token_hash, now]);
       return { id: session.user_id as string, isHrManager: user.is_hr_manager as boolean, permissions: user.permissions as string[] };
-    });
   }
 }
