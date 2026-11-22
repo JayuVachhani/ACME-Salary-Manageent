@@ -1,5 +1,11 @@
 # ACME Git change ledger
 
+## Confirmed React publication — 22 November 2026
+
+Commit `2d23947090f5ea7ddcda4b13b8031caebaa45221` pushed normally to `origin/chore/react-frontend-architecture`; `git ls-remote` confirmed the exact SHA. [PR #12](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/12) stays open for independent review/user merge. Required local checks below and final 220-file indexed safety scan passed. Actual-head MCP patch inspection covered shared form/table/pagination ownership, RTK endpoint invalidation, protected cache cleanup, OTP transport, fresh identity reads and browser regressions; no new critical/high issue identified, no inline review threads present. This author review is not independent approval. Exact-head GitHub CI remains a separate pending gate. This ledger follow-up is committed separately, followed by normal push and remote-head confirmation. Backend PR #11 at `57830fb3e6aa003a3fb96d58c84701cf437e100b` has verified successful GitHub validation run45044639345. No approval/merge performed; PR #10 and unrelated user files are preserved.
+
+## Earlier publication preparation
+
 ## React publication preparation — 22 November 2026
 
 Existing PR #12 / chore/react-frontend-architecture. Redux Toolkit/RTK Query conversion, shared accessible controls/tables/pagination/states, typed notifications, dependency invalidation and post-login identity race fix are complete for delivered features. Local lint/types/builds, 31 units, QA typing, architecture71/7549, isolated database suites, 12 foundation and all22 delivered Chromium cases passed. Initial reference race was fixed and covered; a later cold login request stalled, then the complete serial browser run passed unchanged. No timeouts/protections weakened. Final indexed scan and publication are pending below. PR #11 backend final57830fb passed exact-head GitHub run45044639345. No self-approval or merge; unrelated handoff-document-prompt.md remains excluded.
