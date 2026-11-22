@@ -83,7 +83,7 @@ Environment checklist, including script/container-only settings:
 | MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
 | QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428, references 4528, countries 4628 |
 | QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login |
-| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config/config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
+| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
 | ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team browser fixtures verify URL database matches it |
 | QA_ASSERT_REPORT | Optional | qa-assert-observer.mjs output path, supplied by qa-regression.mjs |
 | CI | true in Actions | Test/tool noninteractive mode; not a business feature flag |
@@ -95,7 +95,7 @@ Environment checklist, including script/container-only settings:
 
 ## 3. Frontend and optional services
 
-The same root npm install provisions both workspaces. No frontend .env.example or VITE_* API URL is implemented. apps/web/vite.config/config.ts proxies relative /api, /healthz and /readyz to loopback API port 3001, or QA_API_PORT when explicitly set. Vite serves loopback 5173 with strictPort. Production static files need an approved same-origin API reverse proxy; development proxy settings are not a production server.
+The same root npm install provisions both workspaces. No frontend .env.example or VITE_* API URL is implemented. apps/web/vite.config.ts proxies relative /api, /healthz and /readyz to loopback API port 3001, or QA_API_PORT when explicitly set. Vite serves loopback 5173 with strictPort. Production static files need an approved same-origin API reverse proxy; development proxy settings are not a production server.
 
 For optional local mail capture, with Docker available, run only the mail service if using bundled PostgreSQL:
 

@@ -18,13 +18,13 @@ Legend: **done** implemented/verified for named scope; **stub/partial** groundwo
 |---|---|---|---|
 | Infrastructure | npm workspace, API/web builds, typed config, local DB | done | package.json, main.ts, local-postgres.mjs; Windows dev scope |
 | Infrastructure | Schema integrity/checksummed migrations | done | migrations 001..018, migrate.mjs, schema.prisma |
-| Infrastructure | Health liveness | done | main.ts H01 |
+| Infrastructure | Health liveness | done | health/health.controller.ts H01 |
 | Infrastructure | Operational readiness | stub/partial | H02 always 503; compatibility contract not finalized |
 | Infrastructure | PR CI and synthetic test harness | done | .github/workflows/pr-validation.yml; 22 unit, 72 foundation DB, 22 team + 23 reference DB, 12+9+4 scoped Chromium evidence |
-| Auth | Email OTP/request/resend/login/logout/session checks | done | auth/auth.controller.ts/authentication.ts; real loopback SMTP/Chromium |
+| Auth | Email OTP/request/resend/login/logout/session checks | done | auth/auth.controller.ts and auth/authentication.service.ts; real loopback SMTP/Chromium |
 | Auth | Attempt/rate/expiry/replay and removal revocation | done | auth/auth-rate.ts, migrations 007..010, tests |
 | Admin | Bootstrap/system identity | done | bootstrap-manager.mjs, migrations 001/011 |
-| Admin | HR invites/renewals/permission edits/offboarding/pagination | done | team/team.service.ts/team-controller.ts/team.tsx, migrations 011/012; PR #4 observed merged |
+| Admin | HR invites/renewals/permission edits/offboarding/pagination | done | team/team.service.ts, team/team.controller.ts and web team.tsx, migrations 011/012; PR #4 observed merged |
 | Auth | Verified user-to-employee association | not started | nullable users.employee_id exists; no delivered verification workflow |
 | Reference | Country/currency/reference/FX/hold data foundations | done | migration 002 and domain tests; no admin workflow implied |
 | Reference | Department/designation administration | done | P4a merged in PR #5; 23 DB / 4 reference Chromium cases and exact-head CI passed |

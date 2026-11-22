@@ -49,7 +49,7 @@ Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Co
    ├─ e2e/                        Foundation and unmet-requirement Chromium probes
    ├─ e2e-auth/                   Real SMTP/login/team/reference Chromium workflows and capture server
    ├─ docs/                       Decisions, traceability, module docs and progress
-   ├─ playwright*.config/config.ts       Separate protected test server/fixture setups
+   ├─ playwright*.config.ts       Separate protected test server/fixture setups
    ├─ QA_*.md / TEST_CASES.md / BUG_REPORT.md   Historical and latest execution evidence
    ├─ .local/                     Ignored DB binaries/data/credentials/browser installation
    └─ qa-artifacts/               Ignored reports, traces and synthetic screenshots
@@ -244,7 +244,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 | MIGRATION_DATABASE_URL | Required by migration/admin/DB tests; no API config default | Missing from .env.example; local launcher writes it only when .env does not exist. Owner-only privileges; Prisma config uses it |
 | QA_API_PORT | 3001 fallback in Vite config | Dev proxy target override; foundation 4318, auth/team 4428, references 4528, countries 4628 |
 | QA_RUN | final fallback | Playwright artifact subfolder; CI sets ci, isolated auth runner sets login or references |
-| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config/config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
+| PLAYWRIGHT_BROWSERS_PATH | Set by playwright.config.ts to absolute .local/browsers | CI also sets same project-local path; not an API setting |
 | ACME_AUTH_TEST_DATABASE | Set by test-login.mjs | Random acme_test_ identifier; auth/team/reference browser fixtures verify URL database matches it |
 | QA_ASSERT_REPORT | Optional | qa-assert-observer.mjs output path, supplied by qa-regression.mjs |
 | CI | true in Actions | Test/tool noninteractive mode; not a business feature flag |
@@ -254,7 +254,7 @@ New module: obtain unresolved rules, add forward SQL and transaction/session bou
 | POSTGRES_DB | Compose sets acme | Container initialization only; does not create restricted runtime role |
 
 
-Sources: config/config.ts, .env.example, scripts/local-postgres.mjs, prisma.config/config.ts, scripts/test-*.mjs, scripts/qa-*.mjs, playwright*.config/config.ts, apps/web/vite.config/config.ts, compose.yaml and the workflow. No frontend VITE_* variable is consumed. See [README.md](README.md) and [DEPLOYMENT.md](DEPLOYMENT.md) for safe configuration.
+Sources: config/config.ts, .env.example, scripts/local-postgres.mjs, prisma.config.ts, scripts/test-*.mjs, scripts/qa-*.mjs, playwright*.config.ts, apps/web/vite.config.ts, compose.yaml and the workflow. No frontend VITE_* variable is consumed. See [README.md](README.md) and [DEPLOYMENT.md](DEPLOYMENT.md) for safe configuration.
 
 ## 13. Detailed HTTP contracts
 
@@ -349,7 +349,7 @@ acme-salary-app/apps/web/src/styles.css
 acme-salary-app/apps/web/src/team.tsx
 acme-salary-app/apps/web/src/vite-env.d.ts
 acme-salary-app/apps/web/tsconfig.json
-acme-salary-app/apps/web/vite.config/config.ts
+acme-salary-app/apps/web/vite.config.ts
 acme-salary-app/compose.yaml
 acme-salary-app/database/migrations/001_identity_audit.sql
 acme-salary-app/database/migrations/002_country_employee_fx.sql
@@ -385,9 +385,9 @@ acme-salary-app/e2e/requirements.spec.ts
 acme-salary-app/eslint.config.mjs
 acme-salary-app/package-lock.json
 acme-salary-app/package.json
-acme-salary-app/playwright.auth.config/config.ts
-acme-salary-app/playwright.config/config.ts
-acme-salary-app/prisma.config/config.ts
+acme-salary-app/playwright.auth.config.ts
+acme-salary-app/playwright.config.ts
+acme-salary-app/prisma.config.ts
 acme-salary-app/scripts/bootstrap-manager.mjs
 acme-salary-app/scripts/local-postgres.mjs
 acme-salary-app/scripts/migrate.mjs
@@ -408,7 +408,7 @@ acme-salary-app/scripts/test-team.mjs
 acme-salary-app/scripts/verify-staged.mjs
 acme-salary-app/tsconfig.base.json
 acme-salary-app/tsconfig.qa.json
-acme-salary-app/vitest.config/config.ts
+acme-salary-app/vitest.config.ts
 ~~~
 
 Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628, FX4727/4728; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.

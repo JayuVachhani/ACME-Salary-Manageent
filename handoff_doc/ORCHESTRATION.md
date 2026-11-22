@@ -36,7 +36,7 @@ There is no USE_GRAPH, ENABLE_WORKER, AI_PROVIDER or synchronous/legacy fallback
 
 - authController creates a Set of delivery Promises. The request returns without awaiting user lookup/SMTP. Delivery issue has its own transaction; unknown accounts have no code and no send.
 - createOtpMailer/createInvitationMailer use createMailSender with connect/greeting/socket timeouts and at most two attempts. No attachment/file/URL access or SMTP body debugging is enabled.
-- authController.drain resolves currently tracked deliveries; explicit main.ts app.close wrapper calls it before pool.end. A process crash is not recoverable by a queue; signal/shutdown behavior needs production verification.
+- ApplicationLifecycle.onApplicationShutdown drains MailModule OtpDeliveries after HTTP disposal, then calls pool.end. A process crash is not recoverable by a queue; signal/shutdown behavior needs production verification.
 - TeamController.notify runs after TeamService commit. SMTP failure writes a separate audit event and returns delivery=failed; no automatic invitation rollback.
 - No worker-start command exists. Run API through npm run dev; optional local Mailpit is a service, not a job worker. Test capture starts inside browser test fixtures on 4325 and sends no external mail.
 
@@ -48,10 +48,10 @@ If a durable queue is approved, preserve generic request/attempt/replay/expiry c
 
 | Code map | Responsibility |
 |---|---|
-| apps/api/src/auth/auth.controller.ts | Delivery set, generic response, invalidate-on-failure |
+| apps/api/src/auth/auth.controller.ts and mail/otp-deliveries.service.ts | Tracked delivery, generic response, invalidate-on-failure |
 | apps/api/src/mail/otp-mail.ts | Transport/retry wrappers |
 | apps/api/src/team/team.controller.ts | Post-commit notification and visible failure |
-| apps/api/src/main.ts | Entry, explicit close/drain wrapper |
+| apps/api/src/app-lifecycle.service.ts | Ordered post-HTTP OTP drain and pool shutdown |
 | e2e-auth/smtp-capture.ts | Loopback-only synthetic SMTP protocol capture |
 
 Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
