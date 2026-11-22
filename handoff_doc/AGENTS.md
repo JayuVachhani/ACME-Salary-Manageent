@@ -1,4 +1,20 @@
-# ACME handoff — start here
+# ACME handoff â€” start here
+
+## PR #10 integration — 22 November 2026
+
+PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
+
+## Earlier checkpoint records
+
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this NestJS branch: lint, workspace typechecks/builds, 27 unit tests, QA typing, isolated PostgreSQL integrity/authorization/concurrency suites, native NestJS architecture/OpenAPI checks (including production documentation absence), HTTP health smoke, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The FX email-capture case timed out on the first run; its isolated three-case group passed on rerun without timeout or authorization changes. Environment setup failures and deferred-check snapshots below are historical. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md; no self-approval, merge or production deployment is claimed. The broader unmet/blocked requirements remain open.
+
+## Earlier checkpoint records
+
+Current NestJS audit remediation (22 November 2026): pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
+
+NestJS rules alignment (22 November 2026), implemented but unverified: the existing capability modules/native injectable services remain. Concrete request DTO classes feed one APP_PIPE RequestValidationPipe and schema-derived OpenAPI input contracts. All delivered controllers use this path; the old per-parameter ZodValidationPipe is removed. OTP verification alone defers parsing to AuthService to preserve malformed-attempt throttling/audit. APP_FILTER HttpExceptionFilter handles application/framework/unknown failures with a safe 5xx fallback and preserves readiness's intentional 503 body. RequestContextMiddleware owns correlation/logging/no-store; CORS is limited to configured APP_ORIGIN. Development/test-only /api/docs, /api/openapi.json and /api/openapi.yaml document delivered routes using Swagger 12.1.2. No financial/schema/permission/session policy changes. No tests, lint, typechecks, builds, safety scans or browser checks ran for this increment, per user instruction. Changes remain uncommitted/unpublished; historical passes do not validate this working tree.
 
 Current backend delta (22 November 2026): PR #9 merged at `1e0e65f`; `feature/backend-linkage` adds migration019 and `PATCH /api/v1/team/:id/employee-link`. Independent HR, reason, confirmation, version checks, revocation and audit are implemented at the backend; no linkage UI or public salary writes. Read [TEAM_MODULE.md](../acme-salary-app/docs/TEAM_MODULE.md). Earlier discovery counts are historical: add one method/path, two SQL functions and two triggers, no tables/fields/env. Remaining approved backend work is pending; unresolved business rules stay blocked per client direction.
 
@@ -32,12 +48,13 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 - Read code before edits; flag wrong legacy docs rather than changing working code to fit them. The client-provided handoff brief governs the documentation structure. On 22 November 2026 the client explicitly requested updating and pushing this pack. This authorizes documentation delivery, not application changes or production deployment.
 - Future feature work follows root Git policy: fetch, branch from origin/main using feature/, bugfix/ or chore/, test, scan staged files, commit/push logically, use GitHub MCP exclusively for PR review/lifecycle. Never self-approve or bypass independent review/checks.
 - Preserve user work and synthetic-only fixtures. Never read/copy secrets into docs, commit .env/.local/qa-artifacts, reset databases, force-push or delete branches.
-- Use code-backed status keys: done · stub/partial · not started · blocked · cancelled · deferred. Component-level done never means system-wide readiness.
+- Use code-backed status keys: done Â· stub/partial Â· not started Â· blocked Â· cancelled Â· deferred. Component-level done never means system-wide readiness.
 
 ### Backend
 
-- NestJS 12 ESM/Node16 module resolution, TypeScript 6 strict checks, Zod 4 strict DTOs, pg parameterized SQL. UUIDs are strings; money is decimal text/Decimal, not JavaScript floating-point arithmetic.
-- There is no Passport/JWT/AuthGuard/@Roles implementation. Factories close over a shared pool. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
+- NestJS 12 ESM/Node16 module resolution, TypeScript 6 strict checks, Zod 4 strict DTO classes/global APP_PIPE, Swagger 12.1.2 local/test reference, pg parameterized SQL. UUIDs are strings; money is decimal text/Decimal, not JavaScript floating-point arithmetic.
+- There is no Passport/JWT/session AuthGuard/@Roles implementation. MutationRequestGuard enforces Origin/CSRF transport preconditions, not session authorization. Feature modules register controllers and native injectable class providers; DatabaseModule owns the shared pool and AuthModule exports one AuthenticationService. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
+- Follow root implementation-first rules: do not inspect test cases or run verification until requested; do not commit/push unverified edits. Global DTO schemas remain the single validation authority; Malformed OTP verification must reach attempt accounting and rejection audit before HTTP rejection.
 - Match current identity/session lock order and team advisory lock. Always commit/rollback/release; failed OTP attempts must commit. Notifications run after database commit.
 - SQL migrations are forward-only/checksummed. Prisma is an introspected client/schema, not a replacement for triggers/checks. Never use prisma db push.
 - Internal SalaryApprovalService/readSalarySnapshot are not HTTP endpoints. Employee linkage is incomplete; do not expose internal actor-parameter services directly.
@@ -67,13 +84,13 @@ API filenames below are under acme-salary-app/apps/api/src; migration references
 
 | Task/symptom | Primary locations |
 |---|---|
-| API entry/health/headers | apps/api/src/main.ts, config.ts |
-| OTP/cookies/origin | auth-controller.ts, authentication.ts, auth-secrets.ts, auth-rate.ts |
-| Department/designation admin | organization-references-controller.ts, organization-references.ts, web organization-references.tsx, migrations 013/014 |
-| Email delivery | otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
-| Team access/conflicts | team-controller.ts, team.ts, migrations 011/012 |
-| Salary/FX | salary-approval.ts, money.ts, fx-rates-controller.ts, fx-rates.ts, migrations003..006/018, web fx-rates.tsx |
-| Snapshot/holds | report-access.ts, migrations/002_country_employee_fx.sql |
+| API entry/health/headers | apps/api/src/main.ts, config/config.ts |
+| OTP/cookies/origin | auth/auth.controller.ts, auth/authentication.service.ts, auth/auth-secrets.ts, auth/auth-rate.ts |
+| Department/designation admin | organization-references/organization-references.controller.ts, organization-references/organization-references.service.ts, web organization-references.tsx, migrations 013/014 |
+| Email delivery | mail/otp-mail.ts, compose.yaml, e2e-auth/smtp-capture.ts |
+| Team access/conflicts | team/team.controller.ts, team/team.service.ts, migrations 011/012 |
+| Salary/FX | salary/salary-approval.service.ts, common/domain/money.ts, fx-rates/fx-rates.controller.ts, fx-rates/fx-rates.service.ts, migrations003..006/018, web fx-rates.tsx |
+| Snapshot/holds | reports/report-access.ts, migrations/002_country_employee_fx.sql |
 | UI state/confirmation | apps/web/src/main.tsx, login.tsx, team.tsx, styles.css |
 | Local DB/bootstrap | scripts/local-postgres.mjs, migrate.mjs, bootstrap-manager.mjs |
 | QA/CI | e2e/, e2e-auth/, scripts/test-*.mjs, ../.github/workflows/pr-validation.yml |
@@ -84,7 +101,7 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 1. Confirm source requirements/decision precedence and update BACKLOG/ROADMAP scope.
 2. New domain: schema migration, transactional service, strict HTTP contract, current-session permission checks, functional UI, negative/parallel tests and smoke steps; update CONTEXT, DATA_MODEL, RBAC, WORKFLOW_RULES.
-3. New role/permission: update policy.ts, Zod permission enum, SQL permission checks/guards, UI, session/snapshot invalidation and multi-account tests; never infer roles from client flags.
+3. New role/permission: update common/domain/policy.ts, Zod permission enum, SQL permission checks/guards, UI, session/snapshot invalidation and multi-account tests; never infer roles from client flags.
 4. New status: migrate enums/checks and transition guards; update workflow diagrams, filters, ledger/report selection and tests.
 5. New document/provider/upload type: none exists currently; obtain scope, define storage/retention/validation/contracts before adding routes or packages; update integration/deployment docs and smoke tests.
 6. Update all affected handoff files in the same feature PR. Maintain the existing operational/QA docs too; do not erase historical failures.
@@ -110,4 +127,4 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 30 concrete method/path API operations (27 controller patterns, with two organization-reference kinds); one React root screen; 23 Prisma tables / 178 scalar fields; 18 ordered SQL migrations; 28 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #8 is merged at the source SHA above. The employee feature branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.
 
-P5a adds read-only employee directory/profile (employees-controller.ts/employees.ts/web employees.tsx); no salary payload/mutation. ADR-005 linkage and initial salary approval are approved but not implemented by this slice. Read module contract and latest backlog before salary integration.
+P5a adds read-only employee directory/profile (employees/employees.controller.ts/employees.ts/web employees.tsx); no salary payload/mutation. ADR-005 linkage and initial salary approval are approved but not implemented by this slice. Read module contract and latest backlog before salary integration.

@@ -1,5 +1,9 @@
 # ACME — deployment, GitHub CI and infrastructure
 
+Unverified operational repair: background pg errors are handled via redacted SQLSTATE telemetry rather than an unhandled pool event. Failed rollback destroys the connection without hiding the original operation/commit error. APP_ORIGIN must be the canonical HTTP(S) URL.origin; invalid values fail startup. No infrastructure rollout, operational audit retention policy, new retry mechanism or production readiness claim is introduced.
+
+Current unverified HTTP setup: NODE_ENV=production omits `/api/docs`, `/api/openapi.json` and `/api/openapi.yaml`; development/test reference UI disables submissions and persisted authorization. CORS is limited to configured APP_ORIGIN. No new deployment, environment variable or production approval is introduced. Required checks remain deferred at user request.
+
 **Purpose:** Separate reproducible development/test operations from unimplemented production deployment.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.

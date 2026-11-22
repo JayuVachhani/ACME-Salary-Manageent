@@ -1,5 +1,9 @@
 # Email OTP login increment
 
+Current auth cleanup (implemented/unverified): authentication and rate-attempt transactions delegate to the shared withTransaction mechanics. Failed OTP attempts still return null from transaction work so their counters/audits commit; rollback failure preserves the original exception and destroys the unusable connection. Internal user/challenge/session records and current identity are explicitly typed. Exact-origin configuration is enforced at startup.
+
+Current transport alignment (unverified): RequestOtpDto validates globally through APP_PIPE; VerifyOtpDto deliberately defers to AuthService so malformed attempts still reach throttling/audit and return the established response. The same input schemas feed OpenAPI. HttpExceptionFilter retains safe auth errors; cookie/session/CSRF/lifetime rules are unchanged. Local/test-only API reference routes are listed in README.md. No checks ran for this increment.
+
 Scope: SMTP delivery, login/resend/logout, current-session endpoint, first-manager bootstrap, abuse limits and browser sign-in form. Team invitation/permission administration and all compensation screens remain separate work. This increment does not establish production readiness.
 
 ## API and security

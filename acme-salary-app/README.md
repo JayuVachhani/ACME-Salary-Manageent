@@ -1,10 +1,16 @@
 # ACME Salary Management
 
+Current backend fixes are uncommitted/unverified. APP_ORIGIN must be an exact HTTP(S) origin with no path/trailing slash/query/fragment/credentials. Response schemas now validate runtime projections and normalize pg timestamps. The shared transaction utility handles rollback failure and pool errors are logged safely. Invitation delivery may return failed_audit_unavailable when both SMTP and its failure-audit insert fail after the account commit. No new environment variable or schema migration is required.
+
+NestJS rules alignment (22 November 2026), implemented but unverified: the existing capability modules/native injectable services remain. Concrete request DTO classes feed one APP_PIPE RequestValidationPipe and schema-derived OpenAPI input contracts. All delivered controllers use this path; the old per-parameter ZodValidationPipe is removed. OTP verification alone defers parsing to AuthService to preserve malformed-attempt throttling/audit. APP_FILTER HttpExceptionFilter handles application/framework/unknown failures with a safe 5xx fallback and preserves readiness's intentional 503 body. RequestContextMiddleware owns correlation/logging/no-store; CORS is limited to configured APP_ORIGIN. Development/test-only /api/docs, /api/openapi.json and /api/openapi.yaml document delivered routes using Swagger 12.1.2. No financial/schema/permission/session policy changes. No tests, lint, typechecks, builds, safety scans or browser checks ran for this increment, per user instruction. Changes remain uncommitted/unpublished; historical passes do not validate this working tree.
+
+Local/test API reference after starting the API: `/api/docs`, `/api/openapi.json`, `/api/openapi.yaml`. None are registered in production. Swagger UI is read-only; authenticated application flows remain in the web UI. Validation/OpenAPI uses existing Zod schemas and a global Nest pipe. See [backend structure audit](docs/BACKEND_STRUCTURE_AUDIT.md). Commands below are runbook instructions, not authorization to run checks while verification is deferred.
+
 Fresh local implementation of the approved ACME plan. **Foundation stage, not a completed salary application.** No mock employee statistics, fake authentication or permissive data endpoints are supplied.
 
 ## Requirements
 
-- Node.js 24.15 or newer and npm.
+- Node.js 24.20.0 or newer and npm.
 - Docker Compose for the isolated PostgreSQL and Mailpit services, or equivalent locally supplied services.
 
 ## Project-local PostgreSQL setup (Windows)

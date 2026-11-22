@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { Client, Pool } from 'pg';
-import { SalaryApprovalService } from '../apps/api/dist/salary-approval.js';
+import { SalaryApprovalService } from '../apps/api/dist/salary/salary-approval.service.js';
 const name = `acme_test_${randomUUID().replaceAll('-','')}`;
 if (!/^acme_test_[a-f0-9]{32}$/.test(name)) throw new Error('Unsafe isolated database name');
 const ownerUrl = new URL(process.env.MIGRATION_DATABASE_URL);

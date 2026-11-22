@@ -2,20 +2,18 @@ import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
-import {Module} from '@nestjs/common';
-import {NestFactory} from '@nestjs/core';
 import {Client,Pool} from 'pg';
-import {AuthenticationService} from '../apps/api/dist/authentication.js';
-import {TeamService,linkageInput} from '../apps/api/dist/team.js';
-import {teamController} from '../apps/api/dist/team-controller.js';
-import {loadConfig} from '../apps/api/dist/config.js';
+import {AuthenticationService} from '../apps/api/dist/auth/authentication.service.js';
+import {TeamService} from '../apps/api/dist/team/team.service.js';
+import {linkageInput} from '../apps/api/dist/team/dto/team.dto.js';
+import {createApp} from '../apps/api/dist/app.js';
 
 const name=`acme_test_${randomUUID().replaceAll('-','')}`;
 const ownerUrl=new URL(process.env.MIGRATION_DATABASE_URL),runtimeUrl=new URL(process.env.DATABASE_URL);
 const admin=new Client({connectionString:ownerUrl.href});await admin.connect();
 let created=false,owner,pool,app,passed=0;
 const ok=label=>console.log(`PASS LINK-${String(++passed).padStart(2,'0')} ${label}`);
-const denied=(p,status)=>assert.rejects(p,error=>error.getStatus?.()===status);
+const denied=(p,status)=>assert.rejects(p,error=>error.status===status);
 try {
   await admin.query(`CREATE DATABASE ${name}`);created=true;ownerUrl.pathname=runtimeUrl.pathname=`/${name}`;
   execFileSync(process.execPath,['scripts/migrate.mjs'],{env:{...process.env,MIGRATION_DATABASE_URL:ownerUrl.href},stdio:'pipe',windowsHide:true});
@@ -91,7 +89,7 @@ try {
   const racer=randomUUID();await owner.query("INSERT INTO users(id,email,full_name,status) VALUES($1,'racer@acme.test','Synthetic Racer','ACTIVE')",[racer]);
   const race=await Promise.allSettled([team.linkEmployee(freshA2.token,freshA2.csrf,other,await input(other,e2)),team.linkEmployee(sb.token,sb.csrf,racer,await input(racer,e2))]);
   assert.equal(race.filter(r=>r.status==='fulfilled').length,1);
-  assert.equal(race.find(r=>r.status==='rejected').reason.getStatus(),409);
+  assert.equal(race.find(r=>r.status==='rejected').reason.status,409);
   assert.equal((await owner.query("SELECT count(*)::int n FROM users WHERE employee_id=$1 AND status<>'DELETED'",[e2])).rows[0].n,1);
   ok('concurrent independent links preserve one account per employee');
   const relink=await team.linkEmployee(sb.token,sb.csrf,reader,await input(reader,null));assert.equal(relink.employee_id,null);
@@ -107,18 +105,23 @@ try {
   await owner.query('DROP TRIGGER fail_link_audit ON audit_logs;DROP FUNCTION fail_link_audit()');
   ok('audit failure rolls back mapping version authorization and session revocation');
 
-  const config=loadConfig({...process.env,DATABASE_URL:runtimeUrl.href,OTP_HMAC_SECRET:key,APP_ORIGIN:'http://127.0.0.1:5173'});
-  class TestModule{} Module({controllers:[teamController(pool,config)]})(TestModule);
-  app=await NestFactory.create(TestModule,{logger:false});await app.listen(0,'127.0.0.1');const base=await app.getUrl();
+  const config={APP_ORIGIN:'http://127.0.0.1:5173'};
+  Object.assign(process.env,{DATABASE_URL:runtimeUrl.href,OTP_HMAC_SECRET:key,APP_ORIGIN:config.APP_ORIGIN});
+  app=await createApp();await app.listen(0,'127.0.0.1');const base=await app.getUrl();
   const request=async(session,id,body,origin=config.APP_ORIGIN)=>fetch(`${base}/api/v1/team/${id}/employee-link`,{method:'PATCH',headers:{'Content-Type':'application/json',Cookie:`acme_session=${session.token}`,'X-CSRF-Token':session.csrf,Origin:origin},body:JSON.stringify(body)});
   assert.equal((await request(sb,reader,await input(reader,e1),'https://untrusted.test')).status,403);
   assert.equal((await request(sb,'invalid',await input(reader,e1))).status,400);
   assert.equal((await request(sb,reader,{...(await input(reader,e1)),confirmed:false})).status,400);ok('real HTTP rejects cross-origin invalid IDs and unconfirmed payloads');
   const response=await request(sb,reader,await input(reader,e1));assert.equal(response.status,200);
+  assert.equal(response.headers.get('cache-control'),'no-store');
   const payload=await response.json();assert.equal(payload.employee_id,e1);
   for(const field of ['monthly_amount','authorization_version','token_hash','csrf_hash'])assert.equal(Object.hasOwn(payload,field),false);
   ok('real Nest HTTP route accepts confirmed independent linkage with safe response');
-  const visible=await team.list(sb.token);assert.equal(visible.items.find(u=>u.id===reader).employee_id,e1);ok('HR team list includes explicit current mapping');
+  const visible=await team.list(sb.token);assert.equal(visible.items.find(u=>u.id===reader).employee_id,e1);
+  const listResponse=await fetch(`${base}/api/v1/team`,{headers:{Cookie:`acme_session=${sb.token}`}});
+  assert.equal(listResponse.status,200);assert.equal(listResponse.headers.get('cache-control'),'no-store');
+  assert.equal((await listResponse.json()).items.find(u=>u.id===reader).employee_id,e1);
+  ok('HR service and real HTTP team list include explicit current mapping');
   console.log(`${passed} isolated PostgreSQL / HTTP linkage checks passed`);
 } catch(error) {
   // Set failure status explicitly even when local developer instrumentation intercepts errors.

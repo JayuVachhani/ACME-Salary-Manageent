@@ -45,7 +45,8 @@
     "test": "vitest run",
     "verify:foundation": "npm run lint && npm run typecheck && npm test && npm run build",
     "local:up": "docker compose up -d",
-    "local:down": "docker compose down"
+    "local:down": "docker compose down",
+    "test:architecture": "node --env-file=.env scripts/test-architecture.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

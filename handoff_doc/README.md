@@ -1,5 +1,9 @@
 # ACME — setup, run and operations
 
+Backend implementation checkpoint (unverified): existing dependency setup is unchanged. Use exact APP_ORIGIN without trailing slash/path. Pool error/transaction rollback handling and response-schema validation are now centralized; see audit mapping and delivery outcome details in TEAM_MODULE/SMTP_INTEGRATION. No tests/build/type/lint/safety checks ran.
+
+Backend rules increment: implemented/unverified in the isolated NestJS worktree. After normal local startup, API reference is available only in development/test at `/api/docs`, `/api/openapi.json`, `/api/openapi.yaml`. Production does not register them. No test/build/type/lint/safety/browser command was run; runbook commands below remain deferred until requested. See acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md.
+
 **Purpose:** Run the delivered application and its verification gates safely.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -64,7 +68,7 @@ Environment checklist, including script/container-only settings:
 
 | Variable | Required/default | Consumer and caveat |
 |---|---|---|
-| NODE_ENV | development; development/test/production | config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
+| NODE_ENV | development; development/test/production | config/config.ts; production forbids HTTP APP_ORIGIN/insecure cookies and mailer requires TLS |
 | PORT | 3001, positive integer | API listens on 127.0.0.1 only |
 | APP_ORIGIN | Required URL | Exact Origin equality for mutations; use browser origin without a path or trailing slash |
 | DATABASE_URL | Required PostgreSQL URL | Runtime pg pool and Prisma adapter; use restricted acme_app |
@@ -225,7 +229,7 @@ FX smoke: use synthetic HR to load a pair/date revision, enter positive decimal/
 
 ## P5a employee directory integration
 
-Sources employees-controller.ts,employees.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
+Sources employees/employees.controller.ts,employees/employees.service.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
 
 CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on4827/4828,SMTP4325 sequential; artifacts qa-artifacts/employees. Approved ADR-005 requires independently HR-verified linkage and pending initial salaries; both need future database/API/UI integration,not inferred from directory reads.
 

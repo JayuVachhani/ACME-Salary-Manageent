@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'node:path';
-process.env.PLAYWRIGHT_BROWSERS_PATH = path.resolve('.local/browsers');
+process.env.PLAYWRIGHT_BROWSERS_PATH ??= path.resolve('.local/browsers');
 const run = process.env.QA_RUN || 'final';
 export default defineConfig({
   // Cold Chromium context creation on Windows is included in the test budget.

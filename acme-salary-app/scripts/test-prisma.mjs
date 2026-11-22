@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createDatabase } from '../apps/api/dist/database.js';
+import { createDatabase } from '../apps/api/dist/database/prisma.js';
 const db = createDatabase(process.env.DATABASE_URL);
 try {
   const system = await db.users.findMany({ where: { is_system: true }, select: { id:true, is_hr_manager:true, permissions:true } });

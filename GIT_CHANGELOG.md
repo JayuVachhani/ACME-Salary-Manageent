@@ -1,7 +1,16 @@
 # ACME Git change ledger
 
-Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent
-Started: 21 November 2026 (Asia/Calcutta).
+## Confirmed PR #10 integration push — 22 November 2026
+
+Merge commit `df2b5474081f77cb881810b718a0d879cc491293` incorporates merged main4509d5f into existing PR #11 with linkage ported to native NestJS. Normal push to origin/chore/nestjs-backend-structure succeeded; git ls-remote confirmed the exact SHA. Local lint/types/builds,27 units,17 isolated linkage SQL/real-HTTP checks, native architecture/OpenAPI checks, serial database suites and9 affected Chromium cases passed. Final211-file safety and whitespace checks passed. Actual-head MCP patch review covers the port and preserved migration019; no new critical/high issue identified. Author review is not independent approval. Exact-head GitHub CI remains pending, never inferred from earlier branch passes. This ledger follow-up is published separately with final remote-head confirmation; no self-approval/merge. PR #12 awaits backend merge before reconciliation.
+
+## Earlier integration preparation
+
+## Integrating merged PR #10 into PR #11 — 22 November 2026
+
+Fetched approved origin and confirmed PR #10 merged at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. Existing `chore/nestjs-backend-structure` merges origin/main without rewriting history. Old team factory/file conflicts resolved by porting endpoint, strict DTO and operation into native modules; migration019 unchanged. Real-application linkage test and OpenAPI mapping projection coverage added. Local lint/types/builds,27 units,17 linkage SQL/HTTP cases, architecture/OpenAPI, serial isolated database suites and9 affected authentication/team Chromium cases passed. Indexed211-file scan passed; final scan follows this documentation normalization. Commit/push, actual-head review and CI pending; no approval/merge. PR #12 and unrelated user work untouched.
+
+## Earlier publication records
 
 ## Backend linkage increment — 22 November 2026
 
@@ -10,6 +19,41 @@ Fetched approved origin and verified PR #9 merge `1e0e65f`; new branch `feature/
 Local verification: Node24.20.0; verify:database PASS (22unit,72 DB,lint/types/build,Prisma/health); linkage17 SQL/HTTP PASS; team22,employee19,authentication PASS. qa:typecheck PASS; test:login all five Chromium groups PASS (9 auth/team +4 references +3 country/currency +3 FX +3 employees =22, zero retries). Staged safety PASS154 indexed files; whitespace check PASS.
 
 Implementation commit `04dbf31f4fec5a786d0d6c2c6860f3c36fc24310` pushed successfully to origin/feature/backend-linkage; git ls-remote confirmed exact match. [PR #10](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/10) targets main. MCP actual-patch review [6012088843](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/10#pullrequestreview-6012088843) found no unresolved critical/high issue in this increment; COMMENT only, not independent approval. At this delivery-ledger checkpoint, head04dbf31 Actions [45019831330](https://github.com/JayuVachhani/ACME-Salary-Manageent/actions/runs/45019831330)/job137200045701 was in progress, not a verified pass. The documentation follow-up triggers a new exact-head run; later final CI disposition is recorded in the PR's MCP review/check timeline. No self-approval/merge/protection changes. Root AGENTS.md requires successful merge before dependent salary development; independent review remains the handoff gate.
+
+## Confirmed NestJS publication — 22 November 2026
+
+Commit `89d4f03c97d27e46d7fee867908c183b5dee86af` pushed normally to `origin/chore/nestjs-backend-structure`; `git ls-remote` confirmed the exact SHA. [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11) remains open for independent review/user merge. Required local checks listed below and final 209-file indexed safety scan passed. Actual-head MCP code review inspected DTO/HTTP contracts, auth/transaction invariants, pool handling, invitation workflow and test changes; no new critical/high issue identified, no inline review threads present. This author review is not independent approval. GitHub returned no workflow runs for the new head on the first lookup; CI is pending/unverified, not passing. This documentation follow-up is published separately and the final remote head/checks will be confirmed after push. No approval or merge performed.
+
+## Earlier publication preparation
+
+## NestJS publication preparation — 22 November 2026
+
+Existing PR #11 / chore/nestjs-backend-structure. Native DTO/global validation, OpenAPI response contracts, safe HTTP boundaries, typed database results, transaction cleanup and invitation delivery handling are ready for publication. Local lint/types/builds, 27 units, isolated database suites, architecture/OpenAPI/production-doc checks, HTTP health, QA typing, 12 foundation and 22 delivered browser cases passed. Initial FX email-capture timeout passed its isolated group rerun; no timeouts were increased. Indexed scan passed before final documentation refresh; final scan is required before commit. Commit, confirmed push and exact-head GitHub checks will be recorded after they occur. Independent review/user merge remains pending.
+
+## Earlier checkpoint records
+
+## Audit finding fixes — uncommitted — 22 November 2026
+
+Audit remediation checkpoint — 22 November 2026: the ten source-audit findings have implementation changes in the existing React and NestJS working copies. **Implemented, not verified**: no test cases inspected, no tests/lint/typechecks/builds/browser checks/safety scans run, no staging/commit/push/new CI/approval/merge. Published PR checks are historical and do not validate these edits. Preserve unrelated handoff-document-prompt.md. React stays in the primary checkout on chore/react-frontend-architecture; backend stays in .worktrees/nestjs-rules on chore/nestjs-backend-structure. No reset, schema migration or new financial/permission/retention policy is introduced.
+
+This checkout implements pool error handling, shared failure-safe transaction mechanics, typed query/response contracts, exact-origin config and honest committed invitation delivery/audit outcomes. No new commit hash, push result or CI result exists. Required verification and independent review remain pending; preserve PR #10/#11/#12 branches and their published heads. See the current architecture audit for the repair-to-finding mapping.
+
+## Earlier ledger records
+
+## NestJS rules alignment — uncommitted — 22 November 2026
+
+Branch `chore/nestjs-backend-structure` remains at published head `cfbac9ac8b86b3ae6346ce58bc9148a26e1c2320`; isolated checkout `.worktrees/nestjs-rules` preserves primary React changes. Origin fetched before work. Global DTO pipe, schema-based input/output/error API contracts, dedicated request middleware, catch-all safe HTTP filter, explicit APP_ORIGIN CORS and service-owned invitation orchestration implemented; Swagger 12.1.2 pinned, docs local/test only. No business/schema/permission/session rule changes. Dependency metadata/install only (--ignore-scripts --no-audit --no-fund); npm reported host Node24.15.0 versus required>=24.20.0. No tests/lint/type/build/browser/safety checks, staging, commit, push, new CI, approval or merge. New hash: none. Historical CI does not validate current edits. Independent review/publication checks remain pending; PR #10 and PR #12 work preserved.
+
+Exact unchanged published head: `cfbac9ac8b86b3ae6346ce58bc9148a26e1c2320`; [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11). Current source and deferred verification are in acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md inside the NestJS checkout.
+
+## Earlier ledger records
+
+## Nest backend audit and refactor — 22 November 2026
+
+Fetched origin and started chore/nestjs-backend-structure from origin/main 1e0e65f. Preserved feature/backend-linkage/PR #10 and unrelated handoff-document-prompt.md. Audit confirmed medium hidden-DI/module composition and lifecycle-cleanup findings, repaired with capability modules/providers and ordered shutdown. Source references, script consumers, technical decisions, progress/roadmap and handoff updated. See docs/BACKEND_STRUCTURE_AUDIT.md under acme-salary-app for audit evidence and limitations. Current verification: foundation PASS22 units/lint/types/build; auth/team22/references23/country27/FX23/employees19 PASS; approvals38/rules23/Prisma/health/QA typing PASS. Final lifecycle, browser, commit/push and exact-head CI disposition will be recorded below after verification; no pushed/merged result inferred. No self-approval or merge authorized at this checkpoint.
+
+Repository: https://github.com/JayuVachhani/ACME-Salary-Manageent
+Started: 21 November 2026 (Asia/Calcutta).
 
 ## Confirmed history
 
@@ -134,3 +178,15 @@ The merge-handoff documentation commit is identified by `git log -- GIT_CHANGELO
 - Before merge, an authorized independent reviewer must approve and GitHub's required checks/policies must be satisfied. The connected author account was not used to APPROVE, and no merge/protection change was performed. Adding a workflow does not configure required-check branch protection; administrators should verify **Foundation integrity** is enforced as intended.
 
 Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.
+
+Final local structure checkpoint: real Nest architecture/lifecycle test PASS after the composition-root cleanup change; final API build, workspace typecheck and lint PASS. All five delivered Chromium groups PASS (9 authentication/team +4 references +3 country/currency +3 FX +3 employee =22; zero retries). Existing future-requirement failures remain unchanged and are not a full-system acceptance pass. Script import and decorator inventories verified; no schema, environment, permission or route additions/removals. Staging safety and whitespace verified before commit. GitHub exact-head results remain separate from local execution.
+
+Implementation commit `54bdc1a4b0437ae2061b72743e2ccc0f502aa1ee` pushed successfully to origin/chore/nestjs-backend-structure; git ls-remote confirmed identical head. [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11) targets main. MCP actual-patch inspection found documentation source-reference corrections (config filenames, slash-separated maps, obsolete close-wrapper text); repaired in this evidence update. No unresolved critical/high application issue found in this structural review. CI run45021497680 for implementation head is in progress, not a pass. The documentation successor needs its own exact-head CI and re-review. Independent approval remains required; no self-approval/merge.
+
+User follow-up requires complete native Nest architecture, not first-pass conversion. Native injectable services, DTO separation, framework-free application errors/global filter, shared request-security/validation, mail provider, auth orchestration, notifications, health and private salary module are implemented on the same PR branch. Full updated-code tests and new commit/push disposition remain pending until verified. MCP review-comment submission for PR #11 was NOT executed: automatic approval review hit the account usage limit. Actual patch was retrieved and inspected read-only; no independent review, approval or merge claim is made.
+
+Prior documentation delivery confirmed: a7725ab6fc6cd6104426965d39c6484fabb75f72 is on the remote (git ls-remote and MCP PR metadata agree); GitHub run45021674336 concluded SUCCESS on that exact first-pass/documentation head. This does not certify the subsequent complete-conversion working tree. Final native-provider/guard/pipe architecture test PASS, final lint/API build PASS,22units/workspace and QA typing PASS. Updated isolated backend suites PASS:authentication,team22,references23,country27,FX23,employees19,approvals38,health. Serial browser rerun login/team9 PASS after earlier7PASS/2FAIL timeout attempt; remaining groups pending at this checkpoint. No tests/timeouts weakened.
+
+Final complete-conversion verification: all22 delivered Chromium tests PASS in the serial run (9auth/team,4references,3country/currency,3FX,3employees; zero retries). Final architecture/guard/pipe/filter/lifecycle test PASS, lint/API+web build/workspace+QA types PASS,22unit tests PASS; isolated authentication/team22/references23/country27/FX23/employees19/approvals38/health PASS. The earlier7PASS/2FAIL browser timeout attempt remains historical evidence, not erased or relabeled. Current application-wide requirement failures/blockers remain open. Exact-head GitHub CI and independent review remain separate publication gates.
+
+Complete native architecture commit `1f466a2aa4bcefa398eacc0335642e7eb830a401` pushed successfully to origin/chore/nestjs-backend-structure; git ls-remote and GitHub MCP confirmed identical head. [PR #11](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11) title/body now describe the complete conversion. Actual102-file MCP patch inspected at this head; [COMMENT review6012618908](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/11#pullrequestreview-6012618908) posted successfully after the earlier automatic-review usage failure. No unresolved critical/high conversion finding; author COMMENT is not independent approval. Current-head workflow endpoint returned no runs at this check, so CI is unverified, not passing. Required independent review/current-head checks still gate merge. No self-approval/merge/protection changes. Staging safety PASS188 files; unrelated user prompt excluded.
