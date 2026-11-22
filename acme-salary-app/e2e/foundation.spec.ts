@@ -6,7 +6,7 @@ test('UI-001 foundation renders against the actual API', async ({ page }, info) 
   await expect(page).toHaveTitle('ACME Salary Management');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText('API is online');
-  await expect(page.getByText('No employee data is displayed.')).toBeVisible();
+  await expect(page.getByText('Sign in to access your permitted workspace.')).toBeVisible();
   await info.attach('inventory', { body: JSON.stringify(await page.evaluate(() => ({
     buttons: [...document.querySelectorAll('button')].map(e=>e.textContent),
     forms: document.forms.length, inputs: document.querySelectorAll('input').length,
@@ -58,14 +58,21 @@ test('UI-007 stalled health request leaves loading state within a bounded time',
   await expect(page.getByRole('status')).toHaveText('API is unavailable');
 });
 test('UI-006 no uncaught browser errors or unexpected external dependencies',async ({page},info)=>{
-  const errors:string[]=[]; const external:string[]=[];
+  const errors:string[]=[]; const external:string[]=[]; const anonymousSessionChecks:string[]=[];
   page.on('pageerror',error=>errors.push(error.message));
-  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  page.on('console',message=>{
+    if(message.type()!=='error')return;
+    // Anonymous /me is now an explicit session check, even without a CSRF-cookie hint.
+    // Keep every other console error (including a /me 500) as a failure.
+    const url=message.location().url;
+    if(url&&new URL(url).pathname==='/api/v1/auth/me'&&/^Failed to load resource: the server responded with a status of 401\b/.test(message.text()))anonymousSessionChecks.push(message.text());
+    else errors.push(message.text());
+  });
   page.on('request',request=>{if(!request.url().startsWith('http://127.0.0.1:4317')&&!request.url().startsWith('data:'))external.push(request.url());});
   await page.goto('/'); await expect(page.getByRole('status')).toHaveText('API is online');
   await page.evaluate(()=>document.fonts.ready);
-  await info.attach('console-network',{body:JSON.stringify({errors,external},null,2),contentType:'application/json'});
-  expect(errors).toEqual([]);expect(external).toEqual([]);
+  await info.attach('console-network',{body:JSON.stringify({errors,external,anonymousSessionChecks},null,2),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(external).toEqual([]);expect(anonymousSessionChecks.length).toBeGreaterThan(0);
 });
 test('API-001 browser verifies health security headers and closed readiness',async ({page},info)=>{
   await page.goto('/');

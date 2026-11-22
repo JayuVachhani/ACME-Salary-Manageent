@@ -34,12 +34,39 @@ test('EMP-E2E-02 permissions, invalid filters, removed records and no salary pay
  const response=await page.request.get('/api/v1/employees');expect(response.headers()['cache-control']).toBe('no-store');const data=await response.json();expect(data.items[0]).not.toHaveProperty('monthly_amount');expect(data.items[0]).not.toHaveProperty('salary');const id=data.items[0].id;
  for(const query of ['page=0','pageSize=101','sort=invalid','country=USA','department=bad','unknown=x'])expect((await page.request.get(`/api/v1/employees?${query}`)).status()).toBe(400);expect((await page.request.get('/api/v1/employees/not-an-id')).status()).toBe(400);
  await pool.query("UPDATE employees SET removed_at=clock_timestamp() WHERE id=$1",[id]);expect((await page.request.get(`/api/v1/employees/${id}`)).status()).toBe(404);await area(page).getByRole('button',{name:'Refresh employees'}).click();await expect(area(page).getByText('27 employees. Page 1.',{exact:true})).toBeVisible();
- await pool.query("UPDATE users SET permissions=ARRAY[]::text[] WHERE email='employee.member@acme.test'");expect((await page.request.get('/api/v1/employees')).status()).toBe(403);expect((await page.request.get('/api/v1/employees/filters')).status()).toBe(403);expect((await page.request.get(`/api/v1/employees/${id}`)).status()).toBe(403);await area(page).getByRole('button',{name:'Refresh employees'}).click();await expect(area(page).getByRole('alert')).toContainText('Employee read permission required');
+ await pool.query("UPDATE users SET permissions=ARRAY[]::text[] WHERE email='employee.member@acme.test'");expect((await page.request.get('/api/v1/employees')).status()).toBe(403);expect((await page.request.get('/api/v1/employees/filters')).status()).toBe(403);expect((await page.request.get(`/api/v1/employees/${id}`)).status()).toBe(403);await area(page).getByRole('button',{name:'Refresh employees'}).click();await expect(area(page)).toHaveCount(0);await expect(page.getByRole('button',{name:'Sign out',exact:true})).toBeVisible();
 });
 test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibility and console',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await login(page);const panel=area(page);await expect(panel.getByText('27 employees. Page 1.',{exact:true})).toBeVisible();
  await panel.getByLabel('Search employees').fill('no synthetic match');await panel.getByRole('button',{name:'Apply employee filters'}).click();await expect(panel.getByText('No employees match these filters.')).toBeVisible();await panel.getByRole('button',{name:'Clear employee filters'}).click();await expect(panel.getByRole('table',{name:'Employee results'})).toBeVisible();
- await page.route('**/api/v1/employees?*',async route=>{await new Promise(r=>setTimeout(r,500));await route.fulfill({status:503,contentType:'application/json',body:'{"message":"Synthetic directory outage"}'});});await panel.getByRole('button',{name:'Refresh employees'}).click();await expect(panel.getByRole('status')).toHaveText('Loading employees…');await expect(panel.getByRole('alert')).toHaveText('Synthetic directory outage');await page.unroute('**/api/v1/employees?*');await panel.getByRole('button',{name:'Refresh employees'}).click();await expect(panel.getByRole('table')).toBeVisible();
+ await page.route('**/api/v1/employees?*',async route=>{await new Promise(r=>setTimeout(r,500));await route.fulfill({status:503,contentType:'application/json',body:'{"message":"Synthetic directory outage"}'});});await panel.getByRole('button',{name:'Refresh employees'}).click();await expect(panel.getByRole('status')).toHaveText('Loading employees…');await expect(panel.getByRole('alert')).toHaveText('Service unavailable. Please try again.');await page.unroute('**/api/v1/employees?*');await panel.getByRole('button',{name:'Refresh employees'}).click();await expect(panel.getByRole('table')).toBeVisible();
+ // A profile request must be cancelled when another employee is selected.
+ const directory = await (await page.request.get('/api/v1/employees')).json() as { items: { id: string; employee_code: string }[] };
+ const first = directory.items.find(item => item.employee_code === 'SYN002')!;
+ let releaseFirst: () => void = () => {};
+ let finishFirst: () => void = () => {};
+ const gate = new Promise<void>(resolve => { releaseFirst = resolve; });
+ const finished = new Promise<void>(resolve => { finishFirst = resolve; });
+ let held = false, cancellations = 0;
+ const firstPath = `/api/v1/employees/${first.id}`;
+ const recordCancellation = (request: import('@playwright/test').Request) => { if (new URL(request.url()).pathname === firstPath) cancellations++; };
+ page.on('requestfailed', recordCancellation);
+ await page.route(`**${firstPath}`, async route => {
+   const response = await route.fetch(); held = true; await gate;
+   try { if (!cancellations) await route.fulfill({ response }); } finally { finishFirst(); }
+ });
+ await panel.getByRole('button', { name: 'View profile for employee SYN002', exact: true }).click();
+ await expect.poll(() => held).toBe(true);
+ const beforeSelection = cancellations;
+ await panel.getByRole('button', { name: 'View profile for employee SYN003', exact: true }).click();
+ const profile = panel.getByRole('region', { name: 'Employee profile' });
+ await expect(profile.getByText('SYN003', { exact: true })).toBeVisible();
+ await expect.poll(() => cancellations).toBeGreaterThan(beforeSelection);
+ releaseFirst(); await finished;
+ await expect(profile.getByText('SYN003', { exact: true })).toBeVisible();
+ await expect(profile.getByText('SYN002', { exact: true })).toHaveCount(0);
+ await panel.getByRole('button', { name: 'Close employee profile' }).click();
+ await page.unroute(`**${firstPath}`); page.off('requestfailed', recordCancellation);
  await page.route(/\/api\/v1\/employees\/[a-f0-9-]{36}$/,route=>route.fulfill({status:404,contentType:'application/json',body:'{"message":"Employee unavailable"}'}));await panel.getByRole('button',{name:'View profile for employee SYN002',exact:true}).click();await expect(panel.getByRole('region',{name:'Employee profile'}).getByRole('alert')).toHaveText('Employee unavailable');await panel.getByRole('button',{name:'Close employee profile'}).click();
  await page.setViewportSize({width:375,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);expect((await new AxeBuilder({page}).include('[aria-labelledby="employees-heading"]').analyze()).violations).toEqual([]);expect(errors).toEqual([]);await panel.screenshot({path:'qa-artifacts/employees/mobile.png'});
 });

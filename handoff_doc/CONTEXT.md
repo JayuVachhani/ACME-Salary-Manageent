@@ -1,5 +1,26 @@
 # ACME — technical context and handoff
 
+## Combined React/NestJS reconciliation — 22 November 2026
+
+PR #10 linkage and PR #11 native NestJS architecture are merged to main at `8b8d7ed344d0eb1b6d05e5dd891786db0d9edc9a`. Existing PR #12 now merges this base, preserving all backend feature modules, DTO/global validation/OpenAPI, migration019 and linkage protections alongside Redux Toolkit/RTK Query and shared React controls. Both architecture commands remain in CI. React Account models the nullable employee_id response; this reconciliation adds no linkage UI or salary workflow. Lockfile contains both Swagger and Redux dependencies. Combined local lint/types/builds,36 units,QA typing,React architecture71/7550,Nest architecture/OpenAPI,serial isolated PostgreSQL suites and17 linkage SQL/HTTP checks passed. The initial FX browser assertion raced a successful second save by matching a retained toast; the helper now awaits the current POST201 and dialog closure. All3 FX cases passed unchanged application code; QA typing passed again. All22 delivered browser cases passed across the completed groups (9auth/team,4references,3country,3FX,3employees). The initial FX failure remains historical, with no relaxed timeout/assertion or application change. Final safety scan,publication and exact-head CI are in progress; earlier branch-only passes and deferred-check snapshots below are historical. No self-approval/merge/deployment; unrelated user files remain excluded.
+
+## Earlier checkpoint records
+
+## Publication verification — 22 November 2026
+
+Required local publication checks passed on this React branch: lint, workspace typechecks/builds, 31 unit tests, QA typing, architecture gate (71 source files / 7,549 assertions), isolated PostgreSQL integrity/authorization/concurrency suites, 12 foundation Chromium cases and all 22 delivered-feature Chromium cases. The initial reference run exposed a startup identity/OTP race; fresh post-login identity retrieval now cancels and settles the older anonymous query, with a regression test. A later cold login request stalled; the complete 22-case serial rerun passed without relaxed timeouts or authorization checks. Final indexed scan, commit/push and exact-head GitHub CI are tracked in GIT_CHANGELOG.md. No self-approval, merge or production deployment; broader unmet/blocked requirements remain open.
+
+Setup history: incomplete dependencies and a Windows PostgreSQL DLL lock required a clean dependency reinstall and preserved local-instance restart; Prisma was regenerated. An overlapping disposable-database migration hit shared-role contention and the database suites passed serially. No existing database was reset. Historical deferred-check snapshots below do not describe this publication checkpoint.
+
+## Earlier checkpoint records
+
+Current React audit remediation (22 November 2026): shared controls/tables/pagination/request states, employee dependency invalidation, typed notification feedback and accurate delivered-scope copy implemented. Verification remains deferred at user request: no test/lint/type/build/browser/safety command ran. No commit/push/new CI/merge. See the current architecture audit for source ownership and pending scenarios; earlier pass records below are historical.
+
+Separate backend working copy: `.worktrees/nestjs-rules` on existing chore/nestjs-backend-structure contains the unverified NestJS standards follow-up (global DTO pipe, OpenAPI, middleware, safe error filter, explicit CORS and invitation workflow service). See its acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and handoff entry point. These edits are not merged into this React checkout and have no new verification/publication result; preserve both working trees.
+
+Current frontend map (unverified working tree): AppProviders wires Redux, ErrorBoundary and notifications. shared/state/store.ts and shared/api/base-api.ts own global state and query cache; feature api.ts files inject typed endpoints. features/auth/use-session.ts reads server identity, use-login.ts keeps OTP credentials local. app/app.tsx lazy loads Workspace with Suspense; shared transport owns same-origin CSRF/errors. Health uses RTK Query with an eight-second window deadline. No SessionProvider/useResource implementation remains. See acme-salary-app/docs/FRONTEND_ARCHITECTURE_AUDIT.md for security exceptions and deferred verification.
+
+Rules alignment in progress (22 November 2026): frontend global state now uses Redux Toolkit 2.15.0 / React Redux 9.3.1 and one RTK Query API/cache. Feature-owned endpoints replace custom remote-state effects; server identity is read through useSession from the query cache. Session Context and useResource are removed. Forms, confirmation snapshots and OTP inputs stay local; OTP credentials bypass Redux actions/cache through the same shared secure transport. AppProviders owns store/error-boundary/notification composition; the authenticated workspace is lazy loaded with Suspense. Logout/self-removal/established-session 401 clears cached protected data; 403 refreshes current identity. No API/schema/financial rule changes. **Uncommitted and unverified: no tests, lint, typechecks, builds, safety scans or browser checks were run for this increment, at the user's request.** Existing PR #12 checks cover its published head only; PR #11 backend and PR #10 linkage remain separate pending work.
 ## PR #10 integration — 22 November 2026
 
 PR #10 merged to main at `4509d5fa272ea1e3a3db785affa245d6a7cbdc5d`. This PR #11 checkout merges that base and ports linkage to native `team/team.controller.ts`, `team/team.service.ts` and `team/dto/team.dto.ts`; no legacy controller factory/service is restored. Migration019 is retained unchanged. The shared member response contract includes nullable employee_id for link/list/invite/change/reinvite responses; OpenAPI derives the same projection. The isolated linkage suite now boots the real application, including global validation/security/response boundaries. Existing independent-HR, audit/revocation/version/rollback rules remain. Combined local lint/types/builds, 27 units, all17 linkage SQL/real-HTTP checks, native architecture/OpenAPI (including required employee_id projection and production docs absence), serial isolated database suites and all9 affected authentication/team Chromium cases passed. Final publication/current-head GitHub CI remain pending; earlier branch-only passes below are historical. React PR #12 remains separate until PR #11 is independently merged.
@@ -62,7 +83,7 @@ Ports: web 5173; API 3001 bound to 127.0.0.1; project-local PostgreSQL 55432. Co
    ├─ compose.yaml                Development PostgreSQL and Mailpit only
    ├─ .env.example                Template; lacks owner migration URL
    ├─ apps/api/src/               NestJS entry, factories, services and unit tests
-   ├─ apps/web/src/               main.tsx, login.tsx, team.tsx, organization-references.tsx, country-currency.tsx, fx-rates.tsx and styles.css
+   ├─ apps/web/src/               main.tsx, features/auth/login.tsx, features/team/team.tsx, features/organization-references/organization-references.tsx, features/country-currency/country-currency.tsx, features/fx-rates/fx-rates.tsx and styles.css
    ├─ database/migrations/        001..018 authoritative SQL, no down migrations
    ├─ database/schema.prisma      Introspected 23-model reference/client input
    ├─ scripts/                    DB lifecycle, migration, bootstrap, regression/safety tools
@@ -111,6 +132,7 @@ Users may edit their own name but not permissions; self-removal is subject to an
 
 ### Organization reference administration — done for P4a
 
+Sources: [controller](../acme-salary-app/apps/api/src/organization-references-controller.ts), [service](../acme-salary-app/apps/api/src/organization-references.ts), [UI](../acme-salary-app/apps/web/src/features/organization-references/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
 Sources: [controller](../acme-salary-app/apps/api/src/organization-references/organization-references.controller.ts), [service](../acme-salary-app/apps/api/src/organization-references/organization-references.service.ts), [UI](../acme-salary-app/apps/web/src/organization-references.tsx), [module contract](../acme-salary-app/docs/ORGANIZATION_REFERENCES_MODULE.md), migrations 013/014 and approved ADR-003.
 
 OrganizationReferencesService.run holds the current HR identity/session through each transaction and sets local acme.reference_actor for atomic before/after audits. Only departments/designations are accepted by referenceKind before any table-name interpolation; all values are SQL parameters. list returns 20 rows ordered by name/id, including inactive records. create trims a 1..200-character name and returns version 1. change requires name, isActive and expectedVersion; stale or unavailable IDs return 409. Case-insensitive uniqueness reserves inactive names. IDs cannot change; there is no DELETE route.
@@ -131,6 +153,7 @@ readSalarySnapshot(client,actorId,snapshotId,exportRequested,now) is an internal
 
 ### Country and currency administration — P4b
 
+Sources: country-currency.ts, country-currency-controller.ts, web features/country-currency/country-currency.tsx, migrations 015..017 and [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md). Catalogue SELECT permits current HR or read member; configuration routes are HR-only. All writes authenticate in the same transaction, require Origin/CSRF and set local reference actor. Versioned updates and transactional before/after audits prevent silent lost updates.
 Sources: country-currency/country-currency.service.ts, country-currency/country-currency.controller.ts, web country-currency.tsx, migrations 015..017 and [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md). Catalogue SELECT permits current HR or read member; configuration routes are HR-only. All writes authenticate in the same transaction, require Origin/CSRF and set local reference actor. Versioned updates and transactional before/after audits prevent silent lost updates.
 
 Pinned SIX publication 2026-09-17 contains 178 codes (165 numeric and 13 N.A.). database/reference/iso4217.json records source/date/raw hash. Runtime catalogue is read-only, without network calls. HR activation inserts/updates configured currencies; version 0 means first activation. Codes/minor units are immutable through HTTP. N.A./unknown codes cannot activate, and mismatched legacy precision cannot silently reactivate. Separately reviewed precision corrections are rejected by SQL when referenced by country, ledger/request, FX or snapshot rows.
@@ -139,15 +162,16 @@ Country inputs configure name/default currency, 0..4 precision, HALF_UP/FLOOR/CE
 
 ### FX administration — P4c
 
+Sources: fx-rates-controller.ts, fx-rates.ts, web features/fx-rates/fx-rates.tsx and [FX module](../acme-salary-app/docs/FX_MODULE.md). HR or read members can list historical revisions/resolve as-of rates. Only HR can POST, using current-session transaction/Origin/CSRF and no actor override. A revision authoring form must load the current pair/date revision, require positive decimal rate/source/reason, show concrete confirmation, and handle stale409 without automatic merge/retry.
 Sources: fx-rates/fx-rates.controller.ts, fx-rates/fx-rates.service.ts, web fx-rates.tsx and [FX module](../acme-salary-app/docs/FX_MODULE.md). HR or read members can list historical revisions/resolve as-of rates. Only HR can POST, using current-session transaction/Origin/CSRF and no actor override. A revision authoring form must load the current pair/date revision, require positive decimal rate/source/reason, show concrete confirmation, and handle stale409 without automatic merge/retry.
 
 POST locks active pair currencies in code order and the existing advisory pair/date key, compares expectedRevision then appends current+1. SQL still enforces HR/sequence/active currencies/immutability. Migration018 writes before/after audit for NEW events while preserving all earlier audit rows. A failed audit undoes the append. Lookup is historically readable even after currency deactivation and returns exact unit factor plus IDs/dates/sources/inverse flags. It uses the existing direct/inverse/USD resolver and configured FX_MAX_STALENESS_DAYS. Future-effective quotes are excluded from earlier as-of selection; missing/stale paths422. This is rate preview/maintenance, not a completed salary or report generator.
 
 ## 7. Frontend architecture and data shapes
 
-main.tsx renders the sole root screen, skip link, health panel and Login. Health fetch aborts after 8 seconds. login.tsx holds email/code/challenge/message/busy/signedIn/identity in local React state. An existing CSRF cookie only hints to call /me; backend identity remains authoritative. HR identity mounts Team, OrganizationReferences, CountryCurrency and FxRates; read members mount catalogue-only CountryCurrency and read-only FxRates; non-HR users do not see private Team controls. There is no React Router, path-based guard, app-wide cache or auth bearer storage.
+main.tsx mounts StrictMode/App only. AppProviders supplies the store/error boundary/notifications; App composes the page, health query and Login, and lazy loads the authenticated workspace. useSession reads query-owned identity on mount/focus/reconnect and after OTP verification.401 is anonymous; established-session expiry clears protected cache, while other identity failures hide the workspace and remain visible. HR/read visibility gates remain unchanged and do not replace server authorization.
 
-team.tsx uses native fetch, local list/editor state and expectedVersion. It displays a native HTML dialog via showModal(), focuses/traps through browser behavior, prevents closing while saving, and supports cancellation, paging and explicit delivery errors. A 409 preserves unsaved input: refresh the list and reopen Edit to load the current version. It does not silently merge concurrent permissions. CSS is system-font/ordinary classes; mobile tables scroll inside their container. Relative requests need a same-origin proxy/static hosting arrangement outside development.
+Each feature has typed injected RTK endpoints/types, local workflow hooks and presentation components. shared/api/client.ts owns transport/CSRF/timeouts/safe errors; RTK Query owns request/cache lifecycle and successful-write invalidation. use-action.ts locks local submissions and links abort cleanup. Native confirmation dialogs preserve explicit targets/versions/revisions. Selected employee profile requests abort on cleanup. No auth persistence, cross-feature implementation imports, SessionProvider or useResource remains.
 
 Core synthetic API shapes (field names are intentionally different from DB snake_case):
 
@@ -362,11 +386,11 @@ acme-salary-app/apps/api/src/team/team.service.ts
 acme-salary-app/apps/api/tsconfig.json
 acme-salary-app/apps/web/index.html
 acme-salary-app/apps/web/package.json
-acme-salary-app/apps/web/src/login.tsx
+acme-salary-app/apps/web/src/features/auth/login.tsx
 acme-salary-app/apps/web/src/main.tsx
-acme-salary-app/apps/web/src/organization-references.tsx
-acme-salary-app/apps/web/src/styles.css
-acme-salary-app/apps/web/src/team.tsx
+acme-salary-app/apps/web/src/features/organization-references/organization-references.tsx
+acme-salary-app/apps/web/src/app/styles.css
+acme-salary-app/apps/web/src/features/team/team.tsx
 acme-salary-app/apps/web/src/vite-env.d.ts
 acme-salary-app/apps/web/tsconfig.json
 acme-salary-app/apps/web/vite.config.ts
@@ -435,6 +459,7 @@ Browser harness update: existing QA_RUN selects distinct web/API ports: login 44
 
 ## P5a employee directory integration
 
+Sources employees-controller.ts,employees.ts,web features/employees/employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
 Sources employees/employees.controller.ts,employees/employees.service.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
 
 CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on4827/4828,SMTP4325 sequential; artifacts qa-artifacts/employees. Approved ADR-005 requires independently HR-verified linkage and pending initial salaries; both need future database/API/UI integration,not inferred from directory reads.

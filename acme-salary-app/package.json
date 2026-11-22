@@ -46,6 +46,7 @@
     "verify:foundation": "npm run lint && npm run typecheck && npm test && npm run build",
     "local:up": "docker compose up -d",
     "local:down": "docker compose down",
+    "test:web-architecture": "node scripts/test-web-architecture.mjs",
     "test:architecture": "node --env-file=.env scripts/test-architecture.mjs"
   },
   "devDependencies": {

@@ -38,11 +38,11 @@ test('TEAM-E2E-01 HR invites through confirmed form, SMTP arrives, member logs i
   await page.getByRole('button',{name:'Cancel change'}).click();
   expect((await pool.query("SELECT count(*)::int n FROM users WHERE email='team.member@acme.test'")).rows[0].n).toBe(0);
   await page.getByRole('button',{name:'Send invitation',exact:true}).click();await page.getByRole('button',{name:'Confirm change'}).click();
-  await expect(page.getByRole('alert').filter({hasText:'Invitation saved and email sent.'})).toBeVisible();
+  await expect(page.getByLabel('Notifications').getByText('Invitation saved and email sent.', {exact:true})).toBeVisible();
   await expect.poll(()=>capture.messages.some(value=>value.includes('To: team.member@acme.test')&&value.includes('You are invited to ACME'))).toBe(true);
   await page.getByRole('button',{name:'Reinvite team.member@acme.test',exact:true}).click();
   await page.getByRole('button',{name:'Confirm change'}).click();
-  await expect(page.getByRole('alert').filter({hasText:'Invitation renewed and email sent.'})).toBeVisible();
+  await expect(page.getByLabel('Notifications').getByText('Invitation renewed and email sent.', {exact:true})).toBeVisible();
   const memberContext=await browser.newContext({baseURL:origin});const member=await memberContext.newPage();
   try{
     await signIn(member,'team.member@acme.test');await expect(member.getByRole('heading',{name:'Team',exact:true})).toHaveCount(0);
@@ -55,12 +55,12 @@ test('TEAM-E2E-01 HR invites through confirmed form, SMTP arrives, member logs i
     await page.getByRole('button',{name:'Save member',exact:true}).click();
     await expect(page.getByRole('dialog')).toContainText('salary:view');
     await page.getByRole('button',{name:'Confirm change'}).click();
-    await expect(page.getByRole('alert').filter({hasText:'Permissions saved.'})).toBeVisible();
+    await expect(page.getByLabel('Notifications').getByText('Permissions saved.', {exact:true})).toBeVisible();
     expect((await (await member.request.get(`${origin}/api/v1/auth/me`)).json()).permissions).toEqual(['read','salary:view']);
     await page.getByRole('button',{name:'Refresh team'}).click();
     await expect(page.getByRole('row').filter({hasText:'team.member@acme.test'})).toContainText('salary:view');
     await page.getByRole('button',{name:'Remove team.member@acme.test',exact:true}).click();await page.getByRole('button',{name:'Confirm change'}).click();
-    await expect(page.getByRole('alert').filter({hasText:'Account removed; access revoked.'})).toBeVisible();
+    await expect(page.getByLabel('Notifications').getByText('Account removed; access revoked.', {exact:true})).toBeVisible();
     expect((await member.request.get(`${origin}/api/v1/auth/me`)).status()).toBe(401);
   }finally{await memberContext.close();}
 });
@@ -109,7 +109,7 @@ test('TEAM-E2E-04 invitation email failure is visible and saved invitation remai
   await signIn(page,'team.b@acme.test');await capture.close();
   await page.getByLabel('Full name',{exact:true}).fill('Synthetic Delivery Failure');await page.getByLabel('Team email').fill('team.delivery@acme.test');
   await page.getByRole('button',{name:'Send invitation',exact:true}).click();await page.getByRole('button',{name:'Confirm change'}).click();
-  await expect(page.getByRole('alert').filter({hasText:'Invitation saved, but email delivery failed.'})).toBeVisible({timeout:15000});
+  await expect(page.getByLabel('Notifications').getByText('Invitation saved, but email delivery failed.', {exact:false})).toBeVisible({timeout:15000});
   const account=(await pool.query("SELECT id,status FROM users WHERE email='team.delivery@acme.test'")).rows[0];
   expect(account.status).toBe('INVITED');
   expect((await pool.query("SELECT count(*)::int n FROM audit_logs WHERE entity_id=$1 AND change_type='INVITATION_DELIVERY_FAILED'",[account.id])).rows[0].n).toBe(1);

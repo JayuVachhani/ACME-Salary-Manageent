@@ -27,12 +27,22 @@ test('AUTH-E2E-01 real SMTP OTP login, HttpOnly session, CSRF logout and revocat
   expect(cookies.find(c => c.name === 'acme_session')?.httpOnly).toBe(true);
   expect(await page.evaluate(() => document.cookie)).not.toContain('acme_session');
   expect((await page.request.get('/api/v1/auth/me')).status()).toBe(200);
+  // The readable CSRF cookie is a hint, not proof that an HttpOnly session exists.
+  await context.clearCookies({ name: 'acme_csrf' });
+  const restored: string[] = [];
+  const recordIdentity = (response: import('@playwright/test').Response) => {
+    if (new URL(response.url()).pathname === '/api/v1/auth/me' && response.status() === 200) restored.push(response.url());
+  };
+  page.on('response', recordIdentity);
   await page.reload();
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await expect.poll(() => restored.length).toBe(1);
+  page.off('response', recordIdentity);
+  await context.addCookies(cookies.filter(cookie => cookie.name === 'acme_csrf'));
   await page.screenshot({ path: 'qa-artifacts/login/signed-in.png', fullPage: true });
   expect((await page.request.post('/api/v1/auth/logout', { headers: { Origin: origin }, data: {} })).status()).toBe(403);
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page.getByRole('alert')).toHaveText('Signed out.');
+  await expect(page.getByLabel('Notifications').getByText('Signed out.', {exact:true})).toBeVisible();
   expect((await page.request.get('/api/v1/auth/me')).status()).toBe(401);
 });
 test('AUTH-E2E-02 origin, DTO, generic responses and unknown-user verification', async ({ request }) => {
