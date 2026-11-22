@@ -47,7 +47,16 @@
     "local:up": "docker compose up -d",
     "local:down": "docker compose down",
     "test:web-architecture": "node scripts/test-web-architecture.mjs",
-    "test:architecture": "node --env-file=.env scripts/test-architecture.mjs"
+    "test:architecture": "node --env-file=.env scripts/test-architecture.mjs",
+    "prepare": "node scripts/install-hooks.mjs",
+    "hooks:install": "node scripts/install-hooks.mjs",
+    "format": "prettier --ignore-path ../.prettierignore --write \"apps/**/*.{ts,tsx,css,json,html}\" \"scripts/**/*.mjs\" \"e2e*/**/*.ts\" \"*.{json,mjs,ts,yml,yaml}\" \"../.github/**/*.{yml,yaml}\" \"../.prettierrc.json\" \"../.lintstagedrc.json\"",
+    "format:check": "prettier --ignore-path ../.prettierignore --check \"apps/**/*.{ts,tsx,css,json,html}\" \"scripts/**/*.mjs\" \"e2e*/**/*.ts\" \"*.{json,mjs,ts,yml,yaml}\" \"../.github/**/*.{yml,yaml}\" \"../.prettierrc.json\" \"../.lintstagedrc.json\"",
+    "lint:fix": "eslint apps --fix --max-warnings 0",
+    "quality:staged": "lint-staged --cwd .. --config ../.lintstagedrc.json --concurrent false && node scripts/verify-staged.mjs",
+    "quality:check": "npm run format:check && npm run verify:foundation && npm run qa:typecheck && npm run test:web-architecture",
+    "quality:push": "npm run quality:check && node scripts/verify-staged.mjs",
+    "test:quality-hooks": "node scripts/test-quality-hooks.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
@@ -57,6 +66,9 @@
     "@types/node": "26.6.6",
     "concurrently": "10.0.7",
     "eslint": "10.15.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.2",
+    "prettier": "3.10.1",
     "prisma": "7.10.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.73.0",

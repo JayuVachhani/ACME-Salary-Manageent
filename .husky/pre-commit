@@ -1,0 +1,1 @@
+npm --prefix acme-salary-app run quality:staged

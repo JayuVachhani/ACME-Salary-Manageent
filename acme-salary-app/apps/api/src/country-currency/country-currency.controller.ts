@@ -1,12 +1,42 @@
-import { Body, Controller, Get, Inject, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { RequestSecurity } from '../common/http/request-security.service.js';
 import { MutationRequestGuard } from '../common/http/mutation-request.guard.js';
-import { ApiErrors, ApiInput, ApiMutation, ApiResult, ApiSession } from '../common/http/api-contract.decorators.js';
+import {
+  ApiErrors,
+  ApiInput,
+  ApiMutation,
+  ApiResult,
+  ApiSession,
+} from '../common/http/api-contract.decorators.js';
 import { CountryCurrencyService } from './country-currency.service.js';
-import { CreateCountryDto, ChangeCountryDto, ChangeCurrencyDto, CountryParamsDto, CurrencyParamsDto, CountryOffsetQueryDto } from './dto/country-currency.dto.js';
-import { catalogueResponse, currenciesResponse, currencyResponse, countriesResponse, countryResponse } from './dto/country-currency-response.dto.js';
+import {
+  CreateCountryDto,
+  ChangeCountryDto,
+  ChangeCurrencyDto,
+  CountryParamsDto,
+  CurrencyParamsDto,
+  CountryOffsetQueryDto,
+} from './dto/country-currency.dto.js';
+import {
+  catalogueResponse,
+  currenciesResponse,
+  currencyResponse,
+  countriesResponse,
+  countryResponse,
+} from './dto/country-currency-response.dto.js';
 
 @ApiTags('Countries and currencies')
 @ApiSession()
@@ -14,30 +44,47 @@ import { catalogueResponse, currenciesResponse, currencyResponse, countriesRespo
 @Controller('/api/v1')
 @UseGuards(MutationRequestGuard)
 export class CountryCurrencyController {
-  constructor(@Inject(RequestSecurity) private readonly security: RequestSecurity,
-    @Inject(CountryCurrencyService) private readonly service: CountryCurrencyService) {}
+  constructor(
+    @Inject(RequestSecurity) private readonly security: RequestSecurity,
+    @Inject(CountryCurrencyService) private readonly service: CountryCurrencyService,
+  ) {}
 
   @Get('currency-catalogue')
   @ApiResult(catalogueResponse)
-  catalogue(@Req() req: Request) { return this.service.catalogue(this.security.token(req)); }
+  catalogue(@Req() req: Request) {
+    return this.service.catalogue(this.security.token(req));
+  }
 
   @Get('currencies')
   @ApiResult(currenciesResponse)
-  currencies(@Req() req: Request) { return this.service.currencies(this.security.token(req)); }
+  currencies(@Req() req: Request) {
+    return this.service.currencies(this.security.token(req));
+  }
 
   @Patch('currencies/:code')
   @ApiMutation()
   @ApiInput(CurrencyParamsDto, 'path')
   @ApiInput(ChangeCurrencyDto, 'body')
   @ApiResult(currencyResponse)
-  activate(@Req() req: Request, @Param() params: CurrencyParamsDto, @Body() body: ChangeCurrencyDto) {
-    return this.service.activate(this.security.token(req), this.security.csrf(req), params.code, body);
+  activate(
+    @Req() req: Request,
+    @Param() params: CurrencyParamsDto,
+    @Body() body: ChangeCurrencyDto,
+  ) {
+    return this.service.activate(
+      this.security.token(req),
+      this.security.csrf(req),
+      params.code,
+      body,
+    );
   }
 
   @Get('countries')
   @ApiInput(CountryOffsetQueryDto, 'query')
   @ApiResult(countriesResponse)
-  countries(@Req() req: Request, @Query() query: CountryOffsetQueryDto) { return this.service.countries(this.security.token(req), query.offset); }
+  countries(@Req() req: Request, @Query() query: CountryOffsetQueryDto) {
+    return this.service.countries(this.security.token(req), query.offset);
+  }
 
   @Post('countries')
   @ApiMutation()
@@ -53,6 +100,11 @@ export class CountryCurrencyController {
   @ApiInput(ChangeCountryDto, 'body')
   @ApiResult(countryResponse)
   change(@Req() req: Request, @Param() params: CountryParamsDto, @Body() body: ChangeCountryDto) {
-    return this.service.change(this.security.token(req), this.security.csrf(req), params.code, body);
+    return this.service.change(
+      this.security.token(req),
+      this.security.csrf(req),
+      params.code,
+      body,
+    );
   }
 }

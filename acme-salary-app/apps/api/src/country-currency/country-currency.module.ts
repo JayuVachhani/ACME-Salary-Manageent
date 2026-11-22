@@ -6,8 +6,8 @@ import { AuthModule } from '../auth/auth.module.js';
 import { CountryCurrencyController } from './country-currency.controller.js';
 import { CountryCurrencyService } from './country-currency.service.js';
 @Module({
-  imports: [HttpModule, ConfigModule, DatabaseModule, AuthModule], controllers: [CountryCurrencyController], providers: [CountryCurrencyService
-  ]
+  imports: [HttpModule, ConfigModule, DatabaseModule, AuthModule],
+  controllers: [CountryCurrencyController],
+  providers: [CountryCurrencyService],
 })
-export class CountryCurrencyModule {
-}
+export class CountryCurrencyModule {}

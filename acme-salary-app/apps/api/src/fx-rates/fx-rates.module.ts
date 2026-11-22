@@ -6,8 +6,8 @@ import { AuthModule } from '../auth/auth.module.js';
 import { FxRatesController } from './fx-rates.controller.js';
 import { FxRatesService } from './fx-rates.service.js';
 @Module({
-  imports: [HttpModule, ConfigModule, DatabaseModule, AuthModule], controllers: [FxRatesController], providers: [FxRatesService
-  ]
+  imports: [HttpModule, ConfigModule, DatabaseModule, AuthModule],
+  controllers: [FxRatesController],
+  providers: [FxRatesService],
 })
-export class FxRatesModule {
-}
+export class FxRatesModule {}

@@ -1,7 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { can, canChangeSalary, canExportSalary, canManageUser, permissions, type Principal } from './policy';
-const base: Principal = { id: 'synthetic-user', employeeId: 'synthetic-employee', active: true,
-  isSystem: false, isHrManager: false, permissions: ['read'] };
+import {
+  can,
+  canChangeSalary,
+  canExportSalary,
+  canManageUser,
+  permissions,
+  type Principal,
+} from './policy';
+const base: Principal = {
+  id: 'synthetic-user',
+  employeeId: 'synthetic-employee',
+  active: true,
+  isSystem: false,
+  isHrManager: false,
+  permissions: ['read'],
+};
 
 describe('approved permission boundaries', () => {
   it('read does not grant compensation or export access', () => {
@@ -14,7 +27,9 @@ describe('approved permission boundaries', () => {
   });
   it('requires every export prerequisite', () => {
     for (const missing of ['read', 'salary:view', 'export'] as const) {
-      expect(canExportSalary({ ...base, permissions: permissions.filter(p => p !== missing) })).toBe(false);
+      expect(
+        canExportSalary({ ...base, permissions: permissions.filter((p) => p !== missing) }),
+      ).toBe(false);
     }
     expect(canExportSalary({ ...base, permissions })).toBe(true);
   });

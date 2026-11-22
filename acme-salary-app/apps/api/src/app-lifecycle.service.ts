@@ -6,6 +6,11 @@ import { OtpDeliveries } from './mail/otp-deliveries.service.js';
 @Injectable()
 export class ApplicationLifecycle implements OnApplicationShutdown {
   constructor(
-    @Inject(Pool) private readonly pool: Pool, @Inject(OtpDeliveries) private readonly deliveries: OtpDeliveries) { }
-  async onApplicationShutdown() { await this.deliveries.drain(); await this.pool.end(); }
+    @Inject(Pool) private readonly pool: Pool,
+    @Inject(OtpDeliveries) private readonly deliveries: OtpDeliveries,
+  ) {}
+  async onApplicationShutdown() {
+    await this.deliveries.drain();
+    await this.pool.end();
+  }
 }

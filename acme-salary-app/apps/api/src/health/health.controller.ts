@@ -12,10 +12,20 @@ export class HealthController {
 
   @Get('/healthz')
   @ApiResult(z.object({ status: z.literal('ok') }))
-  live() { return { status: 'ok' }; }
+  live() {
+    return { status: 'ok' };
+  }
 
   @Get('/readyz')
-  @ApiResult(z.object({ status: z.literal('not_ready'), reason: z.enum(['schema_not_verified', 'database_unavailable']) }), 503,
-    'Readiness intentionally fails until schema readiness is implemented')
-  ready() { return this.health.ready(); }
+  @ApiResult(
+    z.object({
+      status: z.literal('not_ready'),
+      reason: z.enum(['schema_not_verified', 'database_unavailable']),
+    }),
+    503,
+    'Readiness intentionally fails until schema readiness is implemented',
+  )
+  ready() {
+    return this.health.ready();
+  }
 }

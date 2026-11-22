@@ -13,6 +13,12 @@ Work only with `https://github.com/JayuVachhani/ACME-Salary-Manageent.git`. Pres
 - The user requested pushing the current code on 22 November 2026; this authorizes the required verification, in-scope failure fixes, commits and normal pushes to existing PR branches. Do not merge or self-approve. The implementation-first rule remains the default for future work.
 - While verification is deferred, leave edits uncommitted and unpublished. The existing required pre-commit/pre-push checks still apply before delivery, once verification is authorized. Record the deferred status and preserve historical failures.
 
+## Local quality tooling
+
+- Prettier and ESLint are enforced by Husky: pre-commit checks staged formatting/lint plus indexed safety; pre-push checks complete formatting,lint,types,units,builds,QA typing,React boundaries and indexed safety. Database/linkage/Nest runtime/browser gates remain in CI.
+- From acme-salary-app, install dependencies with lifecycle scripts disabled as documented, then explicitly run npm run hooks:install for local development. Normal development install also runs prepare. Hooks require the supported Node version on PATH and use installed local binaries.
+- The formatter baseline excludes Markdown,immutable SQL,package-lock.json and runtime/generated data. Never stage unrelated files to satisfy a hook or weaken hooks/CI to bypass failures. Implementation-first verification deferral remains in force until explicitly authorized.
+
 ## Git delivery
 
 - Fetch and inspect the remote before starting work. New development branches start from `origin/main` and must begin with `feature/`, `bugfix/` or `chore/`.

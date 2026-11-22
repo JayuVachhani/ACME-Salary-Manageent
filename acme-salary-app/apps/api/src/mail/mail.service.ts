@@ -5,11 +5,14 @@ import { createOtpMailer, createInvitationMailer } from './otp-mail.js';
 export class MailService {
   private readonly sendOtp;
   private readonly sendInvitation;
-  constructor(
-  @Inject(APP_CONFIG) config: AppConfig) {
+  constructor(@Inject(APP_CONFIG) config: AppConfig) {
     this.sendOtp = createOtpMailer(config);
     this.sendInvitation = createInvitationMailer(config);
   }
-  otp(email: string, code: string): Promise<void> { return this.sendOtp(email, code); }
-  invitation(email: string): Promise<void> { return this.sendInvitation(email); }
+  otp(email: string, code: string): Promise<void> {
+    return this.sendOtp(email, code);
+  }
+  invitation(email: string): Promise<void> {
+    return this.sendInvitation(email);
+  }
 }

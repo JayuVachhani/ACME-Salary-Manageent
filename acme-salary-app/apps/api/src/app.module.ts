@@ -20,9 +20,18 @@ import { EmployeesModule } from './employees/employees.module.js';
 import { HealthModule } from './health/health.module.js';
 @Module({
   imports: [
-    HttpModule, ConfigModule, DatabaseModule, MailModule, AuthModule, TeamModule,
-    OrganizationReferencesModule, CountryCurrencyModule, FxRatesModule,
-    EmployeesModule, HealthModule, SalaryModule,
+    HttpModule,
+    ConfigModule,
+    DatabaseModule,
+    MailModule,
+    AuthModule,
+    TeamModule,
+    OrganizationReferencesModule,
+    CountryCurrencyModule,
+    FxRatesModule,
+    EmployeesModule,
+    HealthModule,
+    SalaryModule,
   ],
   providers: [
     ApplicationLifecycle,

@@ -17,7 +17,8 @@ export class RequestValidationPipe implements PipeTransform<unknown, unknown> {
     // Only OTP verification defers parsing so malformed attempts reach its throttle/audit boundary.
     if (metadata.metatype.deferredValidation) return value;
     const result = metadata.metatype.schema.safeParse(value);
-    if (!result.success) throw new BadRequestException({ statusCode: 400, message: metadata.metatype.errorMessage });
+    if (!result.success)
+      throw new BadRequestException({ statusCode: 400, message: metadata.metatype.errorMessage });
     return result.data;
   }
 }

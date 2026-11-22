@@ -6,8 +6,10 @@ import { TeamNotifications } from './team-notifications.service.js';
 /** Application workflow: commit the account change before attempting notification delivery. */
 @Injectable()
 export class TeamInvitationsService {
-  constructor(@Inject(TeamService) private readonly team: TeamService,
-    @Inject(TeamNotifications) private readonly notifications: TeamNotifications) {}
+  constructor(
+    @Inject(TeamService) private readonly team: TeamService,
+    @Inject(TeamNotifications) private readonly notifications: TeamNotifications,
+  ) {}
 
   async invite(token: string, csrf: string, input: InviteMemberDto) {
     const account = await this.team.invite(token, csrf, input);

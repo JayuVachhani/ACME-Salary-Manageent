@@ -1,14 +1,17 @@
 import type { ZodType, output } from 'zod';
 
 export interface RequestDtoClass<T = unknown> {
-  new(): T;
+  new (): T;
   readonly schema: ZodType<T>;
   readonly errorMessage: string;
   readonly deferredValidation?: boolean;
 }
 
 /** Runtime metadata for Nest, with one schema for transport validation and API documentation. */
-export function requestDto<S extends ZodType>(schema: S, errorMessage: string): RequestDtoClass<output<S>> {
+export function requestDto<S extends ZodType>(
+  schema: S,
+  errorMessage: string,
+): RequestDtoClass<output<S>> {
   class SchemaDto {
     static readonly schema = schema;
     static readonly errorMessage = errorMessage;
