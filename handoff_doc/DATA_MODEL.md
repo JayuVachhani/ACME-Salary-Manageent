@@ -366,7 +366,7 @@ CREATE TABLE currencies (
 
 Controlled case-insensitive department names; HR administration API/UI delivered in P4a.
 
-**Application queries:** No dedicated HTTP consumer; relation/schema or internal SQL use only. Inspect the source relation and migrations below before adding a consumer.
+**Application queries:** OrganizationReferencesService list/create/change provides HR-only HTTP administration; list orders by name/id, pages 20 and includes inactive rows; change matches ID/version. New employee assignments require active referenced rows under shared locks. See the organization-reference migration protections above.
 
 **Expiration/retention:** No table TTL or cleanup worker is implemented.
 
@@ -419,7 +419,7 @@ CREATE TABLE departments (
 
 Controlled case-insensitive designation names; HR administration API/UI delivered in P4a.
 
-**Application queries:** No dedicated HTTP consumer; relation/schema or internal SQL use only. Inspect the source relation and migrations below before adding a consumer.
+**Application queries:** OrganizationReferencesService list/create/change provides HR-only HTTP administration; list orders by name/id, pages 20 and includes inactive rows; change matches ID/version. New employee assignments require active referenced rows under shared locks. See the organization-reference migration protections above.
 
 **Expiration/retention:** No table TTL or cleanup worker is implemented.
 

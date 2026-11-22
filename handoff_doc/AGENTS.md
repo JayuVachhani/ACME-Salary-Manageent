@@ -61,7 +61,7 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 
 ## Task-to-code map
 
-Paths below are relative to acme-salary-app/ unless prefixed otherwise.
+API filenames below are under acme-salary-app/apps/api/src; migration references are under acme-salary-app/database/migrations. Paths beginning apps/, scripts/, e2e/ or e2e-auth/ are relative to acme-salary-app/. The web reference component is apps/web/src/organization-references.tsx.
 
 | Task/symptom | Primary locations |
 |---|---|

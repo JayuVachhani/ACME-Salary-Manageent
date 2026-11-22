@@ -64,13 +64,11 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 
 ## When an item ships
 
-Update source requirements/technical decision addenda when semantics change; CONTEXT routes/env, DATA_MODEL, WORKFLOW_RULES, RBAC, README/SMOKE_TESTS, ROADMAP status, this backlog, existing traceability/progress/QA docs and Git ledger in the same PR. Add actual evidence and current-head MCP review/check records. Keep LLM/ORCHESTRATION/SMTP/DEPLOYMENT docs aligned if their boundaries change. No handoff-only task authorizes an application change or commit.
+Update source requirements/technical decision addenda when semantics change; CONTEXT routes/env, DATA_MODEL, WORKFLOW_RULES, RBAC, README/SMOKE_TESTS, ROADMAP status, this backlog, existing traceability/progress/QA docs and Git ledger in the same PR. Add actual evidence and current-head MCP review/check records. Keep LLM/ORCHESTRATION/SMTP/DEPLOYMENT docs aligned if their boundaries change. A handoff-only task does not authorize application changes. Commit/push only when explicitly authorized by the client, as for this publication.
 
 ## Changelog
 
 | Date | Change | Evidence |
 |---|---|---|
 | 22 November 2026 | Initial handoff backlog derived from checked-out source; no implementation/priority promises inferred beyond approved plan | HEAD 4925ef2, schema/config/controllers/tests and approved decision files |
-
-
 | 22 November 2026 | P4a merged; inventory refreshed against 8ae97b3; client authorized publishing the 14-file handoff pack | PR #5 merge, ADR-003, controllers/migrations/CI |

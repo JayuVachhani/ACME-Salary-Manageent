@@ -10,7 +10,7 @@ The client authorized updating and pushing this 14-file documentation pack. It n
 
 ## Fresh static result
 
-PASS: 588 checks, 14 deliverables, 190 relative links/anchors, 18 routes, 22 models / 172 scalar fields, 14 migrations / 24 functions / two views, and 16 API configuration settings plus 11 tooling/service settings. The local verification script is ignored test tooling, not an application change. Whitespace and staged secret-safety results are checked separately before commit.
+PASS: 590 checks, 14 deliverables, 190 relative links/anchors, 18 routes, 22 models / 172 scalar fields, 14 migrations / 24 functions / two views, and 16 API configuration settings plus 11 tooling/service settings. The local verification script is ignored test tooling, not an application change. Whitespace and staged secret-safety results are checked separately before commit.
 
 ## Verification scope and checks
 
