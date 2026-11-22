@@ -3,6 +3,7 @@ import type { Employee } from './types';
 import { employeeEditApi, type EditLease } from './edit-api';
 import { useAction } from '../../shared/hooks/use-action';
 import { errorMessage } from '../../shared/api/client';
+import { handleDirectRequestError } from '../../shared/api/direct-request-errors';
 import { baseApi } from '../../shared/api/base-api';
 import { useAppDispatch } from '../../shared/state/hooks';
 export function useEmployeeEditor(employee: Employee, onClose: () => void) {
@@ -31,6 +32,7 @@ export function useEmployeeEditor(employee: Employee, onClose: () => void) {
         .renew(employee.id, lease.leaseToken, controller.signal)
         .catch((error) => {
           if (!controller.signal.aborted) {
+            handleDirectRequestError(error, dispatch);
             setLeaseError(
               errorMessage(error, 'Could not renew the edit session. Cancel and reopen this form.'),
             );
@@ -41,9 +43,11 @@ export function useEmployeeEditor(employee: Employee, onClose: () => void) {
     return () => {
       controller.abort();
       clearInterval(interval);
-      void employeeEditApi.release(employee.id, lease.leaseToken).catch(() => {});
+      void employeeEditApi.release(employee.id, lease.leaseToken).catch((error) => {
+        handleDirectRequestError(error, dispatch);
+      });
     };
-  }, [employee.id, lease]);
+  }, [employee.id, lease, dispatch]);
   function confirm() {
     if (!lease || leaseError) return;
     void action.perform(async (signal) => {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { errorMessage } from '../api/client';
+import { handleDirectRequestError } from '../api/direct-request-errors';
 import { useAppDispatch } from '../state/hooks';
 import { notify } from '../state/notifications';
 import type { FeedbackTone } from '../state/notifications';
@@ -41,6 +42,7 @@ export function useAction() {
         await work(controller.signal);
       } catch (cause) {
         if (mounted.current && !controller.signal.aborted) {
+          handleDirectRequestError(cause, dispatch);
           dispatch(
             notify({
               tone: 'error',
