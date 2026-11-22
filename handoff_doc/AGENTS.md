@@ -6,7 +6,7 @@
 
 ## Executive summary
 
-This is the single entry point for the root handoff_doc/ pack. ACME Salary Management is a TypeScript modular monolith with working passwordless login, team, department/designation and country/currency administration (PR #7 merged), plus FX administration undergoing P4c verification and substantial internal database/compensation foundations. It is not a production-ready salary application. Read [ROADMAP.md](ROADMAP.md) before promising features. This pack describes the checked-out code, not every feature described in the BRD.
+This is the single entry point for the root handoff_doc/ pack. ACME Salary Management is a TypeScript modular monolith with working passwordless login, team, department/designation and country/currency administration (PR #7 merged), plus locally verified P4c FX administration and substantial internal database/compensation foundations. It is not a production-ready salary application. Read [ROADMAP.md](ROADMAP.md) before promising features. This pack describes the checked-out code, not every feature described in the BRD.
 
 ## Read order
 
@@ -106,4 +106,4 @@ Documentation is an ongoing acceptance requirement for every significant project
 
 ## Discovery snapshot
 
-27 concrete method/path API operations (24 controller patterns, with two organization-reference kinds); one React root screen; 23 Prisma tables / 178 scalar fields; 18 ordered SQL migrations; 28 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #5 is merged at the source SHA above. This documentation branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.
+27 concrete method/path API operations (24 controller patterns, with two organization-reference kinds); one React root screen; 23 Prisma tables / 178 scalar fields; 18 ordered SQL migrations; 28 named SQL functions; 2 SQL views. No runtime LLM, upload/storage API, transcription, cron, queue worker or production deployment workflow. PR #7 is merged at the source SHA above. The FX feature branch starts from that origin/main. Public employee/salary/reporting workflows remain incomplete. See [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for snapshot checks.

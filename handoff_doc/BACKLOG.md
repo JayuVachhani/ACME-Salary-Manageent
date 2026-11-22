@@ -16,7 +16,7 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 |---|---|---|---|---|
 | A1a | Department/designation administration (P4a) | High | done | Merged PR #5; migrations 013/014, real API/UI, 23 PostgreSQL and 4 reference Chromium cases |
 | A1b | Country/currency administration (P4b) | Critical | done | PR #7 merged at0e0fb86; ADR-004, pinned catalogue and country-currency module |
-| A1c | Immutable historical FX administration (P4c) | High | stub/partial | Implemented;23 DB /3 FX Chromium local passes; PR review/CI pending. FX_MODULE.md, migration018, service/controller/UI |
+| A1c | Immutable historical FX administration (P4c) | High | done (local scope) | Implemented;23 DB /3 FX Chromium local passes; PR review/CI pending. FX_MODULE.md, migration018, service/controller/UI |
 | A2 | Verify and administer employee/user linkage before public salary access | Critical | blocked | Nullable mapping currently permits incomplete self-subject protection; users, policy.ts, employee workflows |
 | A3 | Employee create/directory/edit/removal with initial salary atomicity | Critical | not started | Dated assignments, validation, permissions, holds and unique keys; employee schemas/UI/API |
 | A4 | Expose backdated request/independent decision workflow safely | Critical | blocked | Depends on A2/A3; SalaryApprovalService, trusted session boundary, approver/requester browser accounts |
