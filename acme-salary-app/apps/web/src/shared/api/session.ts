@@ -8,5 +8,7 @@ export async function refreshSession(dispatch: AppDispatch) {
     previous.abort();
     await previous;
   }
-  return dispatch(baseApi.endpoints.session.initiate(undefined, { subscribe: false, forceRefetch: true })).unwrap();
+  return dispatch(
+    baseApi.endpoints.session.initiate(undefined, { subscribe: false, forceRefetch: true }),
+  ).unwrap();
 }

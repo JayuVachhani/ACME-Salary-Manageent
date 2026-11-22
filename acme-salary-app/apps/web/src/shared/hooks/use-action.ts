@@ -14,29 +14,49 @@ export function useAction() {
   const mounted = useRef(false);
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; current.current?.abort(); };
+    return () => {
+      mounted.current = false;
+      current.current?.abort();
+    };
   }, []);
   const setMessage = useCallback((message: string, tone: FeedbackTone = 'info') => {
     setFeedback(message ? { message, tone } : null);
   }, []);
-  const announce = useCallback((message: string, tone: FeedbackTone = 'success') => {
-    if (!mounted.current) return;
-    setFeedback(null);
-    dispatch(notify({ message, tone }));
-  }, [dispatch]);
-  const perform = useCallback(async (work: (signal: AbortSignal) => Promise<void>) => {
-    if (current.current) return;
-    const controller = new AbortController(); current.current = controller;
-    setBusy(true); setFeedback(null);
-    try { await work(controller.signal); }
-    catch (cause) {
-      if (mounted.current && !controller.signal.aborted) {
-        dispatch(notify({ tone: 'error', message: errorMessage(cause, 'Could not confirm the result. Refresh before retrying.') }));
+  const announce = useCallback(
+    (message: string, tone: FeedbackTone = 'success') => {
+      if (!mounted.current) return;
+      setFeedback(null);
+      dispatch(notify({ message, tone }));
+    },
+    [dispatch],
+  );
+  const perform = useCallback(
+    async (work: (signal: AbortSignal) => Promise<void>) => {
+      if (current.current) return;
+      const controller = new AbortController();
+      current.current = controller;
+      setBusy(true);
+      setFeedback(null);
+      try {
+        await work(controller.signal);
+      } catch (cause) {
+        if (mounted.current && !controller.signal.aborted) {
+          dispatch(
+            notify({
+              tone: 'error',
+              message: errorMessage(
+                cause,
+                'Could not confirm the result. Refresh before retrying.',
+              ),
+            }),
+          );
+        }
+      } finally {
+        if (mounted.current && current.current === controller) setBusy(false);
+        if (current.current === controller) current.current = null;
       }
-    } finally {
-      if (mounted.current && current.current === controller) setBusy(false);
-      if (current.current === controller) current.current = null;
-    }
-  }, [dispatch]);
+    },
+    [dispatch],
+  );
   return { busy, feedback, setMessage, announce, perform };
 }

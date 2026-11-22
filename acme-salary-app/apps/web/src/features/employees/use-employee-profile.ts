@@ -7,10 +7,20 @@ export function useEmployeeProfile(id: string) {
     let active = true;
     let request: ReturnType<typeof load> | undefined;
     // Do not start an immediately cancelled StrictMode setup probe for the same cache key.
-    queueMicrotask(() => { if (active) request = load(id); });
-    return () => { active = false; request?.abort(); };
+    queueMicrotask(() => {
+      if (active) request = load(id);
+    });
+    return () => {
+      active = false;
+      request?.abort();
+    };
   }, [id, load]);
-  return { data: result.isError ? null : result.currentData ?? null,
+  return {
+    data: result.isError ? null : (result.currentData ?? null),
     loading: result.isUninitialized || result.isFetching,
-    error: result.isError && result.error ? errorMessage(result.error, 'Employee request failed. Please retry.') : '' };
+    error:
+      result.isError && result.error
+        ? errorMessage(result.error, 'Employee request failed. Please retry.')
+        : '',
+  };
 }

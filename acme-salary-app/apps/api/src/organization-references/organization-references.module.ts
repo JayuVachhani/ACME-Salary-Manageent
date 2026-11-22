@@ -6,8 +6,8 @@ import { AuthModule } from '../auth/auth.module.js';
 import { OrganizationReferencesController } from './organization-references.controller.js';
 import { OrganizationReferencesService } from './organization-references.service.js';
 @Module({
-  imports: [HttpModule, ConfigModule, DatabaseModule, AuthModule], controllers: [OrganizationReferencesController], providers: [OrganizationReferencesService
-  ]
+  imports: [HttpModule, ConfigModule, DatabaseModule, AuthModule],
+  controllers: [OrganizationReferencesController],
+  providers: [OrganizationReferencesService],
 })
-export class OrganizationReferencesModule {
-}
+export class OrganizationReferencesModule {}

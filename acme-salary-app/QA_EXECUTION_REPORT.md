@@ -1,5 +1,22 @@
 # ACME QA execution report
 
+## Quality tooling publication checks — 22 November 2026
+
+Push request authorizes verification. Formatting,lint,workspace types,36 units,builds,QA typing and React architecture71/7550 passed. Disposable Git/Husky integration checks reject unformatted source,explicit any and prohibited runtime files,and accept valid staged source. Git safety regression passed. Initial formatter baseline changes source layout only. Final indexed scan,real commit/push hooks and exact-head CI remain pending; no approval/merge. Earlier implementation-only records below are historical.
+
+
+## Developer quality hooks — 22 November 2026
+
+Implemented on `chore/quality-hooks`, verification deferred under the user's implementation-first rule. ESLint remains the application linter; Prettier3.10.1,Husky9.1.7 and lint-staged17.6.2 are exact development dependencies. Root Prettier/EditorConfig settings enforce two spaces,single quotes,semicolons and LF. The initial application/config/script/browser-test formatting baseline is applied; Markdown,immutable SQL,lockfiles and generated/runtime files are excluded. No business/API/schema rules change.
+
+From `acme-salary-app`, `npm run format` writes supported source/config formatting; `npm run format:check` checks it; `npm run lint` rejects application lint warnings and `npm run lint:fix` applies supported fixes. `npm run quality:check` runs format check,foundation verification (lint,workspace types,units,builds),browser-test typing and React architecture checks. It does not migrate a database or require browser binaries.
+
+Husky lives at root `.husky/` because Git is one directory above package.json. Normal development install runs `prepare`; after the documented safe `npm ci --ignore-scripts`, explicitly run `npm run hooks:install`. Installation skips CI/production/HUSKY=0. Git pre-commit runs `quality:staged`: non-writing Prettier/ESLint checks on staged code/config plus the existing indexed safety scan. Partially staged work stays under lint-staged's normal stash/hide protection; hooks do not auto-fix or broadly stage files. Git pre-push runs `quality:push`: complete source quality plus indexed safety. Failures stop the Git action. Use Node>=24.20.0 on the terminal/GUI Git PATH; packages are installed locally,never fetched by a hook.
+
+CI keeps lifecycle scripts disabled and now checks formatting in addition to the existing complete delivered database/linkage/architecture/browser gates. The full future-requirement QA suite still retains its unmet/blocked scope. Hook execution,format checking,lint,types,unit/build/browser verification,safety scans,staging,commit and push have not been performed for this increment. Dependency installation,Husky setup and formatter writes are implementation actions,not test passes.
+
+## Earlier checkpoint records
+
 ## Combined React/NestJS reconciliation — 22 November 2026
 
 PR #10 linkage and PR #11 native NestJS architecture are merged to main at `8b8d7ed344d0eb1b6d05e5dd891786db0d9edc9a`. Existing PR #12 now merges this base, preserving all backend feature modules, DTO/global validation/OpenAPI, migration019 and linkage protections alongside Redux Toolkit/RTK Query and shared React controls. Both architecture commands remain in CI. React Account models the nullable employee_id response; this reconciliation adds no linkage UI or salary workflow. Lockfile contains both Swagger and Redux dependencies. Combined local lint/types/builds,36 units,QA typing,React architecture71/7550,Nest architecture/OpenAPI,serial isolated PostgreSQL suites and17 linkage SQL/HTTP checks passed. The initial FX browser assertion raced a successful second save by matching a retained toast; the helper now awaits the current POST201 and dialog closure. All3 FX cases passed unchanged application code; QA typing passed again. All22 delivered browser cases passed across the completed groups (9auth/team,4references,3country,3FX,3employees). The initial FX failure remains historical, with no relaxed timeout/assertion or application change. Final safety scan,publication and exact-head CI are in progress; earlier branch-only passes and deferred-check snapshots below are historical. No self-approval/merge/deployment; unrelated user files remain excluded.

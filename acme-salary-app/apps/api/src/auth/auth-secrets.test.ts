@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { generateOtp, generateSessionToken, matchesSecret, secretDigest, sessionExpired } from './auth-secrets.js';
+import {
+  generateOtp,
+  generateSessionToken,
+  matchesSecret,
+  secretDigest,
+  sessionExpired,
+} from './auth-secrets.js';
 
 const key = 'synthetic-test-key-with-at-least-32-characters';
 describe('authentication secrets', () => {

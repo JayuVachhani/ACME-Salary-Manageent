@@ -10,9 +10,18 @@ export function useSession() {
   // App and Login already subscribe before the lazy workspace mounts; share that verified identity.
   const session = baseApi.useSessionQuery(undefined, { refetchOnMountOrArgChange: false });
   const dispatch = useAppDispatch();
-  return { identity: session.isError ? null : session.currentData ?? null,
-    error: session.isError && session.error ? errorMessage(session.error, 'Could not load your session. Please retry.') : '',
+  return {
+    identity: session.isError ? null : (session.currentData ?? null),
+    error:
+      session.isError && session.error
+        ? errorMessage(session.error, 'Could not load your session. Please retry.')
+        : '',
     refresh: () => refreshSession(dispatch),
-    clear: (message: string) => { dispatch(sessionCleared(message)); },
-    clearNotice: () => { dispatch(dismiss()); } };
+    clear: (message: string) => {
+      dispatch(sessionCleared(message));
+    },
+    clearNotice: () => {
+      dispatch(dismiss());
+    },
+  };
 }

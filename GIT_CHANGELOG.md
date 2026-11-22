@@ -1,5 +1,21 @@
 # ACME Git change ledger
 
+## Confirmed quality tooling push — 22 November 2026
+
+Commit `4a28ea1a94bacfa79895e4116ea314f5dc88984b` pushed normally to origin/chore/quality-hooks; git ls-remote confirmed the exact SHA. Actual Husky pre-commit and pre-push gates passed,including288-file indexed scan. Local quality:check,36 units,React71/7550,Nest architecture/OpenAPI,safety regression and four disposable Git hook acceptance/rejection checks passed. No user file staged; handoff-document-prompt.md preserved. PR targets main; exact-head GitHub CI and independent review remain separate gates. This publication ledger follow-up is committed/pushed separately with hooks enabled. No approval/merge/deployment.
+
+
+## Quality tooling publication checks — 22 November 2026
+
+Push request authorizes verification. Formatting,lint,workspace types,36 units,builds,QA typing and React architecture71/7550 passed. Disposable Git/Husky integration checks reject unformatted source,explicit any and prohibited runtime files,and accept valid staged source. Git safety regression passed. Initial formatter baseline changes source layout only. Final indexed scan,real commit/push hooks and exact-head CI remain pending; no approval/merge. Earlier implementation-only records below are historical.
+
+
+## Quality tooling — implementation only — 22 November 2026
+
+Fetched origin/main at merged PR #12 `e96b6dded034dae1c3be901f679d6c8b3babea49`; created `chore/quality-hooks` from it. Existing application ESLint retained; exact Prettier3.10.1,Husky9.1.7,lint-staged17.6.2 installed without lifecycle scripts. Root formatter/EditorConfig/staged config and Husky pre-commit/pre-push gates added; explicit safe-install prepare/setup and CI format gate added. Source/config/script/browser-test formatter baseline applied; no Markdown/SQL/lockfile/generated-data formatting. No test/lint/type/build/browser/safety/hook verification,staging,commit,push,PR or new CI pass claimed. Verification deferred until the user requests it. Unrelated handoff-document-prompt.md preserved; published feature history below remains historical.
+
+## Earlier publication records
+
 ## Confirmed combined architecture push — 22 November 2026
 
 Merge commit `ca7b6279d931d86e91c441c894eaeeb79c97d169` incorporates main8b8d7ed (merged PR #10/#11) into existing React PR #12. Normal push succeeded and git ls-remote confirmed the exact SHA. Backend source and database migrations have no diff from merged main. CI retains both architecture gates and linkage coverage. Local lint/types/builds,36 units,QA typing,React71/7550,Nest architecture/OpenAPI,isolated database suites,17 linkage SQL/HTTP and22 delivered Chromium cases passed across completed groups. Initial FX test synchronization failure and correction remain documented. Final279-file indexed safety and whitespace gates passed. Actual-head MCP patches inspected; no new critical/high issue identified; author review is not independent approval. Exact-head GitHub CI is pending. This ledger follow-up is published separately with remote-head confirmation; no self-approval/merge/deployment. Unrelated user prompt remains excluded.

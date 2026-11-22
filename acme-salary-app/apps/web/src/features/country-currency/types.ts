@@ -1,3 +1,31 @@
-export type Country = { country_code: string; country_name: string; default_currency: string; decimal_places: number; rounding_mode: string; regulatory_notes: string | null; retention_notes: string | null; is_active: boolean; version: number };
-export type Draft = { countryCode: string; countryName: string; defaultCurrency: string; decimalPlaces: number; roundingMode: string; regulatoryNotes: string; retentionNotes: string; isActive: boolean };
-export const emptyCountry: Draft = { countryCode: '', countryName: '', defaultCurrency: '', decimalPlaces: 2, roundingMode: 'HALF_UP', regulatoryNotes: '', retentionNotes: '', isActive: true };
+export type Country = {
+  country_code: string;
+  country_name: string;
+  default_currency: string;
+  decimal_places: number;
+  rounding_mode: string;
+  regulatory_notes: string | null;
+  retention_notes: string | null;
+  is_active: boolean;
+  version: number;
+};
+export type Draft = {
+  countryCode: string;
+  countryName: string;
+  defaultCurrency: string;
+  decimalPlaces: number;
+  roundingMode: string;
+  regulatoryNotes: string;
+  retentionNotes: string;
+  isActive: boolean;
+};
+export const emptyCountry: Draft = {
+  countryCode: '',
+  countryName: '',
+  defaultCurrency: '',
+  decimalPlaces: 2,
+  roundingMode: 'HALF_UP',
+  regulatoryNotes: '',
+  retentionNotes: '',
+  isActive: true,
+};

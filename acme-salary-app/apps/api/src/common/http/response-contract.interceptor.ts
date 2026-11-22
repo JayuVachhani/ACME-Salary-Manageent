@@ -12,13 +12,15 @@ export class ResponseContractInterceptor implements NestInterceptor<unknown, unk
   intercept(context: ExecutionContext, next: CallHandler<unknown>) {
     const schema = this.reflector.get<ZodType | undefined>(RESPONSE_SCHEMA, context.getHandler());
     if (!schema) return next.handle();
-    return next.handle().pipe(map(value => {
-      const result = schema.safeParse(value);
-      if (!result.success) {
-        process.stderr.write('{"event":"response_contract_failed"}\n');
-        throw new InternalServerErrorException('Response contract failed');
-      }
-      return result.data;
-    }));
+    return next.handle().pipe(
+      map((value) => {
+        const result = schema.safeParse(value);
+        if (!result.success) {
+          process.stderr.write('{"event":"response_contract_failed"}\n');
+          throw new InternalServerErrorException('Response contract failed');
+        }
+        return result.data;
+      }),
+    );
   }
 }

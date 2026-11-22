@@ -9,12 +9,20 @@ export class RequestContextMiddleware implements NestMiddleware {
     const requestId = randomUUID();
     res.setHeader('X-Request-Id', requestId);
     const pathname = req.originalUrl.split('?', 1)[0];
-    if (pathname === '/api/v1' || pathname?.startsWith('/api/v1/')) res.setHeader('Cache-Control', 'no-store');
+    if (pathname === '/api/v1' || pathname?.startsWith('/api/v1/'))
+      res.setHeader('Cache-Control', 'no-store');
     const started = performance.now();
     res.once('finish', () => {
       // Allowlist only: no bodies, URLs, cookies, SQL, exception messages or employee data.
-      process.stdout.write(JSON.stringify({ event: 'http_request', requestId, method: req.method,
-        status: res.statusCode, durationMs: Math.round(performance.now() - started) }) + '\n');
+      process.stdout.write(
+        JSON.stringify({
+          event: 'http_request',
+          requestId,
+          method: req.method,
+          status: res.statusCode,
+          durationMs: Math.round(performance.now() - started),
+        }) + '\n',
+      );
     });
     next();
   }
