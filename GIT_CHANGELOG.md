@@ -30,7 +30,13 @@ The workflow improvement above was separately committed and pushed after its tes
 5. Manage PR creation, actual-code review, approval and merge with GitHub MCP only. Automatic approval/merge is authorized only for the reviewed head after unresolved critical/high issues are closed, required checks verifiably pass and repository policies/permissions allow it. Keep incomplete PRs draft. Do not self-approve when prohibited, bypass independent reviews, force-push, delete branches or bypass protections. Re-review changed heads and use an expected-head merge guard.
 6. Never stage actual `.env`, secrets, local PostgreSQL data, dependencies, browser binaries or QA runtime traces. `.env.example` contains non-secret template values only. Run `node acme-salary-app/scripts/verify-staged.mjs` from the repository root before committing.
 
-## Current delivery state
+## FX administration delivery — 22 November 2026
+
+PR #7 is now merged at 0e0fb86d13bb01903b98df19acb6f2c3aba38223 (user confirmation, fetched origin/main and MCP verification). New branch feature/fx-rate-administration starts from that main. This increment adds HR-maintained immutable FX revisions, authenticated reader historical lookup, strict decimal/provenance validation, concurrency/currency locks, new-event audit before/after, confirmed UI and isolated PostgreSQL/Chromium coverage. PR CI includes test:fx and a fourth isolated browser group. Employee linkage/salary/report workflows and production qualification remain future work; salary bands stay deferred.
+
+Feature commit/push/PR are pending at this entry. No GitHub check or independent approval is claimed. The historical PR #7 state below describes its pre-merge checkpoint, not its present state. Local test and documentation evidence is recorded in QA_EXECUTION_REPORT.md; confirmed hashes, actual push result and MCP review will be added after delivery. No approval/merge action is authorized without the independent reviewer and required passing checks.
+
+## Historical PR #7 delivery state
 
 Browser harness fix `a4e5a4b9b05eee28997b6e7f40967e5b5f126be0` (`fix: isolate browser group server ports and diagnostics`) on `feature/country-currency-administration` committed/pushed; `git ls-remote` confirmed identical remote head. [MCP re-review 6011479799](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/7#pullrequestreview-6011479799) inspected actual code, no unresolved critical/high issue in delivered scope. Local typing and full SMTP/Chromium groups PASS (9+4+3, zero retries/skips); 631 doc checks and staged safety PASS. New CI is not presumed green until exact-head MCP status/log verification. PR #7 is open for independent review, not independently approved or merged; final head result is recorded in its linked checks/review. This ledger-only synchronization changes no executable behavior and triggers its own CI. The failed startup run remains disclosed; no force push, self-approval or policy bypass.
 

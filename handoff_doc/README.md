@@ -2,7 +2,7 @@
 
 **Purpose:** Run the delivered application and its verification gates safely.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
@@ -72,7 +72,7 @@ Environment checklist, including script/container-only settings:
 | OTP_TTL_MINUTES | 15; positive integer at most 15 | Auth challenge expiry and mail text |
 | SESSION_IDLE_MINUTES | 30; positive integer at most 30 | Server idle expiry; valid session reads refresh last_seen_at |
 | SESSION_ABSOLUTE_HOURS | 12; positive integer at most 12 | Server absolute expiry; cookie maxAge remains fixed at 12 hours |
-| FX_MAX_STALENESS_DAYS | 7, positive integer | Validated; no public FX consumer yet. Internal approval service has its own constructor default 7 |
+| FX_MAX_STALENESS_DAYS | 7, positive integer | Public FxRatesService resolution policy; internal approval service still has constructor default7 until exposed/configured |
 | DEV_INSECURE_COOKIES | false; true/false | Explicit development opt-in for HTTP. Production rejects true |
 | SMTP_HOST | Required | Nodemailer server; loopback capture for synthetic testing |
 | SMTP_PORT | 1025, positive integer | Configure for chosen relay; production transport requires TLS |
@@ -132,7 +132,7 @@ Recovery controls: resend replaces earlier OTP and consumes the same limits; Rei
 
 ### Department/designation happy path
 
-As HR, open Organization references, choose Departments or Designations, enter a synthetic name, Review reference, inspect the native confirmation and confirm. Cancel must save nothing. Edit supports rename and an active checkbox; deactivation preserves the entry/history, and reactivation retains its ID. Duplicate names ignore case and remain reserved while inactive. For a stale 409, refresh and reopen the edit. FX administration is not available yet; salary bands are deferred. Detailed semantics are in [WORKFLOW_RULES §7](WORKFLOW_RULES.md#7-departmentdesignation-administration--done-for-p4a).
+As HR, open Organization references, choose Departments or Designations, enter a synthetic name, Review reference, inspect the native confirmation and confirm. Cancel must save nothing. Edit supports rename and an active checkbox; deactivation preserves the entry/history, and reactivation retains its ID. Duplicate names ignore case and remain reserved while inactive. For a stale 409, refresh and reopen the edit. FX administration is now delivered by the P4c increment; salary bands are deferred. Detailed semantics are in [WORKFLOW_RULES §7](WORKFLOW_RULES.md#7-departmentdesignation-administration--done-for-p4a).
 
 ### Country/currency happy path
 
@@ -159,7 +159,7 @@ Stop dev command normally; restart after a build when dist/main.js is absent. St
 
 ## 7. API route reference
 
-Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 24 concrete operations:
+Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 27 concrete operations:
 
 | ID | Method | Path | Guard / response |
 |---|---|---|---|
@@ -187,6 +187,9 @@ Canonical complete map is [CONTEXT.md §8](CONTEXT.md#8-api-route-map); 24 concr
 | C04 | GET | /api/v1/countries | HR only; strict offset, 20 rows/page, includes inactive |
 | C05 | POST | /api/v1/countries | HR + Origin/CSRF, strict country policy, active default required; 201 |
 | C06 | PATCH | /api/v1/countries/:code | Same + expectedVersion/isActive; immutable code; stale 409 |
+| F01 | GET | /api/v1/fx-rates | HR or read member; pair/asOf filters,20-row immutable history |
+| F02 | POST | /api/v1/fx-rates | HR + Origin/CSRF; positive decimal/source/reason/expectedRevision; appends,201 |
+| F03 | GET | /api/v1/fx-rates/resolve | HR or read member; base/quote/asOf; historical direct/inverse/USD path or422 |
 
 ## 8. CI verification
 
@@ -200,6 +203,7 @@ npm.cmd run test:authentication
 npm.cmd run test:team
 npm.cmd run test:references
 npm.cmd run test:country-currency
+npm.cmd run test:fx
 npm.cmd run qa:typecheck
 # Run the next two from repository root, as CI does:
 # node acme-salary-app/scripts/test-git-safety.mjs
@@ -212,4 +216,6 @@ npm.cmd run db:local:stop
 
 verify:database expands to migrations, Prisma generation, lint/type/unit/build, identity checks, country/FX/hold/snapshot checks, approval checks, Prisma adapter and health smoke. test:login builds again and runs SMTP + multi-account auth/team Chromium in one disposable database and reference Chromium in a second disposable database, then country/currency Chromium in a third. Do not parallelize browser commands. Full qa:e2e includes explicit unfinished-requirement failures and is not the passing foundation CI slice. Merged PR #5 verification evidence (run 44997876398, job 137132754960): 22 unit tests, 72 existing logical DB checks, 22 team plus 23 reference DB checks, 12 foundation Chromium, 9 auth/team Chromium and 4 reference Chromium; 3/11 pass/fail requirement probes are a separate run, not full-system acceptance. This documentation task did not rerun application tests. See [SMOKE_TESTS.md](SMOKE_TESTS.md), [DEPLOYMENT.md](DEPLOYMENT.md).
 
-Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. Port isolation and final-head CI are being retested without retries or relaxed assertions.
+Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628, FX4727/4728; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
+
+FX smoke: use synthetic HR to load a pair/date revision, enter positive decimal/source/reason, cancel confirmation (no write), then confirm first quote and append a correction. Verify prior row/audit before/after and stale conflict. Read member sees history/lookup, cannot POST. Resolve a historical direct/inverse/USD path with revision/source/date; reject missing/stale paths. Test pagination, negative DTO/Origin/CSRF, inactive currency, outage/error recovery and mobile/axe. Automated test:fx plus FX test:login group (4727/4728, own disposable DB). Full application remains incomplete.

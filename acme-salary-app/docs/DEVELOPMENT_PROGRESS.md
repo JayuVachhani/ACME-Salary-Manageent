@@ -2,6 +2,8 @@
 
 Last updated: 22 November 2026. Authoritative roadmap: `../../DEVELOPMENT_PLAN.md`.
 
+Current checkpoint: PR #7 country/currency administration is merged at 0e0fb86. P4c FX API/UI/migration/test implementation is on feature/fx-rate-administration. All23 new FX PostgreSQL and all19 authenticated Chromium cases passed after the accessibility fix. PR CI/independent review remain required. The chronology below retains historical findings and does not override this checkpoint. Employee/linkage, salary, reports, audit browsing and production acceptance remain open.
+
 PR #1 merged by the user: GitHub MCP confirmed merge commit `0a5cac1c4e83201be95ffb3514ff8018fecaddea` at `2026-11-21T15:44:15Z`. Final pre-merge head `0c8456e` passed GitHub Actions run 44920501262 (18 unit tests, 72 logical PostgreSQL checks and 12 foundation Chromium tests) and received an MCP comment review. The agent did not approve or merge the PR. Local main is synchronized; next module branch is `feature/authentication-team-access`, created from origin/main. No authentication implementation or additional test execution is claimed by this documentation handoff.
 
 The inactive-currency approval fix and migration 006 are included in the merged foundation. Foundation acceptance and future application gaps remain classified in PR_1_SCOPE.md. Full business E2E and production acceptance remain outstanding.
@@ -43,3 +45,7 @@ PR #4 merged at fa2cbc4867994dcde5e81ba0ee3d5b417d2ac8b8, confirmed through GitH
 ## P4b country/currency increment — locally tested; PR #7 open; independent approval pending
 
 ADR-004 approved; migrations 015..017, pinned SIX catalogue, authenticated country/currency APIs and confirmed UI implemented. Final country guard retest passed 27 DB and 3 Chromium cases; existing auth/team/reference/foundation browser groups and database gates also passed. See QA_EXECUTION_REPORT.md. FX administration, verified employee linkage, employee/salary/reporting screens and production readiness remain pending; bands deferred. Dependencies restored from lockfile after missing-module/locked local PG binary issues without resetting existing data.
+
+## P4c FX administration — locally verified, PR delivery pending
+
+PR #7 merged at0e0fb86; country/currency scope completed. FX service/controller/UI and migration018 implement append-only rate correction, audited before/after, reader history, historical direct/inverse/USD lookup and configured staleness. Actual tests/results are recorded in QA reports; no full-system acceptance implied.

@@ -2,17 +2,17 @@
 
 **Purpose:** Record documentation coverage against the merged implementation and distinguish static verification from runtime tests.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
-The client authorized updating and pushing this 14-file documentation pack. It now covers merged department/designation administration, 24 concrete API operations, 23 tables / 178 scalar fields, 17 forward migrations, 28 SQL functions and two views. No application source, credentials or database data were changed by this documentation task. Static checks and staged secret safety are required before publishing; application runtime results below are explicitly historical evidence.
+The documentation now covers the P4c FX administration increment on merged PR #7: 27 concrete API operations, 23 tables / 178 scalar fields, 18 forward migrations, 28 SQL functions and two views. This is a scoped implementation and verification checkpoint, not production acceptance. Historical evidence below retains its original scope; current FX verification is recorded separately.
 
 ## Historical documentation publication result (PR #6)
 
 PASS: 590 checks, 14 deliverables, 190 relative links/anchors, 18 routes, 22 models / 172 scalar fields, 14 migrations / 24 functions / two views, and 16 API configuration settings plus 11 tooling/service settings. The local verification script is ignored test tooling, not an application change. Whitespace and staged secret-safety results are checked separately before commit.
 
-## P4b current verification scope
+## Historical P4b verification scope
 
 Country/currency APIs add six operations (C01..C06), currency_catalogue adds five fields and configured currencies adds version. Migrations 015..017 bring totals to 17 migrations / 28 functions / two views, 23 tables / 178 scalar fields and 24 concrete API operations. No new environment variables. ADR-004 records catalogue/activation interpretation. Source routes, Prisma fields, migrations/functions, links and CI commands must be rechecked before committing. The prior 590-check result below records PR #6, not this increment. P4b runtime results are in QA_EXECUTION_REPORT.md; unresolved full-system and production gates remain.
 
@@ -60,6 +60,10 @@ Earlier full-requirements probe results (3 passed / 11 failed at the team checkp
 
 P4b fresh static check: 631 checks PASS, 203 relative links/anchors, 24 routes, 23 models/178 scalar fields, 17 migrations/28 functions/two views, unchanged 16 API settings. Current DB/browser evidence is in QA_EXECUTION_REPORT.md; the final supported-default guard DB/browser retest passed; current-head CI and independent review remain required before approval. Historical PR #6 inventories above are explicitly historical, not current totals.
 
-P4b feature head 4da4bc7 passed GitHub run 45006067281/job 137157825998, verified through MCP status and decoded logs (27 new DB checks; 12+9+4+3 Chromium cases plus existing lower-level gates). Actual-code review 6011436419 is COMMENT only. PR #7 remains subject to final-head checks and authorized independent approval; no self-approval/merge performed. Publication identities/push state are in GIT_CHANGELOG.md and linked PR reviews.
+P4b feature head 4da4bc7 passed GitHub run 45006067281/job 137157825998, verified through MCP status and decoded logs (27 new DB checks; 12+9+4+3 Chromium cases plus existing lower-level gates). Actual-code review 6011436419 is COMMENT only. PR #7 subsequently passed final-head checks and was merged by the user at0e0fb86; the agent did not approve or merge it. Publication identities/push state are in GIT_CHANGELOG.md and linked PR reviews.
 
 Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.
+
+## P4c current verification
+
+Fresh static validation:644 checks PASS,14 required files,207 relative links/anchors,27 concrete routes,23 models/178 scalar fields,18 migrations/28 SQL functions/two views and16 API settings. Existing11 tooling/service settings remain unchanged. Scoped runtime:23 FX +27 country/currency +23 organization-reference +22 team PostgreSQL checks,authentication persistence,72 foundation-domain PostgreSQL checks,22 units,Prisma/health,lint/type/build,QA typing and19 authenticated Chromium cases passed. Mobile axe failure was fixed and retested without suppressing the assertion; failed setup/native-crash attempts remain recorded in QA_EXECUTION_REPORT.md. Foundation Chromium and GitHub current-head checks are separately reported there and in the PR. No complete salary-management/production acceptance is claimed.

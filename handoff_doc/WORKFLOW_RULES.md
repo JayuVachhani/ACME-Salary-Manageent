@@ -2,11 +2,11 @@
 
 **Purpose:** Explain allowed transitions, side effects and forbidden shortcuts.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
-Login, team and department/designation transitions are user-accessible. Salary decisions, assignments/FX/holds and snapshot states are internal/schema-only where noted. No workflow can be completed by inventing missing endpoints. Financial history is append-only; there is no destructive rewind. Related: [DATA_MODEL.md](DATA_MODEL.md), [RBAC.md](RBAC.md), [SMOKE_TESTS.md](SMOKE_TESTS.md).
+Login, team and department/designation transitions are user-accessible. FX maintenance is now user-accessible. Salary decisions, assignments/holds and snapshot states remain internal/schema-only where noted. No workflow can be completed by inventing missing endpoints. Financial history is append-only; there is no destructive rewind. Related: [DATA_MODEL.md](DATA_MODEL.md), [RBAC.md](RBAC.md), [SMOKE_TESTS.md](SMOKE_TESTS.md).
 
 ## 1. User and invitation lifecycle — done for delivered admin scope
 
@@ -153,3 +153,17 @@ stateDiagram-v2
 N.A. entries never activate. Codes/minor units are read-only over HTTP. Referenced precision cannot change through SQL; any correction needs a reviewed migration. Country create/edit uses 0..4 precision, rounding enum, descriptive notes, current HR+CSRF and expectedVersion on edits. Codes remain immutable. Country/currency deactivation preserves history and blocks new financial records through active-reference locks. Active-country configuration requires an active default; country deactivation remains allowed when its default is inactive. Policy edits change version and invalidate stale approval policy bases, not old salary rows. Rejection remains independent of salary insertion. Notes preserve existing JSON metadata and do not implement legal retention; holds stay separate. No delete, forced override or automatic catalogue refresh exists.
 
 Related: [country/currency module](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md), [RBAC](RBAC.md), [DATA_MODEL](DATA_MODEL.md).
+
+## 9. FX revision workflow — P4c
+
+~~~mermaid
+flowchart LR
+  HR[Active HR loads pair/date revision] --> Draft[Positive decimal, source and reason]
+  Draft --> Confirm[Review exact direction/value/date]
+  Confirm --> Locks[Session and active-currency locks, pair/date advisory lock]
+  Locks --> Conflict[Stale revision:409, explicit refresh]
+  Locks --> Append[Append current revision plus1]
+  Append --> Audit[Before/after audit in same transaction]
+~~~
+
+Cancel saves nothing. Readers can browse all prior revisions and resolve historical rates, including deactivated currency history. Writes require active currencies and HR; no overwrite/delete, per-salary override or automatic retry. Future rows apply only on/after their effective date. Lookup is direct, inverse, then USD; every leg must meet configured staleness or422. Same configured currency factor1 needs no FX row. Existing salary/report snapshot provenance stays unchanged after correction. The unit-factor preview does not implement reports/payroll. See [FX module](../acme-salary-app/docs/FX_MODULE.md).

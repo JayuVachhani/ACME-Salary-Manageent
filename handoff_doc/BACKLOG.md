@@ -2,7 +2,7 @@
 
 **Purpose:** Give the next agent ordered, evidence-backed work and explicit exclusions.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
@@ -15,8 +15,8 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 | ID | Item | Priority | Status | Notes / primary touchpoints |
 |---|---|---|---|---|
 | A1a | Department/designation administration (P4a) | High | done | Merged PR #5; migrations 013/014, real API/UI, 23 PostgreSQL and 4 reference Chromium cases |
-| A1b | Country/currency administration (P4b) | Critical | stub/partial | Locally tested (27 DB / 3 Chromium); PR #7 open; independent approval pending. ADR-004, pinned SIX catalogue, country-currency module, migrations 015..017 |
-| A1c | Immutable historical FX administration (P4c) | High | not started | HR-only maintenance, historical revisions/source/actor, no per-entry overrides; money.ts |
+| A1b | Country/currency administration (P4b) | Critical | done | PR #7 merged at0e0fb86; ADR-004, pinned catalogue and country-currency module |
+| A1c | Immutable historical FX administration (P4c) | High | stub/partial | Implemented;23 DB /3 FX Chromium local passes; PR review/CI pending. FX_MODULE.md, migration018, service/controller/UI |
 | A2 | Verify and administer employee/user linkage before public salary access | Critical | blocked | Nullable mapping currently permits incomplete self-subject protection; users, policy.ts, employee workflows |
 | A3 | Employee create/directory/edit/removal with initial salary atomicity | Critical | not started | Dated assignments, validation, permissions, holds and unique keys; employee schemas/UI/API |
 | A4 | Expose backdated request/independent decision workflow safely | Critical | blocked | Depends on A2/A3; SalaryApprovalService, trusted session boundary, approver/requester browser accounts |
@@ -27,7 +27,7 @@ Non-breaking rules: keep approved business decisions and synthetic-only tests; d
 | ID | Item | Priority | Status | Notes / primary touchpoints |
 |---|---|---|---|---|
 | B1 | Historical report generator/preview/export with complete snapshot membership | High | not started | report-access.ts; owner/version/30-minute invalidation; FX provenance and CSV hardening |
-| B2 | Resolve aggregate rounding and wire FX staleness config | High | stub/partial | sumConverted hardcodes HALF_UP; future target-country/report rules and service construction |
+| B2 | Resolve aggregate rounding and wire FX staleness config | High | stub/partial | FX HTTP staleness now wired; sumConverted still hardcodes HALF_UP and future salary/report constructors need config |
 | B3 | HR audit browsing and metrics/dashboard | High | not started | Immutable tables exist; no read API/UI |
 | B4 | Deterministic 10k/15k synthetic data and full action/load/security matrix | High | not started | Replace missing-module blockers only with executed workflows, never synthetic pass labels |
 | B5 | Define readiness, hosting/TLS/proxy/secrets/backup/restore/compliance/UAT | Critical | blocked | No deploy implementation or approved target; main.ts /readyz, DEPLOYMENT.md |

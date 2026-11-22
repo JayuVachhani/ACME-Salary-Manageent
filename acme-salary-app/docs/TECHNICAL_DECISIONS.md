@@ -29,3 +29,9 @@ An inactive currency blocks approval without changing the request, salary, histo
 Regression was first executed against the old code and failed with "Missing expected rejection". The service, direct SQL, rollback, concurrent-deactivation, rejection and reactivation paths pass against real isolated PostgreSQL after the fix (38 approval checks total).
 
 Session guards and APIs/UI are not delivered yet. The internal approval service receives its actor from the future trusted session boundary, not a client-supplied body field. Retry/idempotency, lease integration, complete input DTOs, reference administration and approval UI/E2E belong to later vertical slices. Do not advertise the approval module as complete based on backend/database tests alone.
+
+## P4c FX administration implementation — 22 November 2026
+
+Implements the approved HR-maintained, immutable historical FX policy; this is not a new client business decision. Authenticated HR appends a revision with effective date, source and reason; non-HR needs read permission to view history/lookup. No per-entry override or third-party FX provider is added. Session identity supplies the actor; expectedRevision and pair/date advisory locking reject stale concurrent writes. Both currencies are revalidated under shared locks. Historical reads remain valid after deactivation.
+
+The existing NUMERIC(18,8) contract is enforced before persistence without rounding entered rates. Historical lookup uses configured FX_MAX_STALENESS_DAYS, direct/inverse/USD precedence, revision IDs and exact decimal helpers. Migration018 adds before/after payloads only for newly appended audit events, preserving all existing rows. This unit-factor preview does not implement reports or change existing salary/report snapshot provenance. See FX_MODULE.md for the public contract and QA records for executed evidence.

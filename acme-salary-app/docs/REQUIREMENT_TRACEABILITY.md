@@ -13,7 +13,7 @@ Status reflects verified scope, not planned completeness. Full module acceptance
 | FR-CTRY-01..06, FR-REF-01, ADR-003/004 | CountryCurrency service/controller/UI, catalogue JSON, migrations 015..017 | test-country-currency.mjs and e2e-auth/country-currency.spec.ts | Locally tested: 27 DB / 3 country Chromium cases; policy notes descriptive, no legal automation |
 | FR-EMP-05, ND-02 | Effective-dated `employee_assignments` | `test-country-fx-retention.mjs` | Historical assignment/date constraints tested; transfer workflow pending |
 | FR-EMP-09 | Migration 002 hold/release/removal triggers | Hold, release, actor and immutability tests | Database tested; API/UI pending |
-| FR-REF-05 | Migration 002 immutable FX revisions/actor/audit | FX revision history and rejected mutation tests | Database tested; FX administration pending |
+| FR-REF-02/05, FR-ANA-04/05 | FX service/controller/UI, immutable DB sequence and migration018 audit before/after | test-fx-rates.mjs and fx-rates.spec.ts | Implemented; verification in progress; report integration remains pending |
 | FR-SAL-05/10/17/18 | Immutable ledger and correction checks; `money.ts` | Money tests and approval-service fixture | Core tested; normal write/lease flows pending |
 | FR-SAL-11/12/13 | Migration 004 history snapshots and currency event | Approval history/audit checks | Database foundation tested; timeline/table UI pending |
 | FR-APR-01/02 | `salary-approval.ts` submission; separate request storage | Pending/rejected/as-of/precision/date tests | Backend/database tested; authenticated API/UI pending |

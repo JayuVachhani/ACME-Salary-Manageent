@@ -2,11 +2,11 @@
 
 **Purpose:** Inventory every stored table, relationship, field and integrity boundary.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), a2dea9f (merged PR #6), plus the P4b country/currency increment on feature/country-currency-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
 
 ## Executive summary
 
-PostgreSQL is authoritative through 17 forward SQL migrations plus the migrator-owned schema_migrations table. The introspected Prisma schema contains all 23 tables; it is not sufficient to recreate checks/triggers/expression indexes. Use decimal strings for numeric data and UUID strings for identifiers. No TTL deletion scheduler or application cascade purge exists. The per-entity appendix below is derived directly from the checked-in Prisma schema and SQL DDL, not from a live database or employee data.
+PostgreSQL is authoritative through 18 forward SQL migrations plus the migrator-owned schema_migrations table. The introspected Prisma schema contains all 23 tables; it is not sufficient to recreate checks/triggers/expression indexes. Use decimal strings for numeric data and UUID strings for identifiers. No TTL deletion scheduler or application cascade purge exists. The per-entity appendix below is derived directly from the checked-in Prisma schema and SQL DDL, not from a live database or employee data.
 
 Related: [CONTEXT.md](CONTEXT.md), [WORKFLOW_RULES.md](WORKFLOW_RULES.md), [RBAC.md](RBAC.md), [README.md](README.md).
 
@@ -45,6 +45,7 @@ Related: [CONTEXT.md](CONTEXT.md), [WORKFLOW_RULES.md](WORKFLOW_RULES.md), [RBAC
 | 015 | Pinned read-only currency catalogue; currency optimistic version |
 | 016 | Country/currency code/lifecycle/precision/audit and active financial references |
 | 017 | Disambiguate currency-code variable in active-reference guard |
+| 018 | NEW FX audit events include previous and new revision snapshots |
 
 No legacy collection rename, automatic startup migration or down migration exists. Prior applied checksums must remain intact. Proposed future structures such as salary bands/catalogue, lease service extensions, seed datasets or job/storage tables are **planned**, not existing fields. Approve their semantics and write migrations rather than documenting guessed columns as implemented.
 
@@ -134,7 +135,7 @@ Scalar field tables, JSON fragments, FK/index declarations and original SQL cons
 | designations | Controlled case-insensitive designation names; HR administration API/UI delivered in P4a. | Mutable access metadata; no row TTL |
 | employee_assignments | Immutable effective-dated country/department/designation/employment status; not a completed transfer workflow. | Append-only; no row TTL |
 | employees | Employee identity and removal/version fields. Employment active/inactive status belongs to dated assignments, not this row. | Mutable access metadata; no row TTL |
-| fx_rate_revisions | Immutable, sequential pair/date rate revisions with source/reason/creator. No per-entry override or live rate-provider integration. | Append-only; no row TTL |
+| fx_rate_revisions | Immutable, sequential pair/date rate revisions with source/reason/creator. HR append/read/history APIs and UI now exist; no per-entry override or live external provider. | Append-only; no row TTL |
 | record_locks | Edit-lease schema groundwork only; no acquire, heartbeat or release service/API. | Schema only; expires_at is not a cleanup job |
 | report_snapshot_employees | Snapshot membership for removal invalidation; generator must populate every relevant employee. | Mutable access metadata; no row TTL |
 | report_snapshots | Stored owner-specific report payload, filters/as-of/currency and authorization version. Generation/export APIs are absent. | Mutable access metadata; no row TTL |
@@ -688,7 +689,7 @@ CREATE INDEX employees_email_trgm ON employees USING gin ((email::text) gin_trgm
 
 ## fx_rate_revisions
 
-Immutable, sequential pair/date rate revisions with source/reason/creator. No per-entry override or live rate-provider integration.
+Immutable, sequential pair/date rate revisions with source/reason/creator. HR append/read/history APIs and UI now exist; no per-entry override or live external provider.
 
 **Application queries:** Pair/as-of/staleness window then effective_date DESC, revision DESC. Conversion tries direct/inverse/USD.
 
@@ -1874,7 +1875,7 @@ Later CREATE OR REPLACE definitions supersede earlier function bodies. This list
 |---|---|
 | advance_assignment_version | [005_assignment_version_guard.sql](../acme-salary-app/database/migrations/005_assignment_version_guard.sql) |
 | audit_country_currency_configuration | [016_country_currency_integrity.sql](../acme-salary-app/database/migrations/016_country_currency_integrity.sql) |
-| audit_fx_revision | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
+| audit_fx_revision | [018_fx_audit_before_after.sql](../acme-salary-app/database/migrations/018_fx_audit_before_after.sql) |
 | audit_hold_event | [002_country_employee_fx.sql](../acme-salary-app/database/migrations/002_country_employee_fx.sql) |
 | audit_organization_reference | [013_organization_references.sql](../acme-salary-app/database/migrations/013_organization_references.sql) |
 | audit_salary_approval | [003_salary_approval.sql](../acme-salary-app/database/migrations/003_salary_approval.sql) |
@@ -1906,6 +1907,10 @@ Later CREATE OR REPLACE definitions supersede earlier function bodies. This list
 Migration 016 guards currency/country code identity and rejects deletion/truncate; auto versions start1 and advance. Country policy updates do not rewrite salary snapshots. Currency precision is protected when referenced by country, salary/request (including default currency), FX base/quote or report target. Catalogue is runtime-read-only; precision correction needs reviewed migration, never HTTP. Existing records are preserved.
 
 validate_new_financial_references (final body in 017) checks active country for new assignment/request/ledger and active currencies for those plus new FX/report snapshots. Shared row locks conflict with status/precision changes. guard_country_configuration requires active default currency for active country writes; country deactivation may retain an inactive currency. Audits use same-transaction reference actor and before/after JSON. Notes merge existing metadata; no legal rule inferred. See [module contract](../acme-salary-app/docs/COUNTRY_CURRENCY_MODULE.md).
+
+## Current FX audit and API integration
+
+FxRatesService provides authenticated read-permission history/resolution and HR-only append. Immutable row/audit protections remain. SQL audit_fx_revision is replaced by [migration018](../acme-salary-app/database/migrations/018_fx_audit_before_after.sql): NEW audit payload has before (previous same pair/date revision or null) and after (full NEW row). Earlier immutable audit payloads retain their original flat shape; consumers must not assume all historical events use the new envelope. No column/model was added; tables23/scalar fields178/functions28/views2 unchanged, migrations now18. Rate corrections do not rewrite salary/report snapshots referencing older IDs. See [FX contract](../acme-salary-app/docs/FX_MODULE.md).
 
 ## Representation and future work cautions
 

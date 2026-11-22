@@ -12,7 +12,7 @@ Login increment update: QA-001's absent-login implementation is resolved for the
 | QA-002 | High (original) | Team administration was unavailable | RESOLVED for delivered team scope | 22 PostgreSQL checks and actual multi-account team Chromium cases pass; see latest execution report | Cross-module permission matrix, employee linkage and production security acceptance remain future gates |
 | QA-003 | High | Employee management UI/API unavailable | OPEN — incomplete implementation | REQ-EMP fails; GET `/api/v1/employees` returns 404. | Implement directory/create/edit/removal, confirmations, validation and browser tests. |
 | QA-004 | High | Salary/history/approval/transfer user workflows unavailable | OPEN — incomplete integration | REQ-SAL/HISTORY/APPROVAL/TRANSFER fail. Internal approval services pass separate tests but no browser controls exist. | Integrate tested domain services behind real sessions, add forms/history/approval UI and dual-account E2E. Do not expose test-only unsecured endpoints. |
-| QA-005 | High | Country, currency and FX administration unavailable | OPEN — incomplete integration | REQ-COUNTRY/FX fail; country/FX GET probes return 404. | Complete reference API/UI, historical rate management and unauthorized-write E2E. |
+| QA-005 | High | Country, currency and FX administration unavailable | FIXED AND RETESTED for scoped reference workflows | PR #7 country/currency and P4c FX APIs/UI exist;27 country +23 FX DB and3+3 Chromium cases pass locally. Historical404 probes remain original evidence. | Final PR CI and independent review required; full-system qualification remains open. |
 | QA-006 | High | Report generation/export and analytics dashboard unavailable | OPEN — incomplete implementation | REQ-REPORT/DASH fail; report route 404. | Implement filtered previews, exact snapshot CSV, historical FX and report reconciliation before certifying pending/rejected exclusion in reports. |
 | QA-007 | High | HR audit log screen/API unavailable | OPEN — incomplete integration | REQ-AUDIT fails; audit route 404 despite immutable database audit storage. | Add guarded audit browsing and non-HR denial tests. |
 | QA-008 | Critical | No executable authenticated API boundary for required business routes | OPEN — missing functionality | Browser probes of six specified routes return 404. REQ-API expects a real protected endpoint. | Implement sessions and permission guards with endpoints; test anonymous, authorized and unauthorized users. A 404 proves neither a working guard nor an authorization bypass. |
@@ -40,3 +40,13 @@ QA-005 is partially addressed by catalogue/country API/UI; FX administration rem
 CI harness issue CTRY-QA-STARTUP: current-head run 45006454596 exited before the country browser group executed; no country result JSON in retained artifact. Exact cause unproven. Distinct per-group ports and explicit child status diagnostics are under retest; no test retries/assertion relaxation added. PR #7 remains unapproved/unmerged.
 
 Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth/team, 4 reference, 3 country Chromium cases; zero retries/skips). All group processes returned status 0; ignored diagnostics qa-artifacts/country-port-isolation.log. No application logic changed by this harness fix. Current-head GitHub CI remains required; the failed b8667c5 run remains recorded, not relabeled.
+
+## P4c verification findings
+
+| ID | Severity | Finding | Action/status | Evidence |
+|---|---|---|---|---|
+| FX-QA-LOCATOR | Test harness | Visible text did not match correction button accessible name; worker restart duplicated dependent fixtures | Locator corrected; sequence explicitly serial; first two FX cases retested PASS | fx-browser.log then fx-browser-final.log |
+| FX-QA-NATIVE | Environment | Vite exited3221226505 during login retest | Failed run retained; native cause unproven; sequential19-case authenticated retest PASS | fx-browser-retest.log |
+| FX-QA-A11Y | High | Empty FX history scroll container inaccessible to keyboard on mobile | Added tabIndex0 and named region; unchanged axe retest PASS | FX-E2E-03 failed in fx-browser-final.log |
+
+QA-005 country/currency/FX missing-functionality item is addressed and locally retested, including final FX browser verification. This does not close salary/report/audit/linkage gaps. No old failure has been counted as a pass.

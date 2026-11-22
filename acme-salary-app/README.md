@@ -35,9 +35,11 @@ Migrations now cover identity/audit, countries/reference foundations, historical
 
 Country/currency administration now includes the pinned read-only ISO catalogue, HR activation and audited versioned country policy forms. See [country/currency contracts](docs/COUNTRY_CURRENCY_MODULE.md); run `npm run test:country-currency`.
 
+FX administration now supports immutable HR revisions, read-permission history/as-of lookup, exact decimal rates, audit provenance and confirmation. See [FX module](docs/FX_MODULE.md); run `npm run test:fx`.
+
 ## Not implemented yet
 
-Employee/salary/approval screens, FX administration, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
+Employee/salary/approval screens, report generation/export, deterministic full seed, full E2E/security/performance acceptance. Internal approval service and database guards are tested; they are not exposed as unsecured endpoints. See `docs/DEVELOPMENT_PROGRESS.md` and `docs/REQUIREMENT_TRACEABILITY.md` for verified coverage. Do not use real employee data.
 
 The authoritative progress plan is `../DEVELOPMENT_PLAN.md`; approved decision details are in `docs/DECISIONS.md`. No hosting is configured or authorized by this foundation.
 
