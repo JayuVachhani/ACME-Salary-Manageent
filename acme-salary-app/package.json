@@ -25,6 +25,7 @@
     "test:authentication": "node --env-file=.env scripts/test-authentication.mjs",
     "test:login": "npm run build && node --env-file=.env scripts/test-login.mjs",
     "test:team": "node --env-file=.env scripts/test-team.mjs",
+    "test:references": "node --env-file=.env scripts/test-organization-references.mjs",
     "test:health": "node --env-file=.env scripts/test-health.mjs",
     "test:rules": "node --env-file=.env scripts/test-country-fx-retention.mjs",
     "test:approvals": "node --env-file=.env scripts/test-approvals.mjs",

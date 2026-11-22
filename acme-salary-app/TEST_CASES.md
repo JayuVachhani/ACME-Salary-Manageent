@@ -242,3 +242,43 @@ Existing requirement-entry retest: REQ-LOGIN and REQ-OTP now PASS; REQ-TEAM, REQ
 | TEAM-E2E-04 | Invitation SMTP failure | Explicit saved-but-undelivered message and audit; pending account remains | Capture stopped; saved INVITED record and failure audit verified with visible warning | PASS |
 
 REQ-TEAM's earlier anonymous-navigation assertion was replaced with the required anonymous API denial. Authenticated team UI is tested above, not removed from coverage. Remaining REQ-EMP/SAL/HISTORY/APPROVAL/TRANSFER/COUNTRY/FX/REPORT/AUDIT/DASH/API cases continue to fail because their business modules are unfinished.
+
+## Organization references — 22 November 2026
+
+Executed PostgreSQL run: npm run test:references, isolated synthetic database; 23 passed.
+
+| ID | Module/scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|
+| REF-DB-01 | Access: Anonymous and non-HR list | 401/403; no reference data | Executed assertions satisfied | PASS | None |
+| REF-DB-02 | Access: Non-HR write and invalid/missing CSRF | 403; no mutation | Executed assertions satisfied | PASS | None |
+| REF-DB-03 | Departments: Trim names and preserve casing | People Operations stored with version 1 | Executed assertions satisfied | PASS | None |
+| REF-DB-04 | Departments: Case-insensitive duplicate | 409; no duplicate | Executed assertions satisfied | PASS | None |
+| REF-DB-05 | Departments: Stale edits | 409; winner retained | Executed assertions satisfied | PASS | None |
+| REF-DB-06 | Departments: Inactive name reuse | 409; inactive identity reserved | Executed assertions satisfied | PASS | None |
+| REF-DB-07 | Departments: Delete/truncate/ID mutation | 55000; records retained | Executed assertions satisfied | PASS | None |
+| REF-DB-08 | Departments: Concurrent edits | Exactly one winner | Executed assertions satisfied | PASS | None |
+| REF-DB-09 | Departments: SQL space normalization | 23514 | Executed assertions satisfied | PASS | None |
+| REF-DB-10 | Departments: SQL tab whitespace and max length | 23514 | Executed assertions satisfied | PASS | None |
+| REF-DB-11 | Designations: Trim names and preserve casing | People Operations stored with version 1 | Executed assertions satisfied | PASS | None |
+| REF-DB-12 | Designations: Case-insensitive duplicate | 409; no duplicate | Executed assertions satisfied | PASS | None |
+| REF-DB-13 | Designations: Stale edits | 409; winner retained | Executed assertions satisfied | PASS | None |
+| REF-DB-14 | Designations: Inactive name reuse | 409; inactive identity reserved | Executed assertions satisfied | PASS | None |
+| REF-DB-15 | Designations: Delete/truncate/ID mutation | 55000; records retained | Executed assertions satisfied | PASS | None |
+| REF-DB-16 | Designations: Concurrent edits | Exactly one winner | Executed assertions satisfied | PASS | None |
+| REF-DB-17 | Designations: SQL space normalization | 23514 | Executed assertions satisfied | PASS | None |
+| REF-DB-18 | Designations: SQL tab whitespace and max length | 23514 | Executed assertions satisfied | PASS | None |
+| REF-DB-19 | Assignments: Inactive department | New assignment rejected; previous row retained | Executed assertions satisfied | PASS | None |
+| REF-DB-20 | Assignments: Inactive designation | New assignment rejected | Executed assertions satisfied | PASS | None |
+| REF-DB-22 | Audit: Before/after snapshots | Names preserved; session actor recorded | Executed assertions satisfied | PASS | None |
+| REF-DB-23 | Audit: Forced audit failure | Reference row and version unchanged | Executed assertions satisfied | PASS | None |
+
+| REF-DB-21 | Assignments: concurrent deactivation | New insert waits for department update | Lock timeout 55P03 observed while other transaction held row | PASS | None |
+
+Final isolated browser run: 4/4 reference cases PASS, plus 9/9 existing auth/team cases PASS in a separate database; 0 retries/skips.
+
+| ID | Module/scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|
+| REF-E2E-01 | Both lists: confirmation/cancel, trimming, duplicate, rename, deactivate/reactivate | Only confirmed changes persist; duplicate rejected; identity/history retained | All browser and DB assertions satisfied | PASS | None |
+| REF-E2E-02 | Anonymous/member, Origin/CSRF, DTO/kind/ID, stale version and no-store | Unauthorized and invalid writes denied; stale edit 409 | Expected 401/403/400/409 responses and no-store observed | PASS | None |
+| REF-E2E-03 | Whitespace validation, injected outage/recovery, mobile, axe and console | Clear errors; recoverable; no overflow or axe/page errors | Assertions satisfied at 375px; screenshot inspected | PASS | None |
+| REF-E2E-04 | Two-way pagination and empty UI | 20 rows/page, all records retained, clear empty state | Actual pagination plus explicitly simulated empty response rendered correctly | PASS | Empty response simulation is UI-state coverage only |

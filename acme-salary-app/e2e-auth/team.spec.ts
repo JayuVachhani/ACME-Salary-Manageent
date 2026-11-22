@@ -97,9 +97,9 @@ test('TEAM-E2E-03 independent HR offboards manager; final manager cannot remove 
     await page.getByRole('button',{name:'Refresh team'}).click();
     await expect(page.getByRole('button',{name:'Next page'})).toBeEnabled();
     await page.getByRole('button',{name:'Next page'}).click();
-    await expect(page.getByRole('table').getByRole('row')).toHaveCount(liveCount-20+1);
+    await expect(page.getByRole('table',{name:'Team members'}).getByRole('row')).toHaveCount(liveCount-20+1);
     await page.getByRole('button',{name:'Previous page'}).click();
-    await expect(page.getByRole('table').getByRole('row')).toHaveCount(21);
+    await expect(page.getByRole('table',{name:'Team members'}).getByRole('row')).toHaveCount(21);
     await page.setViewportSize({width:375,height:900});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
     await page.screenshot({path:'qa-artifacts/login/team.png',fullPage:true});

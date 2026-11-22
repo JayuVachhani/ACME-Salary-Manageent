@@ -39,3 +39,16 @@ Status: approved by client, 21 November 2026. This addendum takes precedence ove
 Conflict resolution: the prior SOW/BRD/FRD/SDD exclusion of all approval actions is narrowed. This minimal backdated-only workflow is now included; broad/multi-level approval workflows remain excluded. Implementing approval affects schema, API contracts, permission tests, report selection and UI; estimate must be revisited after the first vertical slice. No new cost or delivery date is asserted.
 
 Official toolchain references checked at foundation setup: https://docs.nestjs.com/first-steps and https://vite.dev/guide/. Node 24.15.0 is present. Installed versions are recorded exactly in package manifests and lockfile after dependency resolution.
+
+## ADR-003 — reference administration defaults
+
+Status: explicitly approved by client, 22 November 2026. Applies until a subsequent business decision overrides it.
+
+- Department/designation names trim leading/trailing whitespace, retain display casing and are unique without regard to case. Inactive names remain reserved; deactivation does not create a second identity for the same reference.
+- Reference codes/identifiers are immutable once created. Editable display names do not change identity.
+- Use soft deactivation, preserve historical references, and reject inactive selections for new records. Reactivation retains the same identifier. No destructive cleanup or automatic replacement of existing data is authorized.
+- Currency precision changes are restricted when existing records/transactions reference the currency; historical accuracy takes precedence. Country/currency API integration remains a subsequent increment, not delivered by the organization-reference increment.
+- Salary bands are deferred until overlap, validation and conflict-handling policies are formally agreed. Do not infer band rules from this approval.
+- Apply the approved rules in API validation, frontend and database constraints where applicable; audit management changes, reject stale edits and maintain documentation with implementation.
+
+Delivery split: P4a departments/designations; P4b country/currency administration and precision/lifecycle enforcement; P4c immutable FX maintenance. Only P4a is implemented in the present increment. ISO catalogue selection and salary-band rules remain open.

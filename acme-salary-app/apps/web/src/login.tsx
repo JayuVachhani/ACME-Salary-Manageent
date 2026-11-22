@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Team } from './team';
+import { OrganizationReferences } from './organization-references';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -60,5 +61,5 @@ export function Login() {
       {challengeId && <><button type="button" disabled={busy} onClick={() => void act(send)}>Resend code</button><button type="button" disabled={busy} onClick={() => { setChallenge(''); setCode(''); setMessage(''); }}>Use another email</button></>}
     </form>}
     {message && <p role="alert">{message}</p>}
-  </section>{signedIn&&identity?.isHrManager&&<Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/>}</>;
+  </section>{signedIn&&identity?.isHrManager&&<><Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/><OrganizationReferences/></>}</>;
 }

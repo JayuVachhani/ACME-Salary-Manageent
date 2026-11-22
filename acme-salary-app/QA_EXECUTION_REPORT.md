@@ -53,3 +53,13 @@ No usable login/OTP/invite/employee/salary/approval/transfer/report/audit UI exi
 Commands: npm run build; npm run qa:e2e; npm run qa:regression; npm test -- --reporter=json --outputFile=qa-artifacts/regression/unit.json; npm run qa:typecheck; npm run qa:report. Set QA_RUN=initial or final to keep separate browser runs. qa:e2e intentionally exits nonzero while required features are absent; no expected-failure masking or skip annotations are used.
 
 The first regression-harness attempt failed before tests because Windows ESM preload requires a file URL; fixed and rerun successfully. A sandbox Vite realpath restriction required host-permitted unit/build execution. These harness/environment errors are not misreported as passing product tests.
+
+## Organization references — 22 November 2026
+
+Implemented ADR-003 department/designation scope. Executed: verify:database (22 units, 11+23+38 PostgreSQL checks, lint/types/build, Prisma/health), 23 new reference PostgreSQL checks, authentication regressions, 22 team PostgreSQL checks and browser typing. Initial restricted-sandbox Vite startup failed EPERM; rerun outside that process restriction passed the unit/build gate.
+
+Intermediate browser runs were not accepted: first 11 passed / 1 failed because extra reference HR fixtures changed the team continuity scenario. An attempted fixture cleanup then correctly encountered last-manager protection (11 passed / 2 failed). Harness now runs auth/team and references sequentially against separate unique disposable databases, preserving the real constraint and retaining separate diagnostics. Initial reference UI cases passed but do not substitute for the final isolated retest. Final isolated retest PASS: 9/9 auth/team and 4/4 reference Chromium cases, 0 retries/skips. Actual output: ignored qa-artifacts/references-isolated-final.log, plus separate login/references result JSON. Mobile screenshot inspected; axe and page-error assertions passed.
+
+A transient migration checksum mismatch was investigated using hash comparisons; restored the exact applied migration 013 bytes without modifying the database ledger. Forward migration 014 adds whitespace/length constraints. db:migrate and the expanded reference checks (23 in the final run) passed after correction. Full-system business E2E remains incomplete; historical 3 pass / 11 fail probes were not rerun by this increment and are not claimed as current full-system acceptance.
+
+Final existing foundation Chromium retest: 12/12 PASS, no retries/skips. Combined scoped browser evidence is 12 foundation + 9 auth/team + 4 reference cases. This remains scoped feature verification, not full-system acceptance.
