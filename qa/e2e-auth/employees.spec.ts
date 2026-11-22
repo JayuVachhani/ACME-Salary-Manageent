@@ -67,6 +67,7 @@ async function login(page: Page, email = 'employee.hr@acme.test') {
   await page.getByLabel('One-time code').fill(mail.match(/code is (\d{6})/)![1]!);
   await page.getByRole('button', { name: 'Verify code' }).click();
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await page.goto('/#/employees');
 }
 const area = (page: Page) => page.getByRole('region', { name: 'Employee directory', exact: true });
 
@@ -82,14 +83,21 @@ test('EMP-E2E-01 reader searches literal characters, filters, pages, sorts and o
   await panel
     .getByRole('button', { name: 'View profile for employee SYN028', exact: true })
     .click();
-  await expect(panel.getByRole('region', { name: 'Employee profile' })).toContainText(
-    'Person28 Sample',
-  );
-  await expect(panel.getByRole('region', { name: 'Employee profile' })).toContainText(
-    'Synthetic Engineer',
-  );
-  await panel.getByRole('button', { name: 'Close employee profile' }).click();
-  await expect(panel.getByRole('region', { name: 'Employee profile' })).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toContainText('Person28 Sample');
+  await expect(page.getByRole('dialog')).toContainText('Synthetic Engineer');
+  await expect(page.getByRole('tab', { name: 'Salary & history' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Close employee details', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  const viewAgain = panel.getByRole('button', {
+    name: 'View profile for employee SYN028',
+    exact: true,
+  });
+  await expect(viewAgain).toBeFocused();
+  await viewAgain.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(viewAgain).toBeFocused();
   for (const value of ['%', '_', '\\']) {
     await panel.getByLabel('Search employees').fill(value);
     await panel.getByRole('button', { name: 'Apply employee filters' }).click();
@@ -151,6 +159,7 @@ test('EMP-E2E-02 permissions, invalid filters, removed records and no salary pay
   await area(page).getByRole('button', { name: 'Refresh employees' }).click();
   await expect(area(page)).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await page.goto('/#/employees');
 });
 test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibility and console', async ({
   page,
@@ -179,7 +188,7 @@ test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibi
   await page.unroute('**/api/v1/employees?*');
   await panel.getByRole('button', { name: 'Refresh employees' }).click();
   await expect(panel.getByRole('table')).toBeVisible();
-  // A profile request must be cancelled when another employee is selected.
+  // Closing a modal must cancel its pending profile request before opening another employee.
   const directory = (await (await page.request.get('/api/v1/employees')).json()) as {
     items: { id: string; employee_code: string }[];
   };
@@ -214,17 +223,26 @@ test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibi
     .click();
   await expect.poll(() => held).toBe(true);
   const beforeSelection = cancellations;
+  await page.getByRole('button', { name: 'Close employee details', exact: true }).click();
   await panel
     .getByRole('button', { name: 'View profile for employee SYN003', exact: true })
     .click();
-  const profile = panel.getByRole('region', { name: 'Employee profile' });
-  await expect(profile.getByText('SYN003', { exact: true })).toBeVisible();
+  const profile = page.getByRole('dialog');
+  await expect(
+    profile
+      .getByRole('tabpanel', { name: 'Overview', exact: true })
+      .getByText('SYN003', { exact: true }),
+  ).toBeVisible();
   await expect.poll(() => cancellations).toBeGreaterThan(beforeSelection);
   releaseFirst();
   await finished;
-  await expect(profile.getByText('SYN003', { exact: true })).toBeVisible();
+  await expect(
+    profile
+      .getByRole('tabpanel', { name: 'Overview', exact: true })
+      .getByText('SYN003', { exact: true }),
+  ).toBeVisible();
   await expect(profile.getByText('SYN002', { exact: true })).toHaveCount(0);
-  await panel.getByRole('button', { name: 'Close employee profile' }).click();
+  await page.getByRole('button', { name: 'Close employee details', exact: true }).click();
   await page.unroute(`**${firstPath}`);
   page.off('requestfailed', recordCancellation);
   await page.route(/\/api\/v1\/employees\/[a-f0-9-]{36}$/, (route) =>
@@ -237,10 +255,8 @@ test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibi
   await panel
     .getByRole('button', { name: 'View profile for employee SYN002', exact: true })
     .click();
-  await expect(
-    panel.getByRole('region', { name: 'Employee profile' }).getByRole('alert'),
-  ).toHaveText('Employee unavailable');
-  await panel.getByRole('button', { name: 'Close employee profile' }).click();
+  await expect(page.getByRole('dialog').getByRole('alert')).toHaveText('Employee unavailable');
+  await page.getByRole('button', { name: 'Close employee details', exact: true }).click();
   await page.setViewportSize({ width: 375, height: 900 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
@@ -251,4 +267,171 @@ test('EMP-E2E-03 empty/error/loading recovery, profile failure, mobile accessibi
   ).toEqual([]);
   expect(errors).toEqual([]);
   await panel.screenshot({ path: 'qa-artifacts/employees/mobile.png' });
+});
+
+test('EMP-E2E-04 atomic employee creation, independent initial approval and salary modal tabs', async ({
+  page,
+  browser,
+}) => {
+  const fixture = await pool.connect();
+  try {
+    await fixture.query('BEGIN');
+    const managers = (
+      await fixture.query(
+        "SELECT id,email FROM users WHERE email IN ('employee.hr@acme.test','employee.hr.b@acme.test')",
+      )
+    ).rows;
+    const first = managers.find((user) => user.email === 'employee.hr@acme.test')!.id;
+    const second = managers.find((user) => user.email === 'employee.hr.b@acme.test')!.id;
+    for (const [actor, target, code] of [
+      [second, first, 'SYN027'],
+      [first, second, 'SYN028'],
+    ]) {
+      await fixture.query(
+        "SELECT set_config('acme.link_actor',$1,true),set_config('acme.link_reason','Independent synthetic browser fixture linkage',true),set_config('acme.link_confirmed','true',true)",
+        [actor],
+      );
+      await fixture.query(
+        'UPDATE users SET employee_id=(SELECT id FROM employees WHERE employee_code=$2) WHERE id=$1',
+        [target, code],
+      );
+    }
+    await fixture.query('COMMIT');
+  } catch (error) {
+    await fixture.query('ROLLBACK');
+    throw error;
+  } finally {
+    fixture.release();
+  }
+  await login(page);
+  await page.goto('/#/add-employee');
+  await page.getByLabel('Employee code', { exact: true }).fill('EMP-CREATE-001');
+  await page.getByLabel('Work email', { exact: true }).fill('employee.created@acme.test');
+  await page.getByLabel('First name', { exact: true }).fill('Synthetic');
+  await page.getByLabel('Last name', { exact: true }).fill('Created');
+  await page.getByLabel('Joining date', { exact: true }).fill('2026-01-01');
+  await page.getByLabel('Country', { exact: true }).selectOption('US');
+  await page
+    .getByLabel('Department', { exact: true })
+    .selectOption({ label: 'Synthetic Engineering' });
+  await page.getByLabel('Job title', { exact: true }).selectOption({ label: 'Synthetic Engineer' });
+  await page.getByLabel('Monthly amount', { exact: true }).fill('5000.00');
+  await page.getByLabel('Salary starts on', { exact: true }).fill('2026-11-01');
+  await page
+    .getByLabel('Reason / approval note', { exact: true })
+    .fill('Synthetic initial salary requiring independent approval');
+  await page.getByRole('button', { name: 'Review employee & salary', exact: true }).click();
+  await expect(page.getByRole('dialog')).toContainText('USD 5000.00');
+  await page
+    .getByRole('button', { name: 'Add employee & submit for approval', exact: true })
+    .click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(
+    page.getByText(
+      'Employee added. The salary stays out of active compensation until a different HR manager approves it.',
+    ),
+  ).toBeVisible();
+  const created = (
+    await pool.query(
+      "SELECT e.id,r.id request_id,r.monthly_amount::text FROM employees e JOIN salary_change_requests r ON r.employee_id=e.id WHERE e.employee_code='EMP-CREATE-001'",
+    )
+  ).rows[0]!;
+  expect(
+    (
+      await pool.query('SELECT count(*)::int n FROM salary_records WHERE employee_id=$1', [
+        created.id,
+      ])
+    ).rows[0].n,
+  ).toBe(0);
+  await page.goto('/#/salary-approvals');
+  const creatorRow = page.getByRole('row').filter({ hasText: 'EMP-CREATE-001' });
+  await expect(creatorRow).toContainText('Another eligible HR manager must review');
+  await expect(creatorRow.getByRole('button', { name: 'Approve', exact: true })).toHaveCount(0);
+  const reviewerContext = await browser.newContext({ baseURL: new URL(page.url()).origin });
+  try {
+    const reviewer = await reviewerContext.newPage();
+    await login(reviewer, 'employee.hr.b@acme.test');
+    await reviewer.goto('/#/salary-approvals');
+    await reviewer
+      .getByRole('row')
+      .filter({ hasText: 'EMP-CREATE-001' })
+      .getByRole('button', { name: 'Approve', exact: true })
+      .click();
+    await reviewer
+      .getByLabel('Decision comment (required)', { exact: true })
+      .fill('Independent synthetic browser approval');
+    await reviewer.getByRole('button', { name: 'Confirm approval', exact: true }).click();
+    await expect(reviewer.getByRole('dialog')).toHaveCount(0);
+    expect(
+      (
+        await pool.query('SELECT count(*)::int n FROM salary_records WHERE employee_id=$1', [
+          created.id,
+        ])
+      ).rows[0].n,
+    ).toBe(1);
+  } finally {
+    await reviewerContext.close();
+  }
+  await page.goto('/#/employees');
+  await area(page).getByLabel('Search employees').fill('EMP-CREATE-001');
+  await area(page).getByRole('button', { name: 'Apply employee filters', exact: true }).click();
+  const salaryReads: string[] = [];
+  const track = (request: import('@playwright/test').Request) => {
+    if (new URL(request.url()).pathname === `/api/v1/employees/${created.id}/salary`)
+      salaryReads.push(request.url());
+  };
+  page.on('request', track);
+  await area(page)
+    .getByRole('button', { name: 'View profile for employee EMP-CREATE-001', exact: true })
+    .click();
+  const modal = page.getByRole('dialog', { name: 'Synthetic Created', exact: true });
+  await expect(modal.getByRole('tab', { name: 'Overview', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  expect(salaryReads).toHaveLength(0);
+  await modal.getByRole('tab', { name: 'Salary & history', exact: true }).click();
+  await expect(modal.getByRole('table', { name: 'Approved salary history' })).toContainText(
+    '5000.0000',
+  );
+  await expect(modal.getByText('No approved salary is active today.')).toHaveCount(0);
+  expect(salaryReads.length).toBeGreaterThan(0);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .include('.detail-modal')
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await modal.getByRole('tab', { name: 'Salary & history', exact: true }).press('Home');
+  await expect(modal.getByRole('tab', { name: 'Overview', exact: true })).toBeFocused();
+  await modal.getByRole('button', { name: 'Edit employee details', exact: true }).click();
+  await expect(
+    modal.getByRole('button', { name: 'Close employee details', exact: true }),
+  ).toBeDisabled();
+  await expect(modal.getByRole('tab', { name: 'Salary & history', exact: true })).toBeDisabled();
+  await modal.getByRole('button', { name: 'Start protected editing', exact: true }).click();
+  await modal.getByLabel('First name', { exact: true }).fill('Synthetic Updated');
+  await modal
+    .getByLabel('Reason for this change', { exact: true })
+    .fill('Synthetic corrected employee details');
+  await modal.getByRole('button', { name: 'Review changes', exact: true }).click();
+  const editConfirmation = page.getByRole('dialog', {
+    name: 'Save employee details?',
+    exact: true,
+  });
+  await expect(editConfirmation).toContainText('Synthetic Updated');
+  await editConfirmation
+    .getByRole('button', { name: 'Save employee details', exact: true })
+    .click();
+  await expect(editConfirmation).toHaveCount(0);
+  const savedModal = page.getByRole('dialog', { name: 'Synthetic Updated Created', exact: true });
+  await expect(savedModal).toBeVisible();
+  await expect(
+    savedModal.getByRole('button', { name: 'Close employee details', exact: true }),
+  ).toBeEnabled();
+  await page.keyboard.press('Escape');
+  await expect(savedModal).toHaveCount(0);
+  page.off('request', track);
 });

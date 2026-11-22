@@ -33,6 +33,7 @@ async function login(page: Page, email = 'refs.hr@acme.test') {
   await page.getByLabel('One-time code').fill(mail.match(/code is (\d{6})/)![1]!);
   await page.getByRole('button', { name: 'Verify code' }).click();
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  await page.goto('/#/organization');
 }
 const section = (page: Page) => page.getByRole('region', { name: 'Organization references' });
 async function confirm(page: Page) {

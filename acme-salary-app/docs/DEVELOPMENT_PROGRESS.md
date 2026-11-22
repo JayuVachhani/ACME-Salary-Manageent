@@ -1,3 +1,19 @@
+## Local publication verification — 23 November 2026
+
+The push request authorizes verification. Backend gates and32 new employee SQL/HTTP checks passed; frontend9 units/lint/types/build/architecture and12 foundation Chromium cases passed. All23 delivered Chromium cases also passed across the final corrected groups. Publication hooks and exact-head GitHub CI remain pending. This supersedes earlier deferred-verification snapshots without claiming full-product or10k capacity acceptance. See [current QA report](../QA_EXECUTION_REPORT.md) and Git ledger for actual results; no push/CI success inferred.
+
+## Employee profile presentation — 23 November 2026
+
+Employee details now open in a responsive modal with Overview and permission-aware Salary & history tabs; editing/confirmation/lease rules remain. Shared modal/tabs own keyboard/focus behavior. Source implementation is unverified; no tests/lint/types/build/browser/safety execution, commit or push. Current details: [employee module](EMPLOYEE_DIRECTORY_MODULE.md).
+
+## Demo data and navigation — 23 November 2026
+
+Executed the explicit synthetic seed in local acme_app: 10,000 DEMO employees, 9,990 independently approved initial salaries, 8 pending and 2 rejected requests, using existing active INR. Demo HR accounts are independently linked; existing accounts/data remain preserved. Script owns a transaction/advisory lock and completed-seed audit marker; no reset or overwrite. Sidebar/Home are grouped by People, Salary and Settings with existing permission filtering. Accounts, sample codes, fictional policy labels and repeat command are in [the current runbook](../../README.md). Seeding is not a test/load pass; verification, commit and push remain deferred. No full salary-product completion claimed.
+
+## Employee / initial salary checkpoint — 23 November 2026
+
+First employee/initial-salary workflow implemented in source, with rejected-request recovery and employee-link UI; migrations 020/021 applied locally. Full current contracts and deferred acceptance scenarios: [employee module](EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # Development progress
 
 ## Independent package publication checks — 23 November 2026

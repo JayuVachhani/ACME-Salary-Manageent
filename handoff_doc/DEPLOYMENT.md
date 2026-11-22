@@ -1,3 +1,11 @@
+## Demo data and navigation — 23 November 2026
+
+Executed the explicit synthetic seed in local acme_app: 10,000 DEMO employees, 9,990 independently approved initial salaries, 8 pending and 2 rejected requests, using existing active INR. Demo HR accounts are independently linked; existing accounts/data remain preserved. Script owns a transaction/advisory lock and completed-seed audit marker; no reset or overwrite. Sidebar/Home are grouped by People, Salary and Settings with existing permission filtering. Accounts, sample codes, fictional policy labels and repeat command are in [the current runbook](../README.md). Seeding is not a test/load pass; verification, commit and push remain deferred. No full salary-product completion claimed.
+
+## Employee / initial salary checkpoint — 23 November 2026
+
+Local installed acme_app has migrations 020/021 applied (21 total) and Prisma generated. New workflows are unverified; no production deployment or test execution. Full current contracts and deferred acceptance scenarios: [employee module](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # ACME — deployment, GitHub CI and infrastructure
 
 ## Independent package publication checks — 23 November 2026
@@ -82,3 +90,8 @@ Read-only employee directory/profile integrates GET employees,employees/filters,
 Browser runtime update: Playwright now serves built web assets through scripts/qa-web-server.mjs (loopback Node HTTP,strict port,existing QA_API_PORT proxy); npm run dev remains development only. Build before qa:e2e; test:login builds itself. Repeated native dev/preview exits3221226505 are retained failures,root cause unproven. See [browser test runtime](../acme-salary-app/docs/BROWSER_TEST_RUNTIME.md); no deployment or retry/assertion change.
 
 CI also runs `npm.cmd run test:qa-web` to verify real built-static path/MIME/HEAD protections and API proxy method/query/Origin/body/cookies/health/error behavior. No new config or dependency.
+# Installed local PostgreSQL checkpoint — 23 November 2026
+
+This machine's active development configuration is installed PostgreSQL `127.0.0.1:5432/acme_app`, managed in the existing ACME Salary Management pgAdmin connection. All 19 migrations applied; 23 public tables are visible. Restricted owner/runtime roles have no superuser, Create roles or Create databases privileges. One-time role configuration in migration 001 used the existing administrator session. No data reset or production deployment occurred. Preserve the older embedded cluster and private environment backup.
+
+See the root README's installed PostgreSQL section for the ignored machine-local restart helper, standalone Mailpit and synthetic HR sign-in. Frontend 5173, backend 3001 and Mailpit 8025/1025 are running locally. HTTP proxy/health, OTP email delivery/verification and authenticated identity passed; this is not a complete Chromium acceptance run. Existing readiness `schema_not_verified` and unfinished business workflows remain unchanged. Migration checksum compatibility permits LF/CRLF conversion only and leaves recorded hashes unchanged.

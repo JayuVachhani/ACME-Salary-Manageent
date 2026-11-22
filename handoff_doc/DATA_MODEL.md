@@ -1,3 +1,11 @@
+## Demo data and navigation — 23 November 2026
+
+Executed the explicit synthetic seed in local acme_app: 10,000 DEMO employees, 9,990 independently approved initial salaries, 8 pending and 2 rejected requests, using existing active INR. Demo HR accounts are independently linked; existing accounts/data remain preserved. Script owns a transaction/advisory lock and completed-seed audit marker; no reset or overwrite. Sidebar/Home are grouped by People, Salary and Settings with existing permission filtering. Accounts, sample codes, fictional policy labels and repeat command are in [the current runbook](../README.md). Seeding is not a test/load pass; verification, commit and push remain deferred. No full salary-product completion claimed.
+
+## Employee / initial salary checkpoint — 23 November 2026
+
+Forward migrations 020/021 add request kind, employee_creation_commands, initial approval and linkage guards. Local schema is at 21 migrations; Prisma mirrors the new table/field. Full current contracts and deferred acceptance scenarios: [employee module](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # ACME — database and schema reference
 
 **Purpose:** Inventory every stored table, relationship, field and integrity boundary.

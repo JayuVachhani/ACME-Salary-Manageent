@@ -101,26 +101,27 @@ model employee_assignments {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model employees {
-  id                                 String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  employee_code                      String                      @unique(map: "employees_code_live_uq", where: raw("(removed_at IS NULL)"))
-  email                              String                      @unique(map: "employees_email_live_uq", where: raw("(removed_at IS NULL)")) @db.Citext
+  employee_creation_commands         employee_creation_commands[]
+  id                                 String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_code                      String                       @unique(map: "employees_code_live_uq", where: raw("(removed_at IS NULL)"))
+  email                              String                       @unique(map: "employees_email_live_uq", where: raw("(removed_at IS NULL)")) @db.Citext
   first_name                         String
   last_name                          String
-  joining_date                       DateTime                    @db.Date
-  removed_at                         DateTime?                   @db.Timestamptz(6)
-  version                            Int                         @default(1)
-  created_by                         String                      @db.Uuid
-  created_at                         DateTime                    @default(now()) @db.Timestamptz(6)
-  updated_at                         DateTime                    @default(now()) @db.Timestamptz(6)
+  joining_date                       DateTime                     @db.Date
+  removed_at                         DateTime?                    @db.Timestamptz(6)
+  version                            Int                          @default(1)
+  created_by                         String                       @db.Uuid
+  created_at                         DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at                         DateTime                     @default(now()) @db.Timestamptz(6)
   employee_assignments               employee_assignments[]
-  users_employees_created_byTousers  users                       @relation("employees_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_employees_created_byTousers  users                        @relation("employees_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   record_locks                       record_locks?
   report_snapshot_employees          report_snapshot_employees[]
   retention_holds                    retention_holds[]
   salary_change_requests             salary_change_requests[]
   salary_history_events              salary_history_events[]
   salary_records                     salary_records[]
-  users_users_employee_idToemployees users?                      @relation("users_employee_idToemployees")
+  users_users_employee_idToemployees users?                       @relation("users_employee_idToemployees")
 
   @@index([employee_code(ops: raw("gin_trgm_ops"))], map: "employees_code_trgm", type: Gin)
 }
@@ -219,31 +220,33 @@ model salary_approval_decisions {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model salary_change_requests {
-  id                                                                        String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  employee_id                                                               String                     @db.Uuid
-  requested_by                                                              String                     @db.Uuid
-  submitted_business_date                                                   DateTime                   @db.Date
-  effective_from                                                            DateTime                   @db.Date
+  employee_creation_commands                                                employee_creation_commands[]
+  request_kind                                                              String                       @default("BACKDATED")
+  id                                                                        String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id                                                               String                       @db.Uuid
+  requested_by                                                              String                       @db.Uuid
+  submitted_business_date                                                   DateTime                     @db.Date
+  effective_from                                                            DateTime                     @db.Date
   expected_employee_version                                                 Int
-  monthly_amount                                                            Decimal                    @db.Decimal(18, 4)
+  monthly_amount                                                            Decimal                      @db.Decimal(18, 4)
   currency                                                                  String
   country_code                                                              String
   default_currency                                                          String
   country_rule_version                                                      Int
-  decimal_places                                                            Int                        @db.SmallInt
+  decimal_places                                                            Int                          @db.SmallInt
   rounding_mode                                                             String
-  corrects_id                                                               String?                    @db.Uuid
+  corrects_id                                                               String?                      @db.Uuid
   reason                                                                    String
-  conversion_meta                                                           Json                       @default("{}")
-  created_at                                                                DateTime                   @default(now()) @db.Timestamptz(6)
+  conversion_meta                                                           Json                         @default("{}")
+  created_at                                                                DateTime                     @default(now()) @db.Timestamptz(6)
   salary_approval_decisions                                                 salary_approval_decisions?
-  salary_records_salary_change_requests_corrects_idTosalary_records         salary_records?            @relation("salary_change_requests_corrects_idTosalary_records", fields: [corrects_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "request_correction_fk")
-  country_rules                                                             country_rules              @relation(fields: [country_code], references: [country_code], onDelete: NoAction, onUpdate: NoAction)
-  currencies_salary_change_requests_currencyTocurrencies                    currencies                 @relation("salary_change_requests_currencyTocurrencies", fields: [currency], references: [code], onDelete: NoAction, onUpdate: NoAction)
-  currencies_salary_change_requests_default_currencyTocurrencies            currencies                 @relation("salary_change_requests_default_currencyTocurrencies", fields: [default_currency], references: [code], onDelete: NoAction, onUpdate: NoAction)
-  employees                                                                 employees                  @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                                                                     users                      @relation(fields: [requested_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  salary_records_salary_records_approval_request_idTosalary_change_requests salary_records?            @relation("salary_records_approval_request_idTosalary_change_requests")
+  salary_records_salary_change_requests_corrects_idTosalary_records         salary_records?              @relation("salary_change_requests_corrects_idTosalary_records", fields: [corrects_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "request_correction_fk")
+  country_rules                                                             country_rules                @relation(fields: [country_code], references: [country_code], onDelete: NoAction, onUpdate: NoAction)
+  currencies_salary_change_requests_currencyTocurrencies                    currencies                   @relation("salary_change_requests_currencyTocurrencies", fields: [currency], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  currencies_salary_change_requests_default_currencyTocurrencies            currencies                   @relation("salary_change_requests_default_currencyTocurrencies", fields: [default_currency], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  employees                                                                 employees                    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                                                                     users                        @relation(fields: [requested_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  salary_records_salary_records_approval_request_idTosalary_change_requests salary_records?              @relation("salary_records_approval_request_idTosalary_change_requests")
 
   @@index([employee_id, effective_from], map: "requests_employee_date_idx")
 }
@@ -307,24 +310,25 @@ model schema_migrations {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model users {
-  id                                     String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                                  String                      @unique(map: "users_live_email_uq", where: raw("(status <> 'DELETED'::text)")) @db.Citext
+  employee_creation_commands             employee_creation_commands[]
+  id                                     String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                                  String                       @unique(map: "users_live_email_uq", where: raw("(status <> 'DELETED'::text)")) @db.Citext
   full_name                              String
-  is_hr_manager                          Boolean                     @default(false)
-  permissions                            String[]                    @default(["read"])
+  is_hr_manager                          Boolean                      @default(false)
+  permissions                            String[]                     @default(["read"])
   status                                 String
-  employee_id                            String?                     @unique(map: "users_employee_link_uq", where: raw("((status <> 'DELETED'::text) AND (employee_id IS NOT NULL))")) @db.Uuid
-  invited_by                             String?                     @db.Uuid
-  invite_expires_at                      DateTime?                   @db.Timestamptz(6)
-  is_system                              Boolean                     @unique(map: "users_one_system_uq", where: raw("is_system")) @default(false)
-  deleted_at                             DateTime?                   @db.Timestamptz(6)
-  created_at                             DateTime                    @default(now()) @db.Timestamptz(6)
-  authorization_version                  Int                         @default(1)
-  team_version                           Int                         @default(1)
+  employee_id                            String?                      @unique(map: "users_employee_link_uq", where: raw("((status <> 'DELETED'::text) AND (employee_id IS NOT NULL))")) @db.Uuid
+  invited_by                             String?                      @db.Uuid
+  invite_expires_at                      DateTime?                    @db.Timestamptz(6)
+  is_system                              Boolean                      @unique(map: "users_one_system_uq", where: raw("is_system")) @default(false)
+  deleted_at                             DateTime?                    @db.Timestamptz(6)
+  created_at                             DateTime                     @default(now()) @db.Timestamptz(6)
+  authorization_version                  Int                          @default(1)
+  team_version                           Int                          @default(1)
   audit_logs                             audit_logs[]
   country_rules                          country_rules[]
   employee_assignments                   employee_assignments[]
-  employees_employees_created_byTousers  employees[]                 @relation("employees_created_byTousers")
+  employees_employees_created_byTousers  employees[]                  @relation("employees_created_byTousers")
   fx_rate_revisions                      fx_rate_revisions[]
   login_challenges                       login_challenges?
   record_locks                           record_locks[]
@@ -336,9 +340,9 @@ model users {
   salary_history_events                  salary_history_events[]
   salary_records                         salary_records[]
   user_sessions                          user_sessions[]
-  employees_users_employee_idToemployees employees?                  @relation("users_employee_idToemployees", fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_employee_fk")
-  users                                  users?                      @relation("usersTousers", fields: [invited_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  other_users                            users[]                     @relation("usersTousers")
+  employees_users_employee_idToemployees employees?                   @relation("users_employee_idToemployees", fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_employee_fk")
+  users                                  users?                       @relation("usersTousers", fields: [invited_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_users                            users[]                      @relation("usersTousers")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -386,4 +390,17 @@ model currency_catalogue {
   minor_units   Int?     @db.SmallInt
   published_on  DateTime @default(dbgenerated("'2026-09-17'::date")) @db.Date
   source        String   @default("https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list-one.xml")
+}
+
+model employee_creation_commands {
+  actor_id               String                 @db.Uuid
+  command_id             String                 @db.Uuid
+  input_hash             String
+  employee_id            String                 @db.Uuid
+  request_id             String                 @db.Uuid
+  users                  users                  @relation(fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employees              employees              @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  salary_change_requests salary_change_requests @relation(fields: [request_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([actor_id, command_id])
 }

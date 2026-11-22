@@ -16,6 +16,10 @@ export const employeeQuery = z
   })
   .strict();
 export const employeeId = z.uuid();
+export class EmployeeSalaryQueryDto extends requestDto(
+  z.object({ page: z.coerce.number().int().min(1).max(100000).default(1) }).strict(),
+  'Invalid salary history page',
+) {}
 
 export class EmployeeQueryDto extends requestDto(
   employeeQuery,

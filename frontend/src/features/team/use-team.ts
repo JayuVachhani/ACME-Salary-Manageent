@@ -15,6 +15,7 @@ type Pending =
   | { kind: 'save'; editing: Account | null; input: MemberInput & { email: string } }
   | { kind: 'remove' | 'reinvite'; account: Account };
 export function useTeam({ userId, onSelfRemoved }: TeamProps) {
+  const [linking, setLinking] = useState<Account | null>(null);
   const [offset, changeOffset] = useState(0);
   const resource = queryState(useTeamQuery(offset), { items: [], total: 0 });
   const [invite] = useInviteMutation();
@@ -124,6 +125,8 @@ export function useTeam({ userId, onSelfRemoved }: TeamProps) {
     changeOffset(value);
   }
   return {
+    linking,
+    setLinking,
     userId,
     items: resource.error ? [] : resource.data.items,
     total: resource.data.total,

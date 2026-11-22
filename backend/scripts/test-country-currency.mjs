@@ -1,3 +1,4 @@
+import { approvedInitialFixture, linkFixtureActor } from './salary-fixtures.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -36,6 +37,7 @@ try {
     [actor, reader],
   );
   await owner.query('UPDATE users SET permissions=ARRAY[]::text[] WHERE id=$1', [reader]);
+  await linkFixtureActor(owner, actor);
   const auth = new AuthenticationService(
       pool,
       'synthetic-country-test-secret-at-least-32-characters',
@@ -184,18 +186,14 @@ try {
       [emp, dept, designation, date, actor],
     );
   await assignment('2020-01-01');
-  const policy = (
-    await owner.query(
-      "SELECT version,decimal_places,rounding_mode FROM country_rules WHERE country_code='ZZ'",
-    )
-  ).rows[0];
-  const ledger = (
-    await owner.query(
-      `INSERT INTO salary_records(employee_id,monthly_amount,currency,country_code,default_currency,country_rule_version,decimal_places,rounding_mode,effective_from,submitted_business_date,approval_status,change_reason,created_by)
-    VALUES($1,1000,'USD','ZZ','USD',$2,$3,$4,'2020-01-01','2020-01-01','ACTIVE','Synthetic initial salary',$5) RETURNING id`,
-      [emp, policy.version, policy.decimal_places, policy.rounding_mode, actor],
-    )
-  ).rows[0].id;
+  const ledger = await approvedInitialFixture(owner, {
+    employeeId: emp,
+    actorId: actor,
+    amount: '1000',
+    currency: 'USD',
+    effectiveFrom: '2020-01-01',
+    countryCode: 'ZZ',
+  });
   const original = (
     await owner.query('SELECT to_jsonb(s) AS snapshot FROM salary_records s WHERE id=$1', [ledger])
   ).rows[0].snapshot;

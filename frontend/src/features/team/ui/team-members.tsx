@@ -4,7 +4,9 @@ import { DataTable } from '../../../shared/ui/data-table';
 import { EmptyState } from '../../../shared/ui/request-state';
 import { Button } from '../../../shared/ui/button';
 import type { TeamModel } from '../use-team';
+import { EmployeeLinkEditor } from './employee-link-editor';
 export function TeamMembers({ model }: { model: TeamModel }) {
+  const { linking, setLinking } = model;
   const { userId, items, total, offset, setOffset, busy, edit, reviewReinvite, reviewRemove } =
     model;
   return (
@@ -35,6 +37,7 @@ export function TeamMembers({ model }: { model: TeamModel }) {
             </td>
             <td>
               {account.status}
+              <p>{account.employee_id ? 'Employee linked' : 'Employee not linked'}</p>
               {account.status === 'INVITED' && account.invite_expires_at && (
                 <>
                   <br />
@@ -43,6 +46,11 @@ export function TeamMembers({ model }: { model: TeamModel }) {
               )}
             </td>
             <td>
+              {account.id !== userId && (
+                <Button disabled={busy} onClick={() => setLinking(account)}>
+                  Link employee record
+                </Button>
+              )}
               <Button
                 disabled={busy}
                 aria-label={`Edit ${account.email}`}
@@ -70,6 +78,9 @@ export function TeamMembers({ model }: { model: TeamModel }) {
           </tr>
         ))}
       </DataTable>
+      {linking && (
+        <EmployeeLinkEditor key={linking.id} account={linking} onClose={() => setLinking(null)} />
+      )}
       {!items.length && <EmptyState>No team members on this page.</EmptyState>}
       <OffsetPagination
         label="Team"

@@ -1,3 +1,7 @@
+## Local publication verification — 23 November 2026
+
+The push request authorizes verification. Backend gates and32 new employee SQL/HTTP checks passed; frontend9 units/lint/types/build/architecture and12 foundation Chromium cases passed. All23 delivered Chromium cases also passed across the final corrected groups. Publication hooks and exact-head GitHub CI remain pending. This supersedes earlier deferred-verification snapshots without claiming full-product or10k capacity acceptance. See [current QA report](QA_EXECUTION_REPORT.md) and Git ledger for actual results; no push/CI success inferred.
+
 # ACME bug and missing-functionality register
 
 Date: 21 November 2026. Environment: real Playwright Chromium, local React/NestJS, synthetic PostgreSQL fixtures only. These are release-assessment priorities; missing features were previously documented as unfinished, not regressions falsely claimed to be complete.

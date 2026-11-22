@@ -1,3 +1,7 @@
+## Employee / initial salary checkpoint — 23 November 2026
+
+Initial salary stays pending for every date; independent linked HR approval appends the ledger. Creation is atomic and idempotent; rejected requests can be resubmitted with new IDs. Full current contracts and deferred acceptance scenarios: [employee module](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # ACME — workflow rules and state transitions
 
 Migration019: accounts start unlinked. Independent current HR may link/relink/unlink with reason, confirmation and expected team version. No self-link or actor's own employee identity, removed subject or duplicate live mapping. Commit atomically updates mapping/version, revokes target sessions/open OTPs, removes target edit leases, invalidates owner and old/new membership snapshots and appends actor/time/reason/old/new identity audit. Failure rolls everything back. No implicit email mapping or linkage UI; public salary writes remain absent. Earlier linkage-pending descriptions are the historical pre-019 checkpoint. See TEAM_MODULE.md.

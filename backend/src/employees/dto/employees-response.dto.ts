@@ -29,3 +29,23 @@ export const employeeFiltersResponse = z.object({
 export type EmployeeResponse = z.output<typeof employeeResponse>;
 export type EmployeePageResponse = z.output<typeof employeePageResponse>;
 export type EmployeeFiltersResponse = z.output<typeof employeeFiltersResponse>;
+export const employeeSalaryResponse = z.object({
+  current: z
+    .object({ id: z.uuid(), amount: z.string(), currency: z.string(), effectiveFrom: z.string() })
+    .nullable(),
+  history: z.array(
+    z.object({
+      id: z.uuid(),
+      amount: z.string(),
+      currency: z.string(),
+      effectiveFrom: z.string(),
+      reason: z.string(),
+    }),
+  ),
+  pending: z.array(
+    z.object({ id: z.uuid(), amount: z.string(), currency: z.string(), effectiveFrom: z.string() }),
+  ),
+  total: z.number().int(),
+  page: z.number().int(),
+  canResubmitInitial: z.boolean(),
+});

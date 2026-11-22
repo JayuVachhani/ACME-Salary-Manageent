@@ -1,3 +1,4 @@
+import { approvedInitialFixture, linkFixtureActor } from './salary-fixtures.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -57,14 +58,15 @@ try {
     VALUES($1,'ZZ',$2,$3,'ACTIVE','2026-01-01','Synthetic initial assignment',$4)`,
     [employee, department, designation, manager],
   );
-  const original = (
-    await owner.query(
-      `INSERT INTO salary_records(employee_id,monthly_amount,currency,country_code,default_currency,country_rule_version,
-    decimal_places,rounding_mode,effective_from,submitted_business_date,approval_status,change_reason,created_by)
-    VALUES($1,100,'USD','ZZ','USD',1,2,'HALF_UP','2026-01-01','2026-01-01','ACTIVE','Synthetic initial salary',$2) RETURNING id`,
-      [employee, manager],
-    )
-  ).rows[0].id;
+  const approverEmployee = await linkFixtureActor(owner, approver);
+  const original = await approvedInitialFixture(owner, {
+    employeeId: employee,
+    actorId: manager,
+    amount: '100',
+    currency: 'USD',
+    effectiveFrom: '2026-01-01',
+    countryCode: 'ZZ',
+  });
   const version = async () =>
     (await owner.query('SELECT version FROM employees WHERE id=$1', [employee])).rows[0].version;
   const salary = async (date) =>
@@ -126,7 +128,7 @@ try {
     (e) => e.code === '42501',
   );
   passed++;
-  await fixtureLink(null);
+  await fixtureLink(approverEmployee);
   const approvalState = async () => ({
     version: await version(),
     salary: await salary('2026-11-21'),

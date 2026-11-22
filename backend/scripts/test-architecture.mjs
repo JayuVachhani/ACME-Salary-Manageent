@@ -11,6 +11,11 @@ import { TeamModule } from '../dist/team/team.module.js';
 import { TeamService } from '../dist/team/team.service.js';
 import { EmployeesModule } from '../dist/employees/employees.module.js';
 import { EmployeesService } from '../dist/employees/employees.service.js';
+import { EmployeeCreationService } from '../dist/employees/employee-creation.service.js';
+import { EmployeeEditingService } from '../dist/employees/employee-editing.service.js';
+import { SalaryModule } from '../dist/salary/salary.module.js';
+import { SalaryWorkflowService } from '../dist/salary/salary-workflow.service.js';
+import { SalaryApprovalService } from '../dist/salary/salary-approval.service.js';
 import { DatabaseModule } from '../dist/database/database.module.js';
 
 // Compose real Nest providers. No connection to a database or SMTP server is made.
@@ -20,6 +25,10 @@ const auth = app.select(AuthModule).get(AuthenticationService, { strict: true })
 const deliveries = app.select(MailModule).get(OtpDeliveries, { strict: true });
 const team = app.select(TeamModule).get(TeamService, { strict: true });
 const employees = app.select(EmployeesModule).get(EmployeesService, { strict: true });
+const creation = app.select(EmployeesModule).get(EmployeeCreationService, { strict: true });
+const editing = app.select(EmployeesModule).get(EmployeeEditingService, { strict: true });
+const salaries = app.select(SalaryModule).get(SalaryWorkflowService, { strict: true });
+const approvals = app.select(SalaryModule).get(SalaryApprovalService, { strict: true });
 let closed = false;
 const end = pool.end.bind(pool);
 pool.end = async () => {
@@ -44,6 +53,11 @@ try {
   assert.equal(employees.auth, auth);
   assert.equal(team.pool, pool);
   assert.equal(employees.pool, pool);
+  for (const service of [creation, editing, salaries]) {
+    assert.equal(service.pool, pool);
+    assert.equal(service.auth, auth);
+  }
+  assert.equal(salaries.approvals, approvals);
   assert.throws(() => app.select(EmployeesModule).get(TeamService, { strict: true }));
   await app.listen(0, '127.0.0.1');
   const base = await app.getUrl();
@@ -59,6 +73,11 @@ try {
     ['/api/v1/countries/invalid', { method: 'PATCH' }, 403],
     ['/api/v1/fx-rates', { method: 'POST' }, 403],
     ['/api/v1/employees/invalid', {}, 400],
+    ['/api/v1/employees', { method: 'POST' }, 403],
+    ['/api/v1/employees/create-options', {}, 401],
+    ['/api/v1/employees/invalid/edit-lease', { method: 'POST' }, 403],
+    ['/api/v1/salary-requests', {}, 401],
+    ['/api/v1/salary-requests/invalid/decision', { method: 'POST' }, 403],
   ]) {
     const response = await fetch(`${base}${url}`, options);
     assert.equal(response.status, status, url);
@@ -68,6 +87,13 @@ try {
   assert.equal(spec.status, 200);
   const document = await spec.json();
   assert.ok(document.paths['/api/v1/employees']);
+  assert.ok(document.paths['/api/v1/employees'].post.requestBody);
+  assert.ok(document.paths['/api/v1/employees/create-options'].get);
+  assert.ok(document.paths['/api/v1/employees/{id}/salary'].get);
+  assert.ok(document.paths['/api/v1/employees/{id}/edit-lease'].post.requestBody);
+  assert.ok(document.paths['/api/v1/employees/{id}/initial-salary'].post.requestBody);
+  assert.ok(document.paths['/api/v1/salary-requests'].get);
+  assert.ok(document.paths['/api/v1/salary-requests/{id}/decision'].post.requestBody);
   const linkage = document.paths['/api/v1/team/{id}/employee-link'].patch;
   assert.ok(linkage.requestBody);
   assert.ok(linkage.responses['200'].content['application/json'].schema.properties.employee_id);
@@ -110,7 +136,7 @@ try {
   assert.equal(drained, true);
   assert.equal(closed, true);
   console.log(
-    'Nest architecture PASS: real DI, shared providers, module isolation, six feature routes, health, headers and shutdown drain order',
+    'Nest architecture PASS: real DI, shared providers, module isolation, registered feature routes, health, headers and shutdown drain order',
   );
 } finally {
   if (!closed) await app.close();

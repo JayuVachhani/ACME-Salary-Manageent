@@ -5,8 +5,8 @@ test('UI-001 foundation renders against the actual API', async ({ page }, info) 
   await page.goto('/');
   await expect(page).toHaveTitle('ACME Salary Management');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByRole('status')).toHaveText('API is online');
-  await expect(page.getByText('Sign in to access your permitted workspace.')).toBeVisible();
+  await expect(page.getByRole('status')).toHaveText('Connected');
+  await expect(page.getByRole('heading', { name: 'Sign in to ACME', exact: true })).toBeVisible();
   await info.attach('inventory', {
     body: JSON.stringify(
       await page.evaluate(() => ({
@@ -29,7 +29,7 @@ for (const width of [320, 375, 768, 1440]) {
   test(`UI-${width} responsive layout at ${width}px`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
-    await expect(page.getByRole('status')).toHaveText('API is online');
+    await expect(page.getByRole('status')).toHaveText('Connected');
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
@@ -42,7 +42,7 @@ test('UI-002 skip link supports keyboard navigation', async ({ page }) => {
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/#main$/);
+  await expect(page.getByRole('main')).toBeFocused();
   await expect(page.getByRole('main')).toBeInViewport();
 });
 test('UI-003 WCAG automated scan desktop and mobile', async ({ page }, info) => {
@@ -71,16 +71,16 @@ test('UI-004 initial loading and successful status (controlled delayed health re
     await route.fulfill({ status: 200, json: { status: 'ok' } });
   });
   await page.goto('/');
-  await expect(page.getByRole('status')).toHaveText('Checking service…');
+  await expect(page.getByRole('status')).toHaveText('Connecting\u2026');
   release();
-  await expect(page.getByRole('status')).toHaveText('API is online');
+  await expect(page.getByRole('status')).toHaveText('Connected');
 });
 test('UI-005 unavailable status on health failure (controlled HTTP failure)', async ({ page }) => {
   await page.route('**/healthz', (route) =>
     route.fulfill({ status: 503, json: { status: 'unavailable' } }),
   );
   await page.goto('/');
-  await expect(page.getByRole('status')).toHaveText('API is unavailable');
+  await expect(page.getByRole('status')).toHaveText('Connection unavailable');
 });
 test('UI-007 stalled health request leaves loading state within a bounded time', async ({
   page,
@@ -88,9 +88,9 @@ test('UI-007 stalled health request leaves loading state within a bounded time',
   await page.clock.install();
   await page.route('**/healthz', () => {});
   await page.goto('/');
-  await expect(page.getByRole('status')).toHaveText('Checking service…');
+  await expect(page.getByRole('status')).toHaveText('Connecting\u2026');
   await page.clock.fastForward(10000);
-  await expect(page.getByRole('status')).toHaveText('API is unavailable');
+  await expect(page.getByRole('status')).toHaveText('Connection unavailable');
 });
 test('UI-006 no uncaught browser errors or unexpected external dependencies', async ({
   page,
@@ -116,8 +116,14 @@ test('UI-006 no uncaught browser errors or unexpected external dependencies', as
     if (!request.url().startsWith('http://127.0.0.1:4317') && !request.url().startsWith('data:'))
       external.push(request.url());
   });
+  const anonymousResponse = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === '/api/v1/auth/me' && response.status() === 401,
+  );
   await page.goto('/');
-  await expect(page.getByRole('status')).toHaveText('API is online');
+  await anonymousResponse;
+  await expect.poll(() => anonymousSessionChecks.length).toBeGreaterThan(0);
+  await expect(page.getByRole('status')).toHaveText('Connected');
   await page.evaluate(() => document.fonts.ready);
   await info.attach('console-network', {
     body: JSON.stringify({ errors, external, anonymousSessionChecks }, null, 2),

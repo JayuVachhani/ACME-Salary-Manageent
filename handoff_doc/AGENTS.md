@@ -1,3 +1,15 @@
+## Local publication verification — 23 November 2026
+
+The push request authorizes verification. Backend gates and32 new employee SQL/HTTP checks passed; frontend9 units/lint/types/build/architecture and12 foundation Chromium cases passed. All23 delivered Chromium cases also passed across the final corrected groups. Publication hooks and exact-head GitHub CI remain pending. This supersedes earlier deferred-verification snapshots without claiming full-product or10k capacity acceptance. See [current QA report](../acme-salary-app/QA_EXECUTION_REPORT.md) and Git ledger for actual results; no push/CI success inferred.
+
+## Demo data and navigation — 23 November 2026
+
+Executed the explicit synthetic seed in local acme_app: 10,000 DEMO employees, 9,990 independently approved initial salaries, 8 pending and 2 rejected requests, using existing active INR. Demo HR accounts are independently linked; existing accounts/data remain preserved. Script owns a transaction/advisory lock and completed-seed audit marker; no reset or overwrite. Sidebar/Home are grouped by People, Salary and Settings with existing permission filtering. Accounts, sample codes, fictional policy labels and repeat command are in [the current runbook](../README.md). Seeding is not a test/load pass; verification, commit and push remain deferred. No full salary-product completion claimed.
+
+## Employee / initial salary checkpoint — 23 November 2026
+
+Current work adds the first employee/initial-salary business workflow. Treat it as unverified implementation; no prior pass validates this working tree. Full current contracts and deferred acceptance scenarios: [employee module](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Tests/checks remain deferred at client request; changes are local/uncommitted/unpushed.
+
 # ACME handoff â€” start here
 
 ## Independent package publication checks — 23 November 2026

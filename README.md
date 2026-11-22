@@ -1,3 +1,26 @@
+## Ready-to-use synthetic demo data — 23 November 2026
+
+Local acme_app now contains the committed acme-demo-v1 dataset: **10,000 synthetic employees, 9,990 independently approved initial salaries, 8 pending requests and 2 rejected requests**. The selected existing active currency is INR; the seed does not activate currencies or overwrite current settings. Some approved entries start 30 days after the seed date and are correctly absent from today's active compensation. Employment status and department/job-title/region vary for searching/filtering. This is data preparation, not an application test pass or a 10k performance qualification.
+
+Open http://localhost:5173 and sign in using **demo.hr2@acme.test** to review pending initial salaries. Get the sign-in code from http://localhost:8025. Other accounts: demo.hr1@acme.test (request creator/HR), demo.editor@acme.test (read/write/edit/salary-view, not HR), and demo.viewer@acme.test (read-only, no salary access). The first two HR accounts are explicitly linked to DEMO-00001/00002; the editor is linked to DEMO-00003. No existing user's linkage or privileges were changed. Pending requests are DEMO-09991 through DEMO-09998; rejected requests are DEMO-09999/DEMO-10000. Use separate browser profiles to try both HR accounts.
+
+Demo codes start DEMO-, employee emails use demo.employeeNNNNN@acme.test, reference names start [DEMO], and the fictitious XZ/XY/XW regions are explicitly marked synthetic. Their 2-place HALF_UP sample policies are fixture data, not real country/legal requirements. The seed chooses an already active eligible currency. It uses normal immutable request/decision/ledger/audit/linkage guards, not disabled triggers or approved salary bypasses.
+
+To prepare this dataset on a configured local acme_app clone (backend owns credentials):
+
+```powershell
+cd 'F:\My Projects\ACME Salary Management\backend'
+npm run db:seed:demo -- --employees 10000 --confirm-synthetic
+```
+
+Use supported Node 24.20+. The script is restricted to loopback acme_app outside production and requires explicit synthetic confirmation. A transaction and advisory lock prevent partial/concurrent seeds. A committed audit marker makes subsequent runs preserve demo records and manual edits; rerunning with a different count does not resize an existing dataset. Deterministic IDs also reject unrelated collisions. There is no reset/delete option. Counts 25–15,000 are supported for a first seed; 10,000 is the default. The current execution committed successfully; replay behavior and application/load scenarios have not been verified.
+
+View profile in Employees opens a modal: Overview shows personal/assignment details; Salary & history is available only with salary access. Save or cancel personal editing before closing.
+
+Navigation and Home shortcuts are grouped into Overview, People, Salary and Settings. Permission filtering and bookmarked page routes remain in place. Ordinary monthly salary revisions, transfers, reports and full-system acceptance are still pending. Tests/lint/types/build/browser/safety checks remain deferred; no commit/push.
+
+---
+
 # ACME Salary Management
 
 Two independent applications: [React frontend](frontend/README.md) and [NestJS backend](backend/README.md). Each owns its package.json,lockfile,framework configuration,dependencies,environment and commands. There is no root npm application/workspace. [Browser QA](qa/README.md) and repository Git hooks in tools/quality are separate optional tooling. Module/requirements/history documents remain under acme-salary-app/docs and handoff_doc.
@@ -5,6 +28,23 @@ Two independent applications: [React frontend](frontend/README.md) and [NestJS b
 Independent package lint/types/unit/build checks,architecture/database/linkage checks and12 foundation Chromium cases have passed after commit/push authorization. All22 delivered Chromium cases and native Nest CLI/Vite development startup/proxy checks also passed; publication/current-head CI disposition is recorded in GIT_CHANGELOG.md. Existing business gaps remain: employee creation/salary/approval/reporting workflows are incomplete. Use synthetic data only.
 
 ## Run locally on Windows
+
+### Configured installed PostgreSQL on this machine — 23 November 2026
+
+The current ignored `backend/.env` uses installed PostgreSQL at `127.0.0.1:5432/acme_app`, visible in pgAdmin under **ACME Salary Management → Databases → acme_app → Schemas → public → Tables**. All 21 migrations are applied (including the new initial-salary workflow). Separate `acme_owner` migration and `acme_app` runtime logins are non-superusers without Create roles/Create databases privileges. The first migration's role settings were applied once through the existing administrator connection; subsequent migrations use the owner. No existing database was reset. The older embedded database remains preserved; **do not run `db:local:start` for this installed-server setup**.
+
+Frontend: http://localhost:5173. Local Mailpit inbox: http://localhost:8025 (standalone project-local executable, no Docker required on this machine). Sign in with synthetic HR email `tester@acme.test`, request a code, and copy the latest code from Mailpit. The synthetic account, OTP delivery, verification and authenticated identity were checked through the running frontend proxy. This is a local startup check, not a new full browser-suite pass.
+
+After a reboot, ensure the installed PostgreSQL Windows service is running, then restart this machine's configured services:
+
+```powershell
+cd 'F:\My Projects\ACME Salary Management'
+& '.\backend\.local\start-manual.ps1'
+```
+
+This ignored machine-local helper uses the already installed Node 24.20.0, dependencies and Mailpit binary. It starts missing service ports; logs are in `backend/.local/*-dev.*.log`. For foreground terminals instead, use the backend/frontend commands below and run `backend/.local/mailpit/mailpit.exe --listen 127.0.0.1:8025 --smtp 127.0.0.1:1025`. Keep `SMTP_HOST=127.0.0.1`. Do not copy over the configured `.env` or rerun the first-manager bootstrap. Future migration commands remain `npm run db:migrate` and `npm run db:generate` from backend with supported Node. Credentials and local mail/database files remain ignored.
+
+Migration integrity accepts unchanged SQL with LF/CRLF line endings so Windows checkout conversion does not invalidate historical migration hashes; SQL/content changes still fail and stored history is never rewritten. Seven focused regression cases cover this boundary. General fresh-clone instructions follow.
 
 Prerequisites: Node.js **24.20.0 or newer**,npm,Git,and Docker Desktop for the local Mailpit inbox. Open PowerShell in this repository. All paths below assume `F:\My Projects\ACME Salary Management`; change that path if your clone is elsewhere. Do not run npm install from the repository root. Run `node --version` in every terminal; if it is below24.20.0,install/update Node before proceeding.
 
@@ -74,6 +114,8 @@ Open **http://localhost:5173**. Use exactly this host/origin consistently; APP_O
 
 ### 7. Manual checks
 
+New workflow (implemented, not yet accepted): Add employee → enter details and monthly salary → review/submit. In Team access, an independent HR manager must link reviewer accounts to their employee records; affected colleagues sign in again. A different linked HR manager reviews Salary approvals and confirms a decision with a comment. Employee profiles show approved/pending salary only with salary-view access. Rejected initial requests can be replaced from the profile by an eligible linked creator. Employee name/email editing uses a protected edit session. The steps below are instructions, not a claim that the new workflow has passed tests.
+
 1. Confirm the service shows online. Enter your HR email,click Send sign-in code,and open Mailpit to copy the six-digit code. Verify it; Sign out and the permitted workspace should appear.
 2. Create a synthetic department/designation; confirm changes,rename/deactivate/reactivate them,and check feedback/pagination.
 3. Activate needed currencies and create/edit a country policy with its required confirmation.
@@ -82,7 +124,7 @@ Open **http://localhost:5173**. Use exactly this host/origin consistently; APP_O
 6. Inspect the employee directory/profile if synthetic records exist. An empty directory is valid; the employee creation UI is not delivered. The verified account/employee-link backend exists,but a linkage UI is not yet delivered.
 7. Check keyboard navigation,field labels,confirmation cancel/confirm,notification dismissal,mobile layouts and sign-out. On sign-out,protected data should disappear.
 
-Do not treat absent salary/approval/reporting screens as completed functionality. An expected validation/conflict rejection should not become a successful write. No real employee data is needed.
+The new Add employee and Salary approvals pages implement the initial salary workflow in source; acceptance testing is deferred. Ordinary monthly revisions/transfers and reporting remain incomplete. An expected validation/conflict rejection should not become a successful write. No real employee data is needed.
 
 ### Stop services
 

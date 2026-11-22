@@ -14,3 +14,5 @@ Self-contained NestJS12 application. Install and run commands here; no parent wo
 No migration SQL or business rule is changed by the package separation. Independent package lint/types/units/build and related architecture checks passed after commit/push authorization; final publication gates are tracked in GIT_CHANGELOG.md. Existing /readyz intentionally remains503/schema_not_verified; /healthz is the liveness check.
 
 ESLint uses native ESM .mjs config; Nest CLI and TypeScript use native JSON configs. Existing database .mjs operational scripts are Node ESM commands,not a custom framework build system.
+
+Migration integrity preserves stored hashes while accepting LF/CRLF-only checkout conversion. SQL edits and other whitespace changes still fail. Run `node --test scripts/migration-checksum.test.mjs` for the focused regression cases; never rewrite applied migration history to repair a line-ending mismatch.

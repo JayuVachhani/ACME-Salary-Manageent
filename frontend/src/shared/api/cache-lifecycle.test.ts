@@ -4,6 +4,9 @@ import { baseApi } from './base-api';
 import { refreshSession } from './session';
 import { employeesApi } from '../../features/employees/api';
 import { referencesApi } from '../../features/organization-references/api';
+import { employeeEditApi } from '../../features/employees/edit-api';
+import { ApiError } from './client';
+import { handleDirectRequestError } from './direct-request-errors';
 
 const subscriptions: { unsubscribe: () => void }[] = [];
 afterEach(() => {
@@ -12,6 +15,92 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe('protected API cache lifecycle', () => {
+  it('clears protected cache and identity after a direct lease request returns 401', async () => {
+    vi.stubGlobal('document', { cookie: 'acme_csrf=synthetic' });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('{"message":"Sign in required"}', { status: 401 })),
+    );
+    await store.dispatch(
+      baseApi.util.upsertQueryData('session', undefined, {
+        id: 'synthetic',
+        isHrManager: true,
+        permissions: ['read'],
+      }),
+    );
+    await store.dispatch(
+      employeesApi.util.upsertQueryData(
+        'employees',
+        {
+          search: '',
+          country: '',
+          department: '',
+          status: '',
+          sort: 'code',
+          direction: 'asc',
+          pageSize: '25',
+          page: 1,
+        },
+        { items: [], total: 7 },
+      ),
+    );
+    const dispatch = vi.fn(store.dispatch);
+    await employeeEditApi
+      .acquire('synthetic', 1, new AbortController().signal)
+      .catch((cause) => handleDirectRequestError(cause, dispatch));
+    expect(dispatch.mock.calls.map(([action]) => action)).toEqual([{ type: 'session/expired' }]);
+    expect(
+      Object.keys(store.getState().api.queries).some((key) => key.startsWith('employees(')),
+    ).toBe(false);
+    await vi.waitFor(() =>
+      expect(baseApi.endpoints.session.select()(store.getState()).data ?? null).toBeNull(),
+    );
+  });
+  it('refreshes current permissions after a direct lease renewal returns 403', async () => {
+    vi.stubGlobal('document', { cookie: 'acme_csrf=synthetic' });
+    let reads = 0;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (path: string) => {
+        if (path === '/api/v1/auth/me') {
+          reads++;
+          return new Response(
+            JSON.stringify({
+              id: 'synthetic',
+              isHrManager: false,
+              permissions: reads === 1 ? ['read', 'edit'] : [],
+            }),
+          );
+        }
+        return new Response('{"message":"Access changed"}', { status: 403 });
+      }),
+    );
+    const session = store.dispatch(baseApi.endpoints.session.initiate());
+    subscriptions.push(session);
+    await session.unwrap();
+    const dispatch = vi.fn(store.dispatch);
+    await employeeEditApi
+      .renew('synthetic', 'synthetic-local-lease', new AbortController().signal)
+      .catch((cause) => handleDirectRequestError(cause, dispatch));
+    expect(dispatch.mock.calls.map(([action]) => action)).toEqual([
+      { type: 'session/accessDenied' },
+    ]);
+    await vi.waitFor(() =>
+      expect(baseApi.endpoints.session.select()(store.getState()).data?.permissions).toEqual([]),
+    );
+    expect(reads).toBe(2);
+  });
+  it('does not duplicate RTK Query auth events or expire sessions on other direct failures', () => {
+    const dispatch = vi.fn(store.dispatch);
+    for (const cause of [
+      { status: 401, message: 'Already handled by RTK Query' },
+      { status: 403, message: 'Already handled by RTK Query' },
+      new ApiError('Refresh and review', 409),
+      new TypeError('Network unavailable'),
+    ])
+      handleDirectRequestError(cause, dispatch);
+    expect(dispatch).not.toHaveBeenCalled();
+  });
   it('refreshes employee labels after a successful reference change but not a conflict', async () => {
     let reads = 0;
     let status = 200;
