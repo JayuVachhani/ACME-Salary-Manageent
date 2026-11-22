@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Team } from './team';
 import { OrganizationReferences } from './organization-references';
 import { CountryCurrency } from './country-currency';
+import { Employees } from './employees';
 import { FxRates } from './fx-rates';
 
 export function Login() {
@@ -63,5 +64,5 @@ export function Login() {
       {challengeId && <><button type="button" disabled={busy} onClick={() => void act(send)}>Resend code</button><button type="button" disabled={busy} onClick={() => { setChallenge(''); setCode(''); setMessage(''); }}>Use another email</button></>}
     </form>}
     {message && <p role="alert">{message}</p>}
-  </section>{signedIn&&identity?.isHrManager&&<><Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/><OrganizationReferences/></>}{signedIn&&identity&&(identity.isHrManager||identity.permissions.includes('read'))&&<><CountryCurrency isHrManager={identity.isHrManager}/><FxRates isHrManager={identity.isHrManager}/></>}</>;
+  </section>{signedIn&&identity?.isHrManager&&<><Team userId={identity.id} onSelfRemoved={()=>{setSignedIn(false);setIdentity(null);setChallenge('');setCode('');setMessage('Your access was removed.');}}/><OrganizationReferences/></>}{signedIn&&identity&&(identity.isHrManager||identity.permissions.includes('read'))&&<><Employees/><CountryCurrency isHrManager={identity.isHrManager}/><FxRates isHrManager={identity.isHrManager}/></>}</>;
 }

@@ -367,3 +367,43 @@ Port-isolation local retest: qa:typecheck and all test:login groups PASS (9 auth
 Final authenticated runner:9 auth/team +4 organization-reference +3 country/currency +3 FX passed; zero retries/skips. Each group uses a separate disposable synthetic database. Earlier failures and their actual outcomes remain in QA_EXECUTION_REPORT.md.
 
 Foundation Chromium regression also executed PASS12/12 after the FX accessibility fix (fx-foundation-browser.log). Total scoped browser execution:31 passing cases, zero retries/skips; not a full-system acceptance run.
+
+## P5a employee directory database execution
+
+Initial19-case execution; final ordering/date refinement retest recorded separately.
+
+| ID | Module | Scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|---|
+| EMP-DB-01 | Employee directory | anonymous denied | anonymous denied; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-02 | Employee directory | reader empty list | reader empty list; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-03 | Employee directory | fresh read revocation enforced | fresh read revocation enforced; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-04 | Employee directory | default page25 deterministic code order | default page25 deterministic code order; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-05 | Employee directory | second page retains remainder | second page retains remainder; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-06 | Employee directory | empty page preserves total | empty page preserves total; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-07 | Employee directory | page size100 accepted | page size100 accepted; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-08 | Employee directory | strict pagination filter and sort whitelist | strict pagination filter and sort whitelist; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-09 | Employee directory | percent underscore backslash literal search | percent underscore backslash literal search; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-10 | Employee directory | case insensitive code email full name search | case insensitive code email full name search; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-11 | Employee directory | combined country department employment filters | combined country department employment filters; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-12 | Employee directory | future assignment excluded from current profile | future assignment excluded from current profile; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-13 | Employee directory | removed employee excluded and profile404 | removed employee excluded and profile404; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-14 | Employee directory | unknown employee404 | unknown employee404; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-15 | Employee directory | all sort and direction options execute | all sort and direction options execute; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-16 | Employee directory | allowlisted non-salary profile and list payload | allowlisted non-salary profile and list payload; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-17 | Employee directory | read member gets filter references without HR routes | read member gets filter references without HR routes; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-18 | Employee directory | inactive reference does not hide historical assignment | inactive reference does not hide historical assignment; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+| EMP-DB-19 | Employee directory | removed account session denied | removed account session denied; enforced by isolated real DB assertions | Executed assertion satisfied | PASS | None |
+
+## P5a final Chromium and QA-server execution
+
+| ID | Module | Scenario | Expected | Actual | Status | Issue |
+|---|---|---|---|---|---|---|
+| EMP-E2E-01 | Directory | OTP reader,real search/literal wildcards,profile open/close,combined filters,sort,paging25/100 | Correct actual DB-backed rows/count/profile/order | Executed UI/API assertions satisfied | PASS | None |
+| EMP-E2E-02 | Directory access | Anonymous/no-read/revoked permissions,strict query/UUID,removed404,no salary fields | 401/403/400/404/no-store and no salary payload | Executed browser/HTTP/DB assertions satisfied | PASS | None |
+| EMP-E2E-03 | Directory states/mobile | Empty result,delayed synthetic503/loading/recovery,profile404,375px,axe,pageerrors,screenshot | Explicit states,no page overflow/axe/pageerrors,successful screenshot | Actual UI/API and unchanged axe assertions satisfied | PASS | Accessible-name and screenshot locator fixes retested |
+| QA-WEB-01 | Test runtime | Built HTML/JS/HEAD/MIME | Real files and correct MIME/length | HTTP assertions satisfied | PASS | None |
+| QA-WEB-02 | Test runtime | Dotfile/traversal/missing asset/static POST | 403/403/404/405 | HTTP assertions satisfied | PASS | None |
+| QA-WEB-03 | Test runtime | Method/query/Origin/body/cookies/health proxy | Preserve request/response against real fixture HTTP backend | HTTP assertions satisfied | PASS | Synthetic backend only for proxy unit integration; app E2E uses actual Nest |
+| QA-WEB-04 | Test runtime | Backend unavailable | Generic502,no leaked details | HTTP assertions satisfied | PASS | None |
+
+Final Node-server default runner:22 authenticated Chromium cases PASS (9+4+3+3+3),foundation12PASS,zero retries.19 directory PostgreSQL cases passed after explicit ordering/date refinement. No complete employee CRUD/linkage/salary/production pass is inferred. Intermediate failures remain recorded separately.

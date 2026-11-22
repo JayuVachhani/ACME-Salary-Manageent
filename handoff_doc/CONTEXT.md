@@ -2,7 +2,7 @@
 
 **Purpose:** Describe implementation contracts, architecture, source evidence and pitfalls.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -99,7 +99,7 @@ SalaryApprovalService.submit(actorId,input) requires a backdated UTC date, manda
 
 SalaryApprovalService.decide(actorId,requestId,decision,comment) requires an independent active HR through SQL trigger checks. Rejection records only a decision. Approval locks the employee, checks current country policy version and shares-locks active currency, appends decision plus exact ledger row in one transaction. Deferred approval_salary_atomic prevents an approval committing without salary. record_salary_history creates before/after history/audit and advances employee version. Requester/subject checks rely on employee_id linkage, which is nullable and not yet verified end to end. **Block public salary exposure until linkage and trusted session-to-actor integration are implemented.**
 
-money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration is now exposed through FxRatesService; salary bands and employee HTTP/UI remain absent.
+money.ts uses Decimal.clone at precision 60. validateSalary rejects scientific notation, leading-format anomalies, zero/negative/excess precision and values above numeric(18,4). resolveFx uses latest eligible revision on/before as-of date with stale limit: direct, inverse, then two-leg USD. convertExact avoids intermediate rounding. roundCalculated supports HALF_UP/FLOOR/CEIL; sumConverted currently hardcodes HALF_UP. There is no external rate API. FX administration is now exposed through FxRatesService; salary bands and employee mutation HTTP/UI remain absent; read-only directory/profile now exist.
 
 Employee assignments are append-only dated organization/status records. SQL validates joining date, protects historical joining-date changes and increments employee version. Holds/releases are append-only HR-attributed records; active holds block employee removal. No user-facing transfer, hold or permanent purge workflow exists.
 
@@ -143,7 +143,7 @@ The first is invite DTO; second is edit DTO; third is current-session identity r
 
 ## 8. API route map
 
-27 concrete method/path operations are listed below, registered by main.ts and the auth, team, organization-reference, country-currency and FX controller factories. Organization references register three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary, employee, audit browser, report generator, file or deployment endpoints are registered.
+30 concrete method/path operations are listed below, registered by main.ts and the auth, team, organization-reference, country-currency,FX and employee controller factories. Organization references register three patterns with kind strictly limited to departments/designations. The two OTP request aliases share one handler. No salary writes, employee mutations, audit browser, report generator, file or deployment endpoints are registered.
 
 No deprecated registered routes or redirect targets were found. Old SDD route proposals are planned/unimplemented contracts, not legacy endpoints with working redirects.
 
@@ -176,6 +176,9 @@ No deprecated registered routes or redirect targets were found. Old SDD route pr
 | F01 | GET | /api/v1/fx-rates | HR or read member; pair/asOf filters,20-row immutable history |
 | F02 | POST | /api/v1/fx-rates | HR + Origin/CSRF; positive decimal/source/reason/expectedRevision; appends,201 |
 | F03 | GET | /api/v1/fx-rates/resolve | HR or read member; base/quote/asOf; historical direct/inverse/USD path or422 |
+| E01 | GET | /api/v1/employees | HR/read; literal search,current assignment filters,whitelisted sorting,page25/max100; no salary fields |
+| E02 | GET | /api/v1/employees/filters | HR/read; country/department options including inactive reference labels |
+| E03 | GET | /api/v1/employees/:id | HR/read; UUID; non-removed allowlisted profile or404; no salary fields |
 
 ## 9. Bug fixes and pitfalls
 
@@ -405,3 +408,13 @@ acme-salary-app/vitest.config.ts
 ~~~
 
 Browser harness update: existing QA_RUN selects distinct web/API ports: login 4427/4428, references 4527/4528, country-currency 4627/4628, FX4727/4728; sequential capture SMTP remains 4325. The runner logs only group/stage/process status diagnostics. GitHub run 45006454596 failed during third-group startup before country cases executed; exact cause unproven. PR #7 final head4938a138 passed run45007418682/job137162007364 and was subsequently merged at0e0fb86; failed startup evidence remains historical. P4c adds the isolated FX group on4727/4728; no retries or relaxed assertions.
+
+## P5a employee directory integration
+
+Sources employees-controller.ts,employees.ts,web employees.tsx,test-employees.mjs and employees.spec.ts; [module contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). Login mounts Employees for HR/read accounts. E01 strict filters:search max200,country2,department UUID,status ACTIVE/INACTIVE,sort code/name/joiningDate/department/country,direction asc/desc,page1..100000,pageSize1..100 default25. Response items,total,page,pageSize; E03 same item shape: id,employee_code,email,first_name,last_name,joining_date,version,country_code,country_name,department_id,department,designation_id,designation,employment_status. Never salary fields. Fresh session/read check for every list/options/profile; literal escaped ILIKE,latest assignment as of UTC,removed exclusion,stable ID ties,count/page one SQL snapshot. Profile404,invalid400,anonymous401,denied403,no-store. Filters include inactive labels for existing records. Read-only UI:apply/clear/search/sort/paging/profile,request cancellation and mobile keyboard-scroll states. No DB migration or config added; models23/scalars178/migrations18/functions28/views2 unchanged. No complete employee CRUD/linkage/salary acceptance implied.
+
+CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on4827/4828,SMTP4325 sequential; artifacts qa-artifacts/employees. Approved ADR-005 requires independently HR-verified linkage and pending initial salaries; both need future database/API/UI integration,not inferred from directory reads.
+
+Browser runtime update: Playwright now serves built web assets through scripts/qa-web-server.mjs (loopback Node HTTP,strict port,existing QA_API_PORT proxy); npm run dev remains development only. Build before qa:e2e; test:login builds itself. Repeated native dev/preview exits3221226505 are retained failures,root cause unproven. See [browser test runtime](../acme-salary-app/docs/BROWSER_TEST_RUNTIME.md); no deployment or retry/assertion change.
+
+CI also runs `npm.cmd run test:qa-web` to verify real built-static path/MIME/HEAD protections and API proxy method/query/Origin/body/cookies/health/error behavior. No new config or dependency.

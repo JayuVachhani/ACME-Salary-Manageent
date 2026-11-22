@@ -2,7 +2,7 @@
 
 **Purpose:** Inventory every stored table, relationship, field and integrity boundary.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -578,7 +578,7 @@ CREATE INDEX assignment_employee_date_idx ON employee_assignments(employee_id, e
 
 Employee identity and removal/version fields. Employment active/inactive status belongs to dated assignments, not this row.
 
-**Application queries:** Domain reads use removed_at IS NULL; date >= joining_date; version compared before writes.
+**Application queries:** EmployeesService list/detail exclude removed_at rows,escape literal ILIKE and join latest assignment as of today UTC; one SQL statement orders the page and counts all eligible rows. No salary columns are selected. Internal domain writes compare version and joining date.
 
 **Expiration/retention:** No table TTL or cleanup worker is implemented.
 
@@ -1915,3 +1915,7 @@ FxRatesService provides authenticated read-permission history/resolution and HR-
 ## Representation and future work cautions
 
 Stored salary numeric(18,4) text may have four trailing decimal places, while validateSalary rejects user input exceeding the country precision even when extra digits are zeros. Future UI serialization must distinguish input precision from DB scale. Currency and country code shape checks do not constitute a complete ISO catalogue. Pending status comes from a view, not a hidden request.status column. No salary-band, attachment, document, project, LLM, job or deployment-status table exists. New structures are planned only after approved scope; do not fabricate field names from the old SDD. See [BACKLOG.md](BACKLOG.md).
+
+## P5a directory checkpoint
+
+Read-only employee directory/profile integrates GET employees,employees/filters,employees/:id with fresh HR/read checks; no salary payload or mutation. Current assignment excludes future dates,removed employees excluded,literal wildcard search and fixed sorting/paging. No migration/schema/config/external service added. test:employees plus fifth isolated test:login Chromium group (4827/4828,SMTP4325 sequential),artifacts employees. Local19 directory DB /3 directory Chromium and34 scoped browser checks passed; exact-head CI/review pending; see QA_EXECUTION_REPORT.md. [Employee contract](../acme-salary-app/docs/EMPLOYEE_DIRECTORY_MODULE.md). ADR-005 linkage and initial salary approval are approved future integration requirements; do not treat this directory as employee creation/approval completion.

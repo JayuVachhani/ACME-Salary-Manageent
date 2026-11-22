@@ -11,3 +11,7 @@ Historical baseline Chromium QA (21 November 2026) recorded 12 passes / 14 failu
 - PostgreSQL binaries are pinned as Windows development tooling. Portable application deployment is separate. Local `.env` and `.local` must remain private; Windows filesystem ACLs govern local credential confidentiality.
 - Prisma introspection warns about unsupported check/expression-index representation. SQL migrations retain these protections; do not replace them with schema push.
 - Department/designation administrative edit behavior, overlapping salary band policy, complete analytics catalogue and measured performance profile remain to be finalized before their modules.
+
+P5a:directory/profile is read-only and excludes salary values. Salary-band filtering,CRUD,verified account linkage,leases and pending initial-salary approval are not yet integrated. ADR-005 is approved; existing backdated-only requests need forward migration before creation is exposed. No client data was seeded/reset; production qualification remains open.
+
+ADR-005 bootstrap dependency: a fresh installation has no employee for the first HR account to link to,but unlinked accounts may not modify/approve salaries and initial salary must be created pending with employee. Define an audited provisioning/import bootstrap before the creation/linkage slice; do not silently add an unlinked-HR salary exception. This does not block read-only directory delivery.

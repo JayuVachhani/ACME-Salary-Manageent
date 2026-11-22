@@ -60,6 +60,8 @@ jobs:
         run: npm run test:country-currency
       - name: Verify FX revisions and historical lookup
         run: npm run test:fx
+      - name: Verify employee directory and privacy
+        run: npm run test:employees
       - name: Verify built QA web server and API proxy
         run: npm run test:qa-web
       - name: Type-check browser tests
@@ -87,6 +89,7 @@ jobs:
             acme-salary-app/qa-artifacts/references/
             acme-salary-app/qa-artifacts/country-currency/
             acme-salary-app/qa-artifacts/fx/
+            acme-salary-app/qa-artifacts/employees/
           if-no-files-found: warn
           retention-days: 7
       - name: Stop isolated PostgreSQL

@@ -45,3 +45,7 @@ Execute test:country-currency on a disposable PostgreSQL database; verify catalo
 ## FX administration increment
 
 Execute test:fx in a unique synthetic database: role/CSRF/strict DTO boundaries, exact rate precision, immutable correction chain, before/after provenance, independent-HR conflicts, concurrent deactivation, audit rollback, historical/future/direct/inverse/USD/stale lookup and configured staleness. Execute FX Chromium group through test:login (4727/4728, independent HR/member accounts): confirm/cancel, correct, history/filter/paging, provenance, negative API/form states, outages, mobile/axe and console. Keep existing gates and missing-requirement failures.
+
+## P5a employee directory
+
+Execute isolated test:employees and employees.spec.ts through test:login:HR/read/no-read/anonymous,revoked permissions,non-salary allowlist,literal wildcard/case-insensitive search,current-v-future assignment,combined filters,all sort/direction,page25/100/empty/invalid,removed404,filter references and actual profile. Browser SMTP login,real API/profile,paging,empty/outage/loading recovery,mobile375px,axe/pageerrors. Employee mutations,verified linkage and salary approval not claimed by this slice.

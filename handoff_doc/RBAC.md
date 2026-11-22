@@ -2,7 +2,7 @@
 
 **Purpose:** Map real security checks without inventing framework guards.
 
-**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 0e0fb86 (merged PR #7), plus the P4c FX increment on feature/fx-rate-administration.
+**Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
 
 ## Executive summary
 
@@ -63,6 +63,8 @@ IDs resolve to the canonical [route map](CONTEXT.md#8-api-route-map); this avoid
 | F01,F03 | HR or read member | Fresh session; list history and resolve as-of; no salary:view/export needed for reference rates |
 | F02 | HR only | Exact Origin/bound CSRF, strict DTO, active currencies, expectedRevision/pair-date lock, atomic audit |
 
+| E01,E02,E03 | HR or read member | Fresh same-transaction session; no salary fields; removed excluded; no implied salary/write privilege |
+
 ## Frontend path × guard
 
 | Path/surface | Guard component | Who sees it / authority |
@@ -73,6 +75,7 @@ IDs resolve to the canonical [route map](CONTEXT.md#8-api-route-map); this avoid
 | / Organization references section | Login identity.isHrManager mounts OrganizationReferences | HR only; current backend session checked on every call |
 | Team own-edit controls | self comparison disables role/permission fields | Own name may change; server rechecks actual fields |
 | / Countries and currencies | Login checks HR or read permission; CountryCurrency hides admin controls for member | Catalogue read-member/HR; country/currency configuration HR only; backend authoritative |
+| / Employee directory/profile | Login HR/read mounts Employees | Backend current-session read checks; non-salary allowlist; no mutations |
 | / Exchange rates | Login HR/read mounts FxRates | Read members see history/lookup; HR authoring controls; server authorizes every call |
 | Planned employee/report/salary screens | None implemented | No claimed permission enforcement at missing endpoints |
 

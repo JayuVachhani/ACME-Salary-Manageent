@@ -495,3 +495,7 @@ Inside a single PostgreSQL transaction:
 - Existing raw example DDL must be extended through forward-only migrations. The approved exact-decimal, country-snapshot, lease/version, same-origin session and least-privilege architecture remains.
 
 New traceability IDs: FR-APR-01–05, FR-REF-05, FR-SAL-18, FR-REP-05, FR-EMP-09. Approval APIs/UI and real-database concurrency tests become part of the salary module's definition of done.
+
+## Approved decision addendum — ADR-005 (22 November 2026)
+
+Client approval supersedes conflicting baseline account-linkage and initial-salary rules. Independent HR links an existing employee/account with a reason and confirmation; one active account per employee; no self-linking or unauthorized relinking. Backend/database must audit actor,time,reason,old/new employee details and invalidate affected sessions/relevant snapshots. Unlinked accounts cannot modify/approve salaries. Initial salaries remain Pending Approval (including past effective dates) until a different authorized HR approves; preserve original effective date and creator/approver/reason/approval timestamp. Creator cannot approve their own entry. Employee creation must atomically save the pending request,not a finalized salary. See [canonical decisions](../acme-salary-app/docs/DECISIONS.md#adr-005--verified-employee-linkage-and-initial-salary-approval). Approval is not an implementation claim; P5a directory is read-only,linkage/creation need reviewed schema/service/UI/tests next.
