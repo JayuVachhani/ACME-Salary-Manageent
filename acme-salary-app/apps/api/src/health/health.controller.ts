@@ -1,22 +1,11 @@
-import { Controller, Get, Inject, ServiceUnavailableException } from '@nestjs/common';
-import { Pool } from 'pg';
+import { Controller, Get, Inject } from '@nestjs/common';
+import { HealthService } from './health.service.js';
 @Controller()
 export class HealthController {
   constructor(
-    @Inject(Pool) private readonly pool: Pool) { }
+  @Inject(HealthService) private readonly health: HealthService) { }
   @Get('/healthz')
   live() { return { status: 'ok' }; }
   @Get('/readyz')
-  async ready() {
-    try {
-      await this.pool.query('SELECT 1');
-      // Preserve the existing fail-closed contract until schema readiness is designed.
-      throw new ServiceUnavailableException({ status: 'not_ready', reason: 'schema_not_verified' });
-    }
-    catch (error) {
-      if (error instanceof ServiceUnavailableException)
-        throw error;
-      throw new ServiceUnavailableException({ status: 'not_ready', reason: 'database_unavailable' });
-    }
-  }
+  ready() { return this.health.ready(); }
 }

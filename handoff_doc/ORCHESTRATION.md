@@ -48,9 +48,9 @@ If a durable queue is approved, preserve generic request/attempt/replay/expiry c
 
 | Code map | Responsibility |
 |---|---|
-| apps/api/src/auth/auth.controller.ts and mail/otp-deliveries.service.ts | Tracked delivery, generic response, invalidate-on-failure |
+| apps/api/src/auth/auth.service.ts and mail/otp-deliveries.service.ts | Tracked delivery, generic response, invalidate-on-failure |
 | apps/api/src/mail/otp-mail.ts | Transport/retry wrappers |
-| apps/api/src/team/team.controller.ts | Post-commit notification and visible failure |
+| apps/api/src/team/team-notifications.service.ts | Post-commit notification and visible failure |
 | apps/api/src/app-lifecycle.service.ts | Ordered post-HTTP OTP drain and pool shutdown |
 | e2e-auth/smtp-capture.ts | Loopback-only synthetic SMTP protocol capture |
 

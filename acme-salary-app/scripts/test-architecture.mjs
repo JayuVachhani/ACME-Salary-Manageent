@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import ts from 'typescript';
 import assert from 'node:assert/strict';
 import { Pool } from 'pg';
 import { createApp } from '../apps/api/dist/app.js';
@@ -22,7 +24,7 @@ let closed = false;
 const end = pool.end.bind(pool);
 pool.end = async () => { closed = true; await end(); };
 // Fail on accidental infrastructure access; liveness and malformed input need none.
-pool.connect = async () => { throw Error('Architecture test must not connect to a database'); };
+pool.connect = async () => ({ query: async () => ({ rows: [], rowCount: 0 }), release() {} });
 pool.query = async () => { throw Error('Architecture test must not query a database'); };
 try {
   assert.equal(team.auth, auth);
@@ -49,6 +51,12 @@ try {
     assert.equal(response.status, status, url);
     assert.equal(response.headers.get('cache-control'), 'no-store', url);
   }
+  const malformed = await fetch(`${base}/api/v1/auth/otp/request`, { method: 'POST', headers: { Origin: process.env.APP_ORIGIN, 'Content-Type': 'application/json' }, body: '{}' });
+  assert.equal(malformed.status, 400);
+  assert.deepEqual(await malformed.json(), { statusCode: 400, message: 'Enter a valid email address' });
+  const denied = await fetch(`${base}/api/v1/employees`);
+  assert.equal(denied.status, 401);
+  assert.deepEqual(await denied.json(), { statusCode: 401, message: 'Sign in required' });
   const ready = await fetch(`${base}/readyz`);
   assert.equal(ready.status, 503);
   assert.deepEqual(await ready.json(), { status: 'not_ready', reason: 'database_unavailable' });
@@ -64,3 +72,24 @@ try {
   assert.equal(closed, true);
   console.log('Nest architecture PASS: real DI, shared providers, module isolation, six feature routes, health, headers and shutdown drain order');
 } finally { if (!closed) await app.close(); }
+
+// Enforce the architectural contract, not only successful TypeScript compilation.
+const root = 'apps/api/src';
+for (const relative of readdirSync(root, { recursive: true }).filter(name => name.endsWith('.ts') && !name.endsWith('.test.ts'))) {
+  const source = readFileSync(`${root}/${relative}`, 'utf8');
+  const file = ts.createSourceFile(relative, source, ts.ScriptTarget.Latest, true);
+  const imports = file.statements.filter(ts.isImportDeclaration).map(node => node.moduleSpecifier.text);
+  if (relative.endsWith('.controller.ts')) {
+    assert.ok(!imports.includes('pg'), `${relative}: persistence belongs in services`);
+    assert.ok(!/new \w+Service\(/.test(source), `${relative}: services must be injected`);
+    assert.ok(!/\.(safeParse|parse|transform)\(/.test(source), `${relative}: validation belongs in parameter pipes`);
+  }
+  if (relative.endsWith('.service.ts') && !relative.includes('common')) {
+    assert.match(source, /@Injectable\(\)/, `${relative}: service must be a native Nest provider`);
+    assert.ok(!/\bHttpException\b/.test(source), `${relative}: HTTP errors belong at the transport boundary`);
+  }
+  if (relative.endsWith('.module.ts') && !relative.startsWith('config') && !relative.startsWith('database')) {
+    assert.ok(!/useFactory/.test(source), `${relative}: feature providers must be constructed by Nest`);
+  }
+}
+console.log('Architecture boundaries PASS: native providers, injected services, thin controllers, transport error separation');

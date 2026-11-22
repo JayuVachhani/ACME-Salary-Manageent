@@ -1,5 +1,7 @@
 # ACME — feature status matrix
 
+Current architecture (22 November2026): The backend conversion now uses native @Injectable services registered directly in feature modules, feature DTO folders, shared ZodValidationPipe/RequestSecurity, ApplicationErrorFilter, MailService and composition-root lifecycle cleanup. AuthService owns OTP orchestration; TeamNotifications owns post-commit notifications; HealthService owns readiness. No controller imports pg or constructs services. Only config values and the external pool use factory providers. Internal SalaryModule registers the approval service without an HTTP controller. SQL transaction/authorization safeguards and business contracts remain unchanged. Earlier first-pass factory-provider descriptions below are historical and superseded by this checkpoint.
+
 ## Backend structure checkpoint — 22 November 2026
 
 On chore/nestjs-backend-structure (base origin/main 1e0e65f), controller factories were replaced by top-level controllers and feature modules with explicit DI, shared config/database/auth/mail providers and lifecycle-managed OTP drain/pool shutdown. Source paths now follow capability folders under apps/api/src; see acme-salary-app/docs/BACKEND_STRUCTURE_AUDIT.md and TECHNICAL_DECISIONS.md (relative paths from repository root). Routes, SQL migrations, permissions and business scope are unchanged. Salary/report helpers remain internal. Pending PR #10 remains preserved separately and requires reconciliation after independent merge. This is structural delivery, not full backend or production acceptance.

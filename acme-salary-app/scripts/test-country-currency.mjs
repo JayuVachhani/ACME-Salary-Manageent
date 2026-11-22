@@ -10,7 +10,7 @@ const ownerUrl=new URL(process.env.MIGRATION_DATABASE_URL),runtimeUrl=new URL(pr
 const admin=new Client({connectionString:ownerUrl.href});await admin.connect();
 let created=false,owner,pool,passed=0;
 const ok=label=>console.log(`PASS CTRY-DB-${String(++passed).padStart(2,'0')} ${label}`);
-const denied=(work,status)=>assert.rejects(work,error=>error.getStatus?.()===status);
+const denied=(work,status)=>assert.rejects(work,error=>error.status===status);
 try {
   await admin.query(`CREATE DATABASE ${name}`);created=true;ownerUrl.pathname=runtimeUrl.pathname=`/${name}`;
   execFileSync(process.execPath,['scripts/migrate.mjs'],{env:{...process.env,MIGRATION_DATABASE_URL:ownerUrl.href},stdio:'pipe',windowsHide:true});

@@ -1,5 +1,7 @@
 # Requirement traceability
 
+Current architecture (22 November2026): The backend conversion now uses native @Injectable services registered directly in feature modules, feature DTO folders, shared ZodValidationPipe/RequestSecurity, ApplicationErrorFilter, MailService and composition-root lifecycle cleanup. AuthService owns OTP orchestration; TeamNotifications owns post-commit notifications; HealthService owns readiness. No controller imports pg or constructs services. Only config values and the external pool use factory providers. Internal SalaryModule registers the approval service without an HTTP controller. SQL transaction/authorization safeguards and business contracts remain unchanged. Earlier first-pass factory-provider descriptions below are historical and superseded by this checkpoint.
+
 Backend structure verification (22 November 2026): AppModule/feature modules now own DI and routing; explicit factory providers preserve service transaction boundaries. scripts/test-architecture.mjs covers real container wiring, module isolation, unchanged route rejection contracts and shutdown drain ordering. No requirement status is promoted solely because source files moved. See BACKEND_STRUCTURE_AUDIT.md.
 
 Status reflects verified scope, not planned completeness. Full module acceptance still requires authenticated API/UI/E2E evidence.

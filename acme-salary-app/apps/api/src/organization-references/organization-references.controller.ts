@@ -1,43 +1,21 @@
-import { Inject } from '@nestjs/common';
-import { APP_CONFIG, type AppConfig } from '../config/config.module.js';
-import { Body, Controller, Get, HttpException, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { z } from 'zod';
-import { OrganizationReferencesService, referenceKind, referenceCreate, referenceChange } from './organization-references.service.js';
+import { offsetQuery } from '../common/dto/pagination.dto.js';
+import { RequestSecurity } from '../common/http/request-security.service.js';
+import { MutationRequestGuard } from '../common/http/mutation-request.guard.js';
+import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe.js';
+import { OrganizationReferencesService } from './organization-references.service.js';
+import { referenceKind, referenceCreate, referenceChange, type ReferenceKind } from './dto/organization-references.dto.js';
+const invalid = 'Invalid reference details';
 @Controller('/api/v1/organization-references')
+@UseGuards(MutationRequestGuard)
 export class OrganizationReferencesController {
-  constructor(
-    @Inject(OrganizationReferencesService) private readonly service: OrganizationReferencesService,
-    @Inject(APP_CONFIG) private readonly config: AppConfig) { }
-  private readonly token = (req: Request) => req.headers.cookie?.split(';').map(v => v.trim()).find(v => v.startsWith('acme_session='))?.slice(13) ?? '';
-  private readonly parse = <T>(schema: z.ZodType<T>, value: unknown): T => {
-    const result = schema.safeParse(value); if (!result.success)
-      throw new HttpException('Invalid reference details', 400); return result.data;
-  };
-  private readonly csrf = (req: Request) => {
-    if (req.headers.origin !== this.config.APP_ORIGIN || !req.header('X-CSRF-Token'))
-      throw new HttpException('Request rejected', 403); return req.header('X-CSRF-Token')!;
-  };
+  constructor(@Inject(RequestSecurity) private readonly security: RequestSecurity, @Inject(OrganizationReferencesService) private readonly service: OrganizationReferencesService) {}
   @Get(':kind')
-  list(
-    @Req() req: Request,
-    @Param('kind') kind: string) {
-    const query = this.parse(z.object({ offset: z.coerce.number().int().min(0).max(100000).default(0) }).strict(), req.query);
-    return this.service.list(this.token(req), this.parse(referenceKind, kind), query.offset);
-  }
+  list(@Req() req: Request, @Param('kind', new ZodValidationPipe(referenceKind, invalid)) kind: ReferenceKind, @Query(new ZodValidationPipe(offsetQuery, invalid)) query: z.infer<typeof offsetQuery>) { return this.service.list(this.security.token(req), kind, query.offset); }
   @Post(':kind')
-  create(
-    @Req() req: Request,
-    @Param('kind') kind: string,
-    @Body() body: unknown) {
-    return this.service.create(this.token(req), this.csrf(req), this.parse(referenceKind, kind), this.parse(referenceCreate, body));
-  }
+  create(@Req() req: Request, @Param('kind', new ZodValidationPipe(referenceKind, invalid)) kind: ReferenceKind, @Body(new ZodValidationPipe(referenceCreate, invalid)) body: z.infer<typeof referenceCreate>) { return this.service.create(this.security.token(req), this.security.csrf(req), kind, body); }
   @Patch(':kind/:id')
-  change(
-    @Req() req: Request,
-    @Param('kind') kind: string,
-    @Param('id') id: string,
-    @Body() body: unknown) {
-    return this.service.change(this.token(req), this.csrf(req), this.parse(referenceKind, kind), this.parse(z.uuid(), id), this.parse(referenceChange, body));
-  }
+  change(@Req() req: Request, @Param('kind', new ZodValidationPipe(referenceKind, invalid)) kind: ReferenceKind, @Param('id', new ZodValidationPipe(z.uuid(), invalid)) id: string, @Body(new ZodValidationPipe(referenceChange, invalid)) body: z.infer<typeof referenceChange>) { return this.service.change(this.security.token(req), this.security.csrf(req), kind, id, body); }
 }

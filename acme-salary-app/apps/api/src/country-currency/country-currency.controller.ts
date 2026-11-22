@@ -1,44 +1,25 @@
-import { Inject } from '@nestjs/common';
-import { APP_CONFIG, type AppConfig } from '../config/config.module.js';
-import { Body, Controller, Get, HttpException, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
-import { z } from 'zod';
-import { CountryCurrencyService, countryInput, countryChange, currencyChange, countryCode, currencyCode } from './country-currency.service.js';
+import type { z } from 'zod';
+import { offsetQuery } from '../common/dto/pagination.dto.js';
+import { RequestSecurity } from '../common/http/request-security.service.js';
+import { MutationRequestGuard } from '../common/http/mutation-request.guard.js';
+import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe.js';
+import { CountryCurrencyService } from './country-currency.service.js';
+import { countryInput, countryChange, currencyChange, countryCode, currencyCode } from './dto/country-currency.dto.js';
+const invalid = 'Invalid country or currency details';
 @Controller('/api/v1')
+@UseGuards(MutationRequestGuard)
 export class CountryCurrencyController {
-  constructor(
-    @Inject(CountryCurrencyService) private readonly service: CountryCurrencyService,
-    @Inject(APP_CONFIG) private readonly config: AppConfig) { }
-  private readonly token = (req: Request) => req.headers.cookie?.split(';').map(v => v.trim()).find(v => v.startsWith('acme_session='))?.slice(13) ?? '';
-  private readonly csrf = (req: Request) => {
-    if (req.headers.origin !== this.config.APP_ORIGIN || !req.header('X-CSRF-Token'))
-      throw new HttpException('Request rejected', 403); return req.header('X-CSRF-Token')!;
-  };
-  private readonly parse = <T>(schema: z.ZodType<T>, value: unknown): T => {
-    const r = schema.safeParse(value); if (!r.success)
-      throw new HttpException('Invalid country or currency details', 400); return r.data;
-  };
-  @Get('currency-catalogue')
-  catalogue(
-    @Req() req: Request) { return this.service.catalogue(this.token(req)); }
-  @Get('currencies')
-  currencies(
-    @Req() req: Request) { return this.service.currencies(this.token(req)); }
+  constructor(@Inject(RequestSecurity) private readonly security: RequestSecurity, @Inject(CountryCurrencyService) private readonly service: CountryCurrencyService) {}
+  @Get('currency-catalogue') catalogue(@Req() req: Request) { return this.service.catalogue(this.security.token(req)); }
+  @Get('currencies') currencies(@Req() req: Request) { return this.service.currencies(this.security.token(req)); }
   @Patch('currencies/:code')
-  activate(
-    @Req() req: Request,
-    @Param('code') code: string,
-    @Body() body: unknown) { return this.service.activate(this.token(req), this.csrf(req), this.parse(currencyCode, code), this.parse(currencyChange, body)); }
+  activate(@Req() req: Request, @Param('code', new ZodValidationPipe(currencyCode, invalid)) code: string, @Body(new ZodValidationPipe(currencyChange, invalid)) body: z.infer<typeof currencyChange>) { return this.service.activate(this.security.token(req), this.security.csrf(req), code, body); }
   @Get('countries')
-  countries(
-    @Req() req: Request) { const q = this.parse(z.object({ offset: z.coerce.number().int().min(0).max(100000).default(0) }).strict(), req.query); return this.service.countries(this.token(req), q.offset); }
+  countries(@Req() req: Request, @Query(new ZodValidationPipe(offsetQuery, invalid)) query: z.infer<typeof offsetQuery>) { return this.service.countries(this.security.token(req), query.offset); }
   @Post('countries')
-  create(
-    @Req() req: Request,
-    @Body() body: unknown) { return this.service.create(this.token(req), this.csrf(req), this.parse(countryInput, body)); }
+  create(@Req() req: Request, @Body(new ZodValidationPipe(countryInput, invalid)) body: z.infer<typeof countryInput>) { return this.service.create(this.security.token(req), this.security.csrf(req), body); }
   @Patch('countries/:code')
-  change(
-    @Req() req: Request,
-    @Param('code') code: string,
-    @Body() body: unknown) { return this.service.change(this.token(req), this.csrf(req), this.parse(countryCode, code), this.parse(countryChange, body)); }
+  change(@Req() req: Request, @Param('code', new ZodValidationPipe(countryCode, invalid)) code: string, @Body(new ZodValidationPipe(countryChange, invalid)) body: z.infer<typeof countryChange>) { return this.service.change(this.security.token(req), this.security.csrf(req), code, body); }
 }

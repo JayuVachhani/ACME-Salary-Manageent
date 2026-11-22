@@ -1,5 +1,7 @@
 # ACME handoff â€” start here
 
+Current architecture (22 November2026): The backend conversion now uses native @Injectable services registered directly in feature modules, feature DTO folders, shared ZodValidationPipe/RequestSecurity, ApplicationErrorFilter, MailService and composition-root lifecycle cleanup. AuthService owns OTP orchestration; TeamNotifications owns post-commit notifications; HealthService owns readiness. No controller imports pg or constructs services. Only config values and the external pool use factory providers. Internal SalaryModule registers the approval service without an HTTP controller. SQL transaction/authorization safeguards and business contracts remain unchanged. Earlier first-pass factory-provider descriptions below are historical and superseded by this checkpoint.
+
 **Purpose:** Onboard developers and coding agents without inventing functionality.
 
 **Last verified against codebase:** 22 November 2026 (Asia/Calcutta), 2a3ee19 (merged PR #8), plus the P5a employee-directory increment on feature/employee-management.
@@ -35,7 +37,7 @@ This is the single entry point for the root handoff_doc/ pack. ACME Salary Manag
 ### Backend
 
 - NestJS 12 ESM/Node16 module resolution, TypeScript 6 strict checks, Zod 4 strict DTOs, pg parameterized SQL. UUIDs are strings; money is decimal text/Decimal, not JavaScript floating-point arithmetic.
-- There is no Passport/JWT/AuthGuard/@Roles implementation. Feature modules register controllers and explicit factory providers; DatabaseModule owns the shared pool and AuthModule exports one AuthenticationService. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
+- There is no Passport/JWT/session AuthGuard/@Roles implementation. MutationRequestGuard enforces Origin/CSRF transport preconditions, not session authorization. Feature modules register controllers and native injectable class providers; DatabaseModule owns the shared pool and AuthModule exports one AuthenticationService. AuthenticationService.authenticateWithin must run in the caller's transaction for mutations; never accept actor IDs from HTTP bodies.
 - Match current identity/session lock order and team advisory lock. Always commit/rollback/release; failed OTP attempts must commit. Notifications run after database commit.
 - SQL migrations are forward-only/checksummed. Prisma is an introspected client/schema, not a replacement for triggers/checks. Never use prisma db push.
 - Internal SalaryApprovalService/readSalarySnapshot are not HTTP endpoints. Employee linkage is incomplete; do not expose internal actor-parameter services directly.

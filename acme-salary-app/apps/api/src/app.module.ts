@@ -1,3 +1,6 @@
+import { SalaryModule } from './salary/salary.module.js';
+import { APP_FILTER } from '@nestjs/core';
+import { ApplicationErrorFilter } from './common/filters/application-error.filter.js';
 import { ApplicationLifecycle } from './app-lifecycle.service.js';
 import { MailModule } from './mail/mail.module.js';
 import { Module } from '@nestjs/common';
@@ -11,7 +14,7 @@ import { FxRatesModule } from './fx-rates/fx-rates.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { HealthModule } from './health/health.module.js';
 @Module({
-  providers: [ApplicationLifecycle], imports: [MailModule, ConfigModule, DatabaseModule, AuthModule, TeamModule,
+  providers: [ApplicationLifecycle, { provide: APP_FILTER, useClass: ApplicationErrorFilter }], imports: [SalaryModule, MailModule, ConfigModule, DatabaseModule, AuthModule, TeamModule,
     OrganizationReferencesModule, CountryCurrencyModule, FxRatesModule, EmployeesModule, HealthModule]
 })
 export class AppModule {
