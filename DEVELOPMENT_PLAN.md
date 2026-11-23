@@ -1,3 +1,11 @@
+## Finalized payslip and external-payment verification — 23 November 2026
+
+This branch adds protected finalized payslips/HTML downloads, exact-net provider-neutral manifests, explicit Finance external-reference attestations, immutable audit/command receipts and no bank/provider execution. It follows verified payroll review/finalization.
+
+Native frontend format/lint/types,15 units,build and154-file/28,075-check architecture pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-doc isolation pass. Combined7-group real PostgreSQL/HTTP and44-case delivered Chromium suites include HTML/CSV escaping,role restrictions,replay,finalized immutability and the real external-report UI. Staged hooks/normal push/current-head CI remain publication steps; no production/10k qualification.
+
+## Earlier checkpoint records
+
 ## Payroll review/finalization verification — 23 November 2026
 
 This branch adds explicit-policy run preparation, immutable source generations, assigned HR→Finance→conditional Director review, configured finalization, stale-source refresh and duplicate employee/month allocation guards. It follows the verified policy/calculation commit.

@@ -10,6 +10,7 @@ import { PayrollDrafts } from '../features/payroll-drafts';
 import { PayrollPolicies } from '../features/payroll-policies';
 import { PayrollRuns } from '../features/payroll-runs';
 import { PayrollCalculations } from '../features/payroll-calculations';
+import { PayrollDelivery } from '../features/payroll-delivery';
 import { SalaryApprovals } from '../features/salary-approvals';
 import { FxRates } from '../features/fx-rates';
 import { useWorkspaceLocation, workspacePages, workspaceGroups } from './workspace-navigation';
@@ -52,7 +53,7 @@ export function Workspace() {
   const pages = workspacePages.filter(
     (page) =>
       page.id === 'home' ||
-      (page.id === 'salaries' || page.id === 'payroll-runs'
+      (page.id === 'salaries' || page.id === 'payroll-runs' || page.id === 'payroll-delivery'
         ? canViewSalary
         : page.id === 'salary-bulk'
           ? canEditSalary
@@ -171,7 +172,7 @@ export function Workspace() {
         {current?.id === 'payroll-calculations' && (
           <PayrollCalculations isHrManager={identity.isHrManager} />
         )}
-
+        {current?.id === 'payroll-delivery' && <PayrollDelivery />}
         {current?.id === 'organization' && <OrganizationReferences />}
         {current?.id === 'team' && (
           <Team

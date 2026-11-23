@@ -57,6 +57,14 @@ export const workspacePages = [
     managerOnly: false,
   },
   {
+    id: 'payroll-delivery',
+    label: 'Payslips & payments',
+    description:
+      'View finalized payslips, prepare manifests and record external payment references.',
+    symbol: '₹',
+    managerOnly: false,
+  },
+  {
     id: 'payroll-drafts',
     label: 'Payroll drafts',
     description: 'Enter monthly components and prepare draft payslips.',
@@ -111,6 +119,7 @@ export function useWorkspaceLocation() {
     () => '/home',
   );
 }
+
 export const workspaceGroups = [
   { label: 'Overview', pages: ['home'] },
   { label: 'People', pages: ['employees', 'add-employee'] },
@@ -120,7 +129,7 @@ export const workspaceGroups = [
   },
   {
     label: 'Payroll',
-    pages: ['payroll-drafts', 'payroll-calculations', 'payroll-runs'],
+    pages: ['payroll-drafts', 'payroll-calculations', 'payroll-runs', 'payroll-delivery'],
   },
   { label: 'Settings', pages: ['payroll-policies', 'organization', 'countries', 'team'] },
 ] as const;

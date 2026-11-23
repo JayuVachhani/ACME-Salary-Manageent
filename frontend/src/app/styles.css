@@ -1338,3 +1338,66 @@ td {
     gap: 0.3rem;
   }
 }
+
+.finalized-payslip {
+  padding: 1.4rem;
+  border: 1px solid #dfe7e1;
+  border-radius: 12px;
+  background: white;
+}
+.finalized-payslip > .eyebrow {
+  color: #24684e;
+  font-weight: 750;
+}
+.finalized-payslip section {
+  margin-top: 1.5rem;
+}
+.payroll-source-reference {
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  color: #687b70;
+}
+@media print {
+  body:has(.finalized-payslip) * {
+    visibility: hidden;
+  }
+  body:has(.finalized-payslip) .finalized-payslip,
+  body:has(.finalized-payslip) .finalized-payslip * {
+    visibility: visible;
+  }
+  .detail-modal:has(.finalized-payslip) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    border: 0;
+    background: white;
+  }
+  .detail-modal:has(.finalized-payslip) .detail-modal-body {
+    overflow: visible;
+    max-height: none;
+  }
+  .finalized-payslip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    border: 0;
+    background: white;
+    color: black;
+  }
+  .finalized-payslip .team-table {
+    overflow: visible;
+  }
+  .finalized-payslip table {
+    width: 100%;
+    min-width: 0;
+  }
+  .finalized-payslip tr {
+    break-inside: avoid;
+  }
+}
