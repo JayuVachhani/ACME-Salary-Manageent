@@ -1,3 +1,9 @@
+## Engineering/security assessment update — 23 November 2026
+
+The [repeatable adversarial suite and current results](../acme-salary-app/docs/ENGINEERING_SECURITY_ASSESSMENT.md) supplement these manual instructions. Build the backend, configure only a disposable local test server and run `npm --prefix backend run test:security`; the script creates/drops its own randomly named fixture database and rejects the installed default port. Existing working/demo data must not be reset. Nine groups passed locally; readiness/performance/production and broader requirement gaps remain open. No current-head CI result is claimed for uncommitted changes.
+
+## Earlier checkpoint records
+
 ## 10,000-employee performance experiment — 23 November 2026
 
 Isolated real HTTP/PostgreSQL baseline completed10,000 payroll employees in100 bounded runs: preparation89.38seconds and independent review/finalization635.05seconds,with zero unexpected HTTP errors and10,000 finalized allocations. Engineering qualification is partial: baseline draft-list and finalized-payslip p95 exceeded1second. A measured shared-eligibility draft query reduced p95 from1,030.42ms to486.07ms in a quiet read recheck; all quiet read gates passed. Concurrent-load salary search still showed a1,160.91ms p95 miss. Finalized-payslip baseline1,124.41ms remains unqualified. Do not infer production/10k simultaneous-user capacity.

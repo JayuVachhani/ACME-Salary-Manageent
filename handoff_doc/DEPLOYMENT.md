@@ -1,3 +1,9 @@
+## Engineering/security assessment update — 23 November 2026
+
+Read the [current assessment](../acme-salary-app/docs/ENGINEERING_SECURITY_ASSESSMENT.md) before hosting. Readiness remains deliberately closed; runtime migration access must not be widened to fake readiness. The actual ingress must establish trusted client-address handling and legitimate shared-IP login capacity without accepting arbitrary forwarded headers. TLS, hosted frontend policy, secret rotation, backpressure, restore/PITR, failover and production alerting were not exercised by local tests. No production rollout or authentication-limit change is delivered by this audit.
+
+## Earlier checkpoint records
+
 ## Developed-scope verification — 23 November 2026
 
 The user authorized testing, fixes, commits and normal pushes. Local checks passed: frontend format/lint/types,15 units,native build and154-file/28,075-check architecture; backend format/lint/types,27 units,7 migration checks,native build,real Nest DI/OpenAPI/module isolation and production-doc isolation; QA formatting/types;4 hook regressions and Git safety regression. Delivered Chromium:44 passed (12 foundation,23 existing,9 new salary/payroll), no skipped/flaky cases. New real PostgreSQL/Nest HTTP suite:7 groups passed, including monthly replay/corrections/backdating,exact proration/caps/statutory replacement,policy-family refresh,independent reviews,duplicate finalization,protected document exports,external-reference authorization/replay and immutable snapshots. Existing isolated identity11,retention/FX23,approvals38,country27,directory19,linkage17,team22,references23,FX23,employee workflow32,authentication,Prisma and health also passed.

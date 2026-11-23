@@ -1,3 +1,15 @@
+## Engineering/security assessment — 23 November 2026
+
+See [current local findings](../acme-salary-app/docs/ENGINEERING_SECURITY_ASSESSMENT.md). Nine new adversarial groups and CI coverage supplement delivered workflows. No application/schema/policy changes; installed data untouched. Readiness is deliberately closed; the measured finalized-payslip target and shared-IP ingress qualification remain open. Assessment edits are uncommitted/unpublished, with no new GitHub check result.
+
+## Assessment documentation reconciliation — 23 November 2026
+
+Current baseline: PR #16 and PR #17 are merged; origin/main e341025 includes the performance work. Published application evidence remains15 frontend units, 27 backend units, 7 checksum cases, 7 financial HTTP/SQL groups and44 delivered Chromium cases; PR17 exact-head CI run 45195679366 passed on d18bd57. The 10k result remains partial, including retained latency misses. No new application test pass is claimed for this prose-only increment.
+
+The root README is now a current runbook; its superseded snapshot is preserved in DEVELOPMENT_LOG.md as historical evidence. ASSESSMENT_OVERVIEW.md maps all six assessment criteria, tradeoffs, code/test references and a focused demonstration. DEVELOPMENT_LOG.md contains a candid AI-use account; DECISIONS.md ADR-007 supersedes the earlier manual-only payroll restriction without changing approved rules. Historical failures/blocked cases remain retained. Documentation/source-link review only; no app code, dependencies, schema, permissions or business behavior changed. These documentation edits remain local/uncommitted on chore/assessment-documentation.
+
+## Earlier checkpoint records
+
 ## 10,000-employee performance experiment — 23 November 2026
 
 Isolated real HTTP/PostgreSQL baseline completed10,000 payroll employees in100 bounded runs: preparation89.38seconds and independent review/finalization635.05seconds,with zero unexpected HTTP errors and10,000 finalized allocations. Engineering qualification is partial: baseline draft-list and finalized-payslip p95 exceeded1second. A measured shared-eligibility draft query reduced p95 from1,030.42ms to486.07ms in a quiet read recheck; all quiet read gates passed. Concurrent-load salary search still showed a1,160.91ms p95 miss. Finalized-payslip baseline1,124.41ms remains unqualified. Do not infer production/10k simultaneous-user capacity.

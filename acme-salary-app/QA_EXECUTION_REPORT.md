@@ -1,3 +1,15 @@
+## Engineering/security assessment — 23 November 2026
+
+Fresh local verification and open findings are in [ENGINEERING_SECURITY_ASSESSMENT.md](docs/ENGINEERING_SECURITY_ASSESSMENT.md). Nine new adversarial groups supplement the delivered financial/browser suites. No critical/high exploit was reproduced within tested paths; this is not independent penetration-test certification or production acceptance. Earlier 14 failed unmet-requirement checks and 45 blocked workflows are retained and not reclassified. Subsequent publication and exact-head CI status are recorded in GIT_CHANGELOG.md.
+
+## Assessment documentation reconciliation — 23 November 2026
+
+Current baseline: PR #16 and PR #17 are merged; origin/main e341025 includes the performance work. Published application evidence remains15 frontend units, 27 backend units, 7 checksum cases, 7 financial HTTP/SQL groups and44 delivered Chromium cases; PR17 exact-head CI run 45195679366 passed on d18bd57. The 10k result remains partial, including retained latency misses. No new application test pass is claimed for this prose-only increment.
+
+The root README is now a current runbook; its superseded snapshot is preserved in DEVELOPMENT_LOG.md as historical evidence. ASSESSMENT_OVERVIEW.md maps all six assessment criteria, tradeoffs, code/test references and a focused demonstration. DEVELOPMENT_LOG.md contains a candid AI-use account; DECISIONS.md ADR-007 supersedes the earlier manual-only payroll restriction without changing approved rules. Historical failures/blocked cases remain retained. Documentation/source-link review only; no app code, dependencies, schema, permissions or business behavior changed. These documentation edits remain local/uncommitted on chore/assessment-documentation.
+
+## Earlier checkpoint records
+
 ## Performance branch publication and PR #17 — 23 November 2026
 
 User requested a PR after the local commit. Normal push succeeded to origin/chore/payroll-10k-performance at3d6d09c6a6010a3b6893339fbc8cf712fa3bd6e9; git ls-remote confirmed equality. Required pre-push formatting/lint/types,15 frontend+27 backend units,7 migration cases,native builds,React architecture,QA typing and453-file indexed safety passed. No hook bypass. Unrelated handoff-document-prompt.md remains untracked; runtime artifacts/credentials remain ignored.

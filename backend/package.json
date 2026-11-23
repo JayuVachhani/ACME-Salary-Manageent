@@ -22,6 +22,7 @@
     "test:rules": "node --env-file=.env scripts/test-country-fx-retention.mjs",
     "test:approvals": "node --env-file=.env scripts/test-approvals.mjs",
     "test:payroll-workflow": "node --env-file=.env scripts/test-payroll-workflow.mjs",
+    "test:security": "node --env-file=.env scripts/test-security-assessment.mjs",
     "test:performance:10k": "node scripts/test-performance-10k.mjs",
     "test:prisma": "node --env-file=.env scripts/test-prisma.mjs",
     "db:introspect": "node --env-file=.env node_modules/prisma/build/index.js db pull",

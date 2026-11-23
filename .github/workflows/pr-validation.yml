@@ -88,6 +88,8 @@ jobs:
         run: npm run test:employee-workflow
       - name: Verify monthly salary and payroll approval through real HTTP and PostgreSQL
         run: npm run test:payroll-workflow
+      - name: Verify adversarial HTTP, authorization and concurrent command boundaries
+        run: npm run test:security
       - name: Verify built QA web server and API proxy
         working-directory: qa
         run: npm run test:qa-web
