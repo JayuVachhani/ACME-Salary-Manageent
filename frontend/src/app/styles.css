@@ -1311,3 +1311,30 @@ td {
     break-inside: avoid;
   }
 }
+
+.policy-setting-list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1rem 0;
+}
+.policy-setting-list > div {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) 2fr;
+  gap: 1rem;
+  border-bottom: 1px solid #e0e7e4;
+  padding-bottom: 0.6rem;
+}
+.policy-setting-list dt {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.policy-setting-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .policy-setting-list > div {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+}

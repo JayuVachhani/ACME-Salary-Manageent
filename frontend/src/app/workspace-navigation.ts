@@ -36,6 +36,20 @@ export const workspacePages = [
     managerOnly: false,
   },
   {
+    id: 'payroll-policies',
+    label: 'Payroll policies',
+    description: 'Configure payroll rules and have another HR manager approve them.',
+    symbol: 'P',
+    managerOnly: true,
+  },
+  {
+    id: 'payroll-calculations',
+    label: 'Calculate payroll',
+    description: 'Preview monthly earnings, deductions and proration using an approved policy.',
+    symbol: 'C',
+    managerOnly: true,
+  },
+  {
     id: 'payroll-drafts',
     label: 'Payroll drafts',
     description: 'Enter monthly components and prepare draft payslips.',
@@ -99,7 +113,7 @@ export const workspaceGroups = [
   },
   {
     label: 'Payroll',
-    pages: ['payroll-drafts'],
+    pages: ['payroll-drafts', 'payroll-calculations'],
   },
-  { label: 'Settings', pages: ['organization', 'countries', 'team'] },
+  { label: 'Settings', pages: ['payroll-policies', 'organization', 'countries', 'team'] },
 ] as const;

@@ -1,3 +1,15 @@
+## Payroll policy/calculation verification — 23 November 2026
+
+This branch adds immutable inactive India/INR policy versions, independent linked-HR activation and exact policy-based gross/deduction/net previews with calendar-day salary segments. Explicit rates/caps/eligibility/state/manualTDS/leave treatment and finalizer responsibilities are required; no statutory settings are inferred. It builds on the verified monthly salary/intake branch.
+
+Native frontend format/lint/types,14 units,build and140-file/23,200-check architecture gate pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-document isolation pass. The same capability source was exercised in the combined7-group isolated HTTP/SQL and44-case delivered Chromium suites. Staged hooks/normal push and current-head CI remain publication steps, not inferred passes. No production/10k qualification.
+
+## Earlier checkpoint records
+
+## Verified feature preparation — 23 November 2026
+
+Branch feature/payroll-policy-calculations builds on 4f7a3683141d43e99ab0ce736ec785296d7fd222. Source was assembled from the tested integration checkout; native branch checks/staged safety and normal publication remain pending. No credentials/runtime data or unrelated prompt included. Existing hooks are enforced. Historical full-product unmet/blocked scope and 10k qualification remain open.
+
 ## Monthly salary and manual intake verification — 23 November 2026
 
 Feature source passes native frontend formatting/lint/types,14 units,Vite build and129-file/20,408-check architecture gate. Backend formatting/lint/types,27 units,7 checksum cases and native build pass. Combined isolated PostgreSQL/HTTP verification covers monthly lease/replay/correction/backdated behavior and manual drafts; combined Chromium acceptance is44 delivered cases (12 foundation,23 existing,9 new salary/payroll). These are scoped checks, not a full-product or10k capacity claim. New test-only config isolates unit imports from real services; commit7c0081ef0acc99b1c065bf57f94db3baee84bf5b. Required commit hooks remain enabled; push/remote/CI evidence is still pending.

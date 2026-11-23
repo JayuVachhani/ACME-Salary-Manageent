@@ -7,6 +7,8 @@ import { Employees, EmployeeCreate, EmployeeProfile } from '../features/employee
 import { SalaryWorkspace } from '../features/salary-workspace';
 import { SalaryBulk } from '../features/salary-bulk';
 import { PayrollDrafts } from '../features/payroll-drafts';
+import { PayrollPolicies } from '../features/payroll-policies';
+import { PayrollCalculations } from '../features/payroll-calculations';
 import { SalaryApprovals } from '../features/salary-approvals';
 import { FxRates } from '../features/fx-rates';
 import { useWorkspaceLocation, workspacePages, workspaceGroups } from './workspace-navigation';
@@ -163,6 +165,11 @@ export function Workspace() {
         {current?.id === 'salaries' && <SalaryWorkspacePage />}
         {current?.id === 'salary-bulk' && <SalaryBulk />}
         {current?.id === 'payroll-drafts' && <PayrollDrafts />}
+        {current?.id === 'payroll-policies' && <PayrollPolicies />}
+
+        {current?.id === 'payroll-calculations' && (
+          <PayrollCalculations isHrManager={identity.isHrManager} />
+        )}
 
         {current?.id === 'organization' && <OrganizationReferences />}
         {current?.id === 'team' && (

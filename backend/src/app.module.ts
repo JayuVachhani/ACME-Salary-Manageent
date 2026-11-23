@@ -1,5 +1,7 @@
 import { ResponseContractInterceptor } from './common/http/response-contract.interceptor.js';
 import { SalaryModule } from './salary/salary.module.js';
+import { PayrollPoliciesModule } from './payroll-policies/payroll-policies.module.js';
+import { PayrollCalculationsModule } from './payroll-calculations/payroll-calculations.module.js';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { RequestValidationPipe } from './common/pipes/request-validation.pipe.js';
@@ -33,6 +35,8 @@ import { PayrollDraftsModule } from './payroll-drafts/payroll-drafts.module.js';
     EmployeesModule,
     HealthModule,
     SalaryModule,
+    PayrollPoliciesModule,
+    PayrollCalculationsModule,
     PayrollDraftsModule,
   ],
   providers: [

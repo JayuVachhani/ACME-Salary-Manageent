@@ -1,3 +1,11 @@
+## Payroll policy/calculation verification — 23 November 2026
+
+This branch adds immutable inactive India/INR policy versions, independent linked-HR activation and exact policy-based gross/deduction/net previews with calendar-day salary segments. Explicit rates/caps/eligibility/state/manualTDS/leave treatment and finalizer responsibilities are required; no statutory settings are inferred. It builds on the verified monthly salary/intake branch.
+
+Native frontend format/lint/types,14 units,build and140-file/23,200-check architecture gate pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-document isolation pass. The same capability source was exercised in the combined7-group isolated HTTP/SQL and44-case delivered Chromium suites. Staged hooks/normal push and current-head CI remain publication steps, not inferred passes. No production/10k qualification.
+
+## Earlier checkpoint records
+
 ## Monthly salary and draft intake — 23 November 2026
 
 This feature adds salary search/current/scheduled views, effective-dated revisions/corrections, independent backdated approval, protected history and manual payroll drafts with create-only CSV intake. Fresh schemas use migrations022–023. Existing later database schemas must not be reset/downgraded to test an older feature snapshot; the combined integration checkout has the complete migration chain.

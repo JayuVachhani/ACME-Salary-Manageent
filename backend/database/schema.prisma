@@ -352,6 +352,8 @@ model users {
   employees_users_employee_idToemployees employees?                   @relation("users_employee_idToemployees", fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_employee_fk")
   users                                  users?                       @relation("usersTousers", fields: [invited_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   other_users                            users[]                      @relation("usersTousers")
+  payroll_policies                       payroll_policies[]
+  payroll_policy_approvals               payroll_policy_approvals[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -480,4 +482,30 @@ model salary_commands {
   salary_change_requests salary_change_requests? @relation(fields: [request_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([actor_id, command_id])
+}
+
+model payroll_policies {
+  id                       String                    @id @db.Uuid
+  policy_key               String
+  version                  Int
+  effective_from           DateTime                  @db.Date
+  config                   Json
+  policy_hash              String
+  reason                   String
+  created_by               String                    @db.Uuid
+  created_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  users                    users                     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payroll_policy_approvals payroll_policy_approvals?
+
+  @@unique([policy_key, version])
+  @@index([policy_key, effective_from(sort: Desc), version(sort: Desc)], map: "payroll_policies_effective_idx")
+}
+
+model payroll_policy_approvals {
+  policy_id        String           @id @db.Uuid
+  approved_by      String           @db.Uuid
+  comment          String
+  approved_at      DateTime         @default(now()) @db.Timestamptz(6)
+  payroll_policies payroll_policies @relation(fields: [policy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users            users            @relation(fields: [approved_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
