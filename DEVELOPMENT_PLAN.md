@@ -1,3 +1,11 @@
+## Monthly salary and draft intake — 23 November 2026
+
+This feature adds salary search/current/scheduled views, effective-dated revisions/corrections, independent backdated approval, protected history and manual payroll drafts with create-only CSV intake. Fresh schemas use migrations022–023. Existing later database schemas must not be reset/downgraded to test an older feature snapshot; the combined integration checkout has the complete migration chain.
+
+Native checks pass (frontend14 units/backend27 units/seven migration cases/builds). The combined source passed44 delivered Chromium cases and7 isolated payroll/monthly integration groups; this is not full-product/10k acceptance. Policies/calculations/review/final delivery follow in dependent feature commits. See [salary contract](acme-salary-app/docs/SALARY_MODULE.md) and [manual draft contract](acme-salary-app/docs/PAYROLL_DRAFTS_MODULE.md).
+
+## Earlier setup and checkpoint records
+
 ## Local publication verification — 23 November 2026
 
 The push request authorizes verification. Backend gates and32 new employee SQL/HTTP checks passed; frontend9 units/lint/types/build/architecture and12 foundation Chromium cases passed. All23 delivered Chromium cases also passed across the final corrected groups. Publication hooks and exact-head GitHub CI remain pending. This supersedes earlier deferred-verification snapshots without claiming full-product or10k capacity acceptance. See [current QA report](acme-salary-app/QA_EXECUTION_REPORT.md) and Git ledger for actual results; no push/CI success inferred.

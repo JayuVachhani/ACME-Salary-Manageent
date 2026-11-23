@@ -22,6 +22,27 @@ export const workspacePages = [
     managerOnly: false,
   },
   {
+    id: 'salaries',
+    label: 'Salary workspace',
+    description: 'Find current salaries, scheduled changes and requests in one place.',
+    symbol: '₹',
+    managerOnly: false,
+  },
+  {
+    id: 'salary-bulk',
+    label: 'Bulk salary revisions',
+    description: 'Upload exact salary revisions and review each employee before saving.',
+    symbol: 'B',
+    managerOnly: false,
+  },
+  {
+    id: 'payroll-drafts',
+    label: 'Payroll drafts',
+    description: 'Enter monthly components and prepare draft payslips.',
+    symbol: 'P',
+    managerOnly: true,
+  },
+  {
     id: 'salary-approvals',
     label: 'Salary approvals',
     description: 'Review initial salaries and requests awaiting an independent decision.',
@@ -69,10 +90,16 @@ export function useWorkspaceLocation() {
     () => '/home',
   );
 }
-
 export const workspaceGroups = [
   { label: 'Overview', pages: ['home'] },
   { label: 'People', pages: ['employees', 'add-employee'] },
-  { label: 'Salary', pages: ['salary-approvals', 'exchange-rates'] },
+  {
+    label: 'Salary',
+    pages: ['salaries', 'salary-bulk', 'salary-approvals', 'exchange-rates'],
+  },
+  {
+    label: 'Payroll',
+    pages: ['payroll-drafts'],
+  },
   { label: 'Settings', pages: ['organization', 'countries', 'team'] },
 ] as const;

@@ -58,6 +58,7 @@ export const baseApi = createApi({
     'EmployeeFilters',
     'Employees',
     'SalaryRequests',
+    'PayrollDrafts',
   ],
   endpoints: (build) => ({
     health: build.query<boolean, void>({

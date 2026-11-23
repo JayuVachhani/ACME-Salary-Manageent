@@ -2,6 +2,7 @@ import { baseApi } from '../../shared/api/base-api';
 import { queryString } from '../../shared/api/client';
 import type { Employee, EmployeeQuery, Filters } from './types';
 import type { EmployeeCreateInput, EmployeeCreateOptions } from './create-types';
+import type { EmployeeSalaryData } from './salary-types';
 export const employeesApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     resubmitInitialSalary: build.mutation<
@@ -26,24 +27,16 @@ export const employeesApi = baseApi.injectEndpoints({
       invalidatesTags: (_data, error) => (error ? [] : ['Employees', 'SalaryRequests']),
     }),
     employeeSalary: build.query<
-      {
-        current: { id: string; amount: string; currency: string; effectiveFrom: string } | null;
-        history: {
-          id: string;
-          amount: string;
-          currency: string;
-          effectiveFrom: string;
-          reason: string;
-        }[];
-        pending: { id: string; amount: string; currency: string; effectiveFrom: string }[];
-        total: number;
-        page: number;
-        canResubmitInitial: boolean;
-      },
-      { id: string; page: number }
+      EmployeeSalaryData,
+      { id: string; page: number; requestsPage?: number }
     >({
-      query: ({ id, page }) => ({ path: `/api/v1/employees/${id}/salary?page=${page}` }),
+      query: ({ id, page, requestsPage = 1 }) => ({
+        path: `/api/v1/employees/${id}/salary?page=${page}&requestsPage=${requestsPage}`,
+      }),
       providesTags: ['Employees', 'SalaryRequests', 'Session'],
+    }),
+    salaryEditSnapshot: build.query<Employee, string>({
+      query: (id) => ({ path: `/api/v1/employees/${id}` }),
     }),
     employeeCreateOptions: build.query<EmployeeCreateOptions, void>({
       query: () => ({ path: '/api/v1/employees/create-options' }),

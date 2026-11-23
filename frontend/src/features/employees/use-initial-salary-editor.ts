@@ -3,7 +3,7 @@ import type { Employee } from './types';
 import { useEmployeeCreateOptionsQuery, useResubmitInitialSalaryMutation } from './api';
 import { useAction } from '../../shared/hooks/use-action';
 import { runRequest } from '../../shared/api/run-request';
-export function useInitialSalaryEditor(employee: Employee) {
+export function useInitialSalaryEditor(employee: Employee, onSaved?: () => void) {
   const options = useEmployeeCreateOptionsQuery();
   const [save] = useResubmitInitialSalaryMutation();
   const action = useAction();
@@ -24,6 +24,7 @@ export function useInitialSalaryEditor(employee: Employee) {
       if (signal.aborted) return;
       setReview(false);
       action.announce('A new initial salary request is waiting for approval.');
+      onSaved?.();
     });
   }
   return { options, action, draft, setDraft, review, setReview, confirm };

@@ -1,3 +1,11 @@
+## Monthly salary and manual intake verification — 23 November 2026
+
+Feature source passes native frontend formatting/lint/types,14 units,Vite build and129-file/20,408-check architecture gate. Backend formatting/lint/types,27 units,7 checksum cases and native build pass. Combined isolated PostgreSQL/HTTP verification covers monthly lease/replay/correction/backdated behavior and manual drafts; combined Chromium acceptance is44 delivered cases (12 foundation,23 existing,9 new salary/payroll). These are scoped checks, not a full-product or10k capacity claim. New test-only config isolates unit imports from real services; commit7c0081ef0acc99b1c065bf57f94db3baee84bf5b. Required commit hooks remain enabled; push/remote/CI evidence is still pending.
+
+## Verified feature preparation — 23 November 2026
+
+Branch feature/payroll-input-import builds on 63c4ed15cbb04d4fa01a4b945845f524381d22a5. Source was assembled from the tested integration checkout; native branch checks/staged safety and normal publication remain pending. No credentials/runtime data or unrelated prompt included. Existing hooks are enforced. Historical full-product unmet/blocked scope and 10k qualification remain open.
+
 ## Confirmed push and PR #15 — 23 November 2026
 
 Normal push succeeded to origin/feature/employee-initial-salary. Remote and local source heads were confirmed equal at b0f1bff4af144768d045e86bea4faf74d0c77b3b, containing45e0ac7 (migration checksums),3ec0151 (employee/initial salary/UI/demo),and b0f1bff (direct-request authorization cache fix). PR: https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/15 targeting main. Required pre-commit/pre-push hooks passed: frontend12units/backend27units/seven migration regressions,package formatting/lint/types/native builds,React architecture91/11536,QA typing and343-file indexed secret/path scan. Local32newSQL/HTTP and legacy isolated database gates passed; feature-bundle browser evidence is12foundation+23delivered across finalgroups, with final auth-error handling covered by3additional direct-cache regressions.

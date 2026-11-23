@@ -101,6 +101,8 @@ model employee_assignments {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model employees {
+  payroll_drafts                     payroll_drafts[]
+  salary_commands                    salary_commands[]
   employee_creation_commands         employee_creation_commands[]
   id                                 String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   employee_code                      String                       @unique(map: "employees_code_live_uq", where: raw("(removed_at IS NULL)"))
@@ -220,6 +222,7 @@ model salary_approval_decisions {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model salary_change_requests {
+  salary_commands                                                           salary_commands?
   employee_creation_commands                                                employee_creation_commands[]
   request_kind                                                              String                       @default("BACKDATED")
   id                                                                        String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -265,10 +268,13 @@ model salary_history_events {
   employees        employees      @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   salary_records   salary_records @relation(fields: [salary_record_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users            users          @relation(fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([salary_record_id, updated_at, id], map: "salary_history_record_idx")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model salary_records {
+  salary_commands                                                                   salary_commands?
   id                                                                                String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   employee_id                                                                       String                   @db.Uuid
   corrects_id                                                                       String?                  @unique(map: "salary_correction_uq", where: raw("(corrects_id IS NOT NULL)")) @db.Uuid
@@ -310,6 +316,9 @@ model schema_migrations {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model users {
+  payroll_draft_revisions                payroll_draft_revisions[]
+  payroll_draft_commands                 payroll_draft_commands[]
+  salary_commands                        salary_commands[]
   employee_creation_commands             employee_creation_commands[]
   id                                     String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email                                  String                       @unique(map: "users_live_email_uq", where: raw("(status <> 'DELETED'::text)")) @db.Citext
@@ -401,6 +410,74 @@ model employee_creation_commands {
   users                  users                  @relation(fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   employees              employees              @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   salary_change_requests salary_change_requests @relation(fields: [request_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([actor_id, command_id])
+}
+
+model payroll_drafts {
+  id                      String                    @id @db.Uuid
+  employee_id             String                    @db.Uuid
+  period_month            DateTime                  @db.Date
+  period_end              DateTime                  @db.Date
+  pay_date                DateTime                  @db.Date
+  country_code            String                    @default("IN")
+  currency                String                    @default("INR")
+  version                 Int                       @default(1)
+  created_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                  @default(now()) @db.Timestamptz(6)
+  employees               employees                 @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payroll_draft_revisions payroll_draft_revisions[]
+  payroll_draft_commands  payroll_draft_commands[]
+
+  @@unique([employee_id, period_month])
+  @@index([period_month(sort: Desc), updated_at(sort: Desc), id], map: "payroll_drafts_period_idx")
+}
+
+model payroll_draft_revisions {
+  id                     String                  @id @db.Uuid
+  draft_id               String                  @db.Uuid
+  version                Int
+  employee_snapshot      Json
+  earnings               Json
+  deductions             Json
+  reason                 String
+  created_by             String                  @db.Uuid
+  created_by_name        String
+  created_at             DateTime                @default(now()) @db.Timestamptz(6)
+  payroll_drafts         payroll_drafts          @relation(fields: [draft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                  users                   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payroll_draft_commands payroll_draft_commands?
+
+  @@unique([draft_id, version])
+}
+
+model payroll_draft_commands {
+  actor_id                String                  @db.Uuid
+  command_id              String                  @db.Uuid
+  input_hash              String
+  draft_id                String                  @db.Uuid
+  revision_id             String                  @unique @db.Uuid
+  users                   users                   @relation(fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payroll_drafts          payroll_drafts          @relation(fields: [draft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payroll_draft_revisions payroll_draft_revisions @relation(fields: [revision_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([actor_id, command_id])
+}
+
+model salary_commands {
+  actor_id               String                  @db.Uuid
+  command_id             String                  @db.Uuid
+  input_hash             String
+  employee_id            String                  @db.Uuid
+  outcome                String
+  salary_id              String?                 @unique @db.Uuid
+  request_id             String?                 @unique @db.Uuid
+  employee_version       Int
+  created_at             DateTime                @default(now()) @db.Timestamptz(6)
+  users                  users                   @relation(fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employees              employees               @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  salary_records         salary_records?         @relation(fields: [salary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  salary_change_requests salary_change_requests? @relation(fields: [request_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([actor_id, command_id])
 }

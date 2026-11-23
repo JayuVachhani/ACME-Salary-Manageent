@@ -5,9 +5,28 @@ import { Modal } from '../../../shared/ui/modal';
 import { Tabs } from '../../../shared/ui/tabs';
 import { EmployeeSalary } from './employee-salary';
 import { EmployeeEditor } from './employee-editor';
-export function EmployeeProfile({ id, onClose }: { id: string; onClose: () => void }) {
-  const { editing, setEditing, tab, setTab, canViewSalary, canEdit, selected, loading, error } =
-    useEmployeeDetails(id);
+export function EmployeeProfile({
+  id,
+  onClose,
+  initialTab = 'details',
+}: {
+  id: string;
+  onClose: () => void;
+  initialTab?: 'details' | 'salary';
+}) {
+  const {
+    editing,
+    setEditing,
+    salaryEditing,
+    setSalaryEditing,
+    tab,
+    setTab,
+    canViewSalary,
+    canEdit,
+    selected,
+    loading,
+    error,
+  } = useEmployeeDetails(id, initialTab);
   const details = selected && (
     <>
       <section className="profile-section" aria-labelledby="profile-personal-heading">
@@ -84,11 +103,17 @@ export function EmployeeProfile({ id, onClose }: { id: string; onClose: () => vo
       contextLabel="Employee details"
       closeLabel="Close employee details"
       onClose={onClose}
-      canClose={!editing || !selected}
+      canClose={(!editing && !salaryEditing) || !selected}
     >
+      {selected && error && (
+        <p className="profile-refresh-error" role="alert">
+          {error} Previously loaded details remain visible and your open draft is preserved. Changes
+          are checked again before saving.
+        </p>
+      )}
       <RequestState
         loading={loading && !selected}
-        error={error}
+        error={selected ? '' : error}
         loadingMessage="Loading employee details…"
       >
         {selected && (
@@ -97,14 +122,20 @@ export function EmployeeProfile({ id, onClose }: { id: string; onClose: () => vo
             selected={canViewSalary ? tab : 'details'}
             onSelect={setTab}
             tabs={[
-              { id: 'details', label: 'Overview', content: details },
+              { id: 'details', label: 'Overview', disabled: salaryEditing, content: details },
               ...(canViewSalary
                 ? [
                     {
                       id: 'salary',
                       label: 'Salary & history',
                       disabled: editing,
-                      content: <EmployeeSalary key={id} employee={selected} />,
+                      content: (
+                        <EmployeeSalary
+                          key={id}
+                          employee={selected}
+                          onEditingChange={setSalaryEditing}
+                        />
+                      ),
                     },
                   ]
                 : []),

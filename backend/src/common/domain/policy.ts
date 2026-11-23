@@ -19,6 +19,7 @@ export function canChangeSalary(principal: Principal, employeeId: string): boole
     can(principal, 'read') &&
     can(principal, 'edit') &&
     can(principal, 'salary:view') &&
+    principal.employeeId !== null &&
     principal.employeeId !== employeeId
   );
 }

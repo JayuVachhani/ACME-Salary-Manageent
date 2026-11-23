@@ -1,3 +1,11 @@
+## Monthly salary and draft intake — 23 November 2026
+
+This feature adds salary search/current/scheduled views, effective-dated revisions/corrections, independent backdated approval, protected history and manual payroll drafts with create-only CSV intake. Fresh schemas use migrations022–023. Existing later database schemas must not be reset/downgraded to test an older feature snapshot; the combined integration checkout has the complete migration chain.
+
+Native checks pass (frontend14 units/backend27 units/seven migration cases/builds). The combined source passed44 delivered Chromium cases and7 isolated payroll/monthly integration groups; this is not full-product/10k acceptance. Policies/calculations/review/final delivery follow in dependent feature commits. See [salary contract](acme-salary-app/docs/SALARY_MODULE.md) and [manual draft contract](acme-salary-app/docs/PAYROLL_DRAFTS_MODULE.md).
+
+## Earlier setup and checkpoint records
+
 ## Ready-to-use synthetic demo data — 23 November 2026
 
 Local acme_app now contains the committed acme-demo-v1 dataset: **10,000 synthetic employees, 9,990 independently approved initial salaries, 8 pending requests and 2 rejected requests**. The selected existing active currency is INR; the seed does not activate currencies or overwrite current settings. Some approved entries start 30 days after the seed date and are correctly absent from today's active compensation. Employment status and department/job-title/region vary for searching/filtering. This is data preparation, not an application test pass or a 10k performance qualification.

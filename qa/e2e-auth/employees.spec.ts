@@ -391,10 +391,10 @@ test('EMP-E2E-04 atomic employee creation, independent initial approval and sala
   );
   expect(salaryReads).toHaveLength(0);
   await modal.getByRole('tab', { name: 'Salary & history', exact: true }).click();
-  await expect(modal.getByRole('table', { name: 'Approved salary history' })).toContainText(
-    '5000.0000',
+  await expect(modal.getByRole('table', { name: 'Salary history entries' })).toContainText(
+    'USD 5,000.00',
   );
-  await expect(modal.getByText('No approved salary is active today.')).toHaveCount(0);
+  await expect(modal.locator('.salary-current-card')).toContainText('USD 5,000.00');
   expect(salaryReads.length).toBeGreaterThan(0);
   expect(
     (

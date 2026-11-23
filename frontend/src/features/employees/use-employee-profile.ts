@@ -15,8 +15,14 @@ export function useEmployeeProfile(id: string) {
       request?.abort();
     };
   }, [id, load]);
+  const status = result.error && 'status' in result.error ? result.error.status : undefined;
+  const transientFailure =
+    result.isError &&
+    (status === 'NETWORK_ERROR' ||
+      status === 'CANCELLED' ||
+      (typeof status === 'number' && status >= 500));
   return {
-    data: result.isError ? null : (result.currentData ?? null),
+    data: result.isError && !transientFailure ? null : (result.currentData ?? null),
     loading: result.isUninitialized || result.isFetching,
     error:
       result.isError && result.error

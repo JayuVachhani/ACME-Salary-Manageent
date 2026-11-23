@@ -1,4 +1,5 @@
 import { baseApi } from '../../shared/api/base-api';
+import type { SalaryMoneySnapshot } from '../../shared/api/salary-contract';
 export type SalaryRequest = {
   id: string;
   employee_id: string;
@@ -14,6 +15,14 @@ export type SalaryRequest = {
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   decision_comment: string | null;
   can_decide: boolean;
+  correctsId: string | null;
+  decimalPlaces: number;
+  countryCode: string;
+  defaultCurrency: string;
+  before: ({ id: string } & SalaryMoneySnapshot) | null;
+  isStale: boolean;
+  decidedByName: string | null;
+  decidedAt: string | null;
 };
 export const salaryApprovalsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

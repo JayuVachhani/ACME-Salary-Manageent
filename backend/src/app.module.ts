@@ -18,6 +18,7 @@ import { CountryCurrencyModule } from './country-currency/country-currency.modul
 import { FxRatesModule } from './fx-rates/fx-rates.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { HealthModule } from './health/health.module.js';
+import { PayrollDraftsModule } from './payroll-drafts/payroll-drafts.module.js';
 @Module({
   imports: [
     HttpModule,
@@ -32,6 +33,7 @@ import { HealthModule } from './health/health.module.js';
     EmployeesModule,
     HealthModule,
     SalaryModule,
+    PayrollDraftsModule,
   ],
   providers: [
     ApplicationLifecycle,
