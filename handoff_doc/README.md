@@ -1,3 +1,24 @@
+# ACME setup and handoff
+
+Current baseline23 November 2026: payroll and performance PRs16/17 are merged. The independent frontend/backend ownership and backend-only secrets remain.
+
+- [Current setup and package commands](../README.md) — use this instead of dated commands in archived checkpoints. Installed acme_app 5432 and isolated test 55432 are separate; do not reset either to run a demo.
+- [Assessment overview and demonstration](../acme-salary-app/docs/ASSESSMENT_OVERVIEW.md) — criterion evidence, tradeoffs and known limits.
+- [Engineering/security assessment](../acme-salary-app/docs/ENGINEERING_SECURITY_ASSESSMENT.md) — fresh local results, nine adversarial groups, open findings and deployment decisions; subsequent publication and CI status are in the Git ledger.
+- [AI-use account](../acme-salary-app/docs/DEVELOPMENT_LOG.md#ai-use-account--assessment-reconciliation) — responsibilities, tools and mistakes caught.
+- [Current business decision precedence](../acme-salary-app/docs/DECISIONS.md) — ADR007 expands manual drafts into configurable approved payroll; no new business rules are introduced by this handoff update.
+- [Workflow contracts](WORKFLOW_RULES.md), [RBAC](RBAC.md), [data model](DATA_MODEL.md), [deployment limits](DEPLOYMENT.md) and [pending/manual smoke instructions](SMOKE_TESTS.md).
+- [QA evidence](../acme-salary-app/QA_EXECUTION_REPORT.md), [performance limits](../acme-salary-app/docs/PERFORMANCE_10K.md), [Git publication ledger](../GIT_CHANGELOG.md).
+
+Documentation reconciliation does not add an application test result. Historical unmet/blocked cases, readiness503/schema_not_verified and partial performance qualification remain explicit. No production rollout or statutory/legal acceptance is claimed.
+
+## Historical setup checkpoints
+
+The following archived content preserves prior setup/verification states. Package paths,test counts,pending features and commands may be superseded; use the links above for current instructions.
+
+<details>
+<summary>Earlier handoff runbook (historical)</summary>
+
 # ACME — setup, run and operations
 
 ## Independent package publication checks — 23 November 2026
@@ -276,3 +297,6 @@ CI adds npm.cmd run test:employees and a fifth isolated SMTP Chromium group on48
 Browser runtime update: Playwright now serves built web assets through scripts/qa-web-server.mjs (loopback Node HTTP,strict port,existing QA_API_PORT proxy); npm run dev remains development only. Build before qa:e2e; test:login builds itself. Repeated native dev/preview exits3221226505 are retained failures,root cause unproven. See [browser test runtime](../acme-salary-app/docs/BROWSER_TEST_RUNTIME.md); no deployment or retry/assertion change.
 
 CI also runs `npm.cmd run test:qa-web` to verify real built-static path/MIME/HEAD protections and API proxy method/query/Origin/body/cookies/health/error behavior. No new config or dependency.
+
+
+</details>

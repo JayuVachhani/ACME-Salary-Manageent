@@ -1,3 +1,19 @@
+## Assessment publication preparation — 23 November 2026
+
+User requested committing and creating a PR targeting main. Branch chore/assessment-documentation is based on fetched origin/main e34102566250fd7653c5ea573a6a00798d11518c. Scope: assessment/reviewer documentation, preserved historical evidence, the nine-group synthetic security regression and CI invocation. Unrelated handoff-document-prompt.md is excluded. Commit, push, PR link, review and exact-head CI results will be recorded after each operation succeeds; no approval or merge is authorized by this request.
+
+## Engineering/security assessment — 23 November 2026 (pre-publication checkpoint)
+
+Branch chore/assessment-documentation; base/application SHA e34102566250fd7653c5ea573a6a00798d11518c. Added the bounded synthetic backend security regression, npm test:security, PR-test CI step and [assessment report](acme-salary-app/docs/ENGINEERING_SECURITY_ASSESSMENT.md). Existing documentation edits were preserved. No application/schema/authentication-policy change, commit, push, PR, approval or merge was performed in this increment. Local evidence is recorded in the report; it is not an exact-head GitHub CI pass. Earlier source hashes/publication records below remain historical.
+
+## Assessment documentation reconciliation — 23 November 2026
+
+Current baseline: PR #16 and PR #17 are merged; origin/main e341025 includes the performance work. Published application evidence remains15 frontend units, 27 backend units, 7 checksum cases, 7 financial HTTP/SQL groups and44 delivered Chromium cases; PR17 exact-head CI run 45195679366 passed on d18bd57. The 10k result remains partial, including retained latency misses. No new application test pass is claimed for this prose-only increment.
+
+The root README is now a current runbook; its superseded snapshot is preserved in DEVELOPMENT_LOG.md as historical evidence. ASSESSMENT_OVERVIEW.md maps all six assessment criteria, tradeoffs, code/test references and a focused demonstration. DEVELOPMENT_LOG.md contains a candid AI-use account; DECISIONS.md ADR-007 supersedes the earlier manual-only payroll restriction without changing approved rules. Historical failures/blocked cases remain retained. Documentation/source-link review only; no app code, dependencies, schema, permissions or business behavior changed. These documentation edits remain local/uncommitted on chore/assessment-documentation.
+
+## Earlier checkpoint records
+
 ## Performance branch publication and PR #17 — 23 November 2026
 
 User requested a PR after the local commit. Normal push succeeded to origin/chore/payroll-10k-performance at3d6d09c6a6010a3b6893339fbc8cf712fa3bd6e9; git ls-remote confirmed equality. Required pre-push formatting/lint/types,15 frontend+27 backend units,7 migration cases,native builds,React architecture,QA typing and453-file indexed safety passed. No hook bypass. Unrelated handoff-document-prompt.md remains untracked; runtime artifacts/credentials remain ignored.

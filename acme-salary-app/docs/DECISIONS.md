@@ -1,5 +1,9 @@
 # Approved recommendations and unresolved detail
 
+## Current interpretation — 23 November 2026
+
+Payroll PR #16 and performance PR #17 are merged. ADR-007 below supersedes the payroll-scope restriction in ADR-006. Initial/backdated salary approval and own-salary safeguards remain unchanged. Dated delivery paragraphs are historical checkpoints,not current implementation inventories; current scope and limitations are summarized in [the assessment overview](ASSESSMENT_OVERVIEW.md) and the capability contracts it links. Historical QA failures are retained separately from delivered-suite results.
+
 The client approved Section 6 recommendations and fresh development in a new folder on 21 November 2026. This records that approval without inventing answers where Section 6 posed a question without a recommendation.
 
 | Decision | Approved direction / selected engineering detail |
@@ -75,6 +79,21 @@ Historical pre-PR #15 delivery snapshot (superseded by current module/progress r
 
 ## ADR-006 — manual India payroll drafts and bounded salary CSV revisions
 
+Historical first payroll increment. Its manual-only payroll restriction was subsequently expanded by explicit user decisions recorded in ADR-007; the paragraph below preserves the earlier boundary rather than asserting current unavailability.
+
 23 November 2026: explicit feature instructions extend earlier excluded payroll scope only to manually entered draft components and draft payslips. India/INR, calendar-month periods and planned payment on the following month's 7th are the initial draft configuration. Components and unavailable automation are specified in PAYROLL_DRAFTS_MODULE.md. No statutory rates/applicability, automatic totals, proration engine, approval roles/lifecycle, finalization or payment processing is authorized as delivered functionality. Proposed proration/review rules await approved implementation policy.
 
 Bounded CSV salary revisions reuse existing per-employee leases, validation, preview, effective dates, independent approval and immutable history. Each employee is its own transaction, with explicit partial results and exact retries. There is no new percentage-increase, reconciliation, payroll calculation or all-or-nothing bulk rule. See SALARY_MODULE.md. Current implementation remains local/uncommitted/unverified; no prior checkpoint pass validates it.
+
+## ADR-007 — approved configurable payroll, review and external tracking
+
+Status: subsequent explicit user instructions on 23 November 2026 expanded ADR-006; implementation merged through PR #16. The 10k measurement/query improvement followed in merged PR #17. This records existing decisions and delivered code; it introduces no new business rule.
+
+- India/INR, calendar-month periods and planned payment on the following month's 7th remain the selected setup. Joining/leaving proration uses eligible calendar days; applicable dated salary segments split the month. Component proration, bases, rounding, eligibility/rates/caps and manual/state inputs are explicit approved configuration, not inferred statutory facts.
+- Policies begin inactive. HR prepares policies and named Finance/Director responsibilities; a different linked HR approves the exact immutable version. Policy selection is explicit, and existing runs remain in their original policy family when revalidated/refreshed.
+- Calculation provides exact earnings, deductions, net and employer contributions. TDS remains a supplied manual amount. Raw manual PF/ESI/PT/TDS draft entries are replaced by configured policy/explicit inputs in the calculation. Unpaid leave has one configured treatment to avoid double deduction. Missing/inconsistent inputs are rejected.
+- Payroll runs use distinct assigned HR/Finance/optional Director review stages and the configured finalizer role. Live linkage, own-record restrictions, version checks, source fingerprints and immutable events apply. Changed sources require refreshed review; finalization freezes historical truth and prevents duplicate employee/month allocation.
+- Final payslips and provider-neutral manifests derive from finalized snapshots. The actual assigned Finance approver may attest a full external payment with reference/date/reason. ACME does not transfer money; partial payments, reversals and supplemental/off-cycle workflows remain unavailable.
+- These payroll approvals are separate from the ordinary salary-ledger management-review badge, which still has no new approve/clear action. INITIAL always needs independent approval; BACKDATED remains excluded from compensation until independent approval.
+
+Detailed contracts: [policies/calculations](PAYROLL_POLICY_CALCULATIONS.md), [review](PAYROLL_RUNS_MODULE.md), [delivery](PAYROLL_DELIVERY_MODULE.md). Verification supports delivered behavior; production/statutory acceptance and all performance targets are not established. [Performance limits](PERFORMANCE_10K.md) remain explicit.
