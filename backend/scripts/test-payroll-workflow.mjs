@@ -102,6 +102,14 @@ try {
     body: { ...command(), employeeId: f.actorEmployees.hr, period: f.period, ...components },
     status: 403,
   });
+  const draftPage = await http(`/payroll-drafts?period=${f.period}&search=PAY-`);
+  assert.equal(draftPage.total, 2);
+  assert.equal(draftPage.items.length, 2);
+  assert.ok(draftPage.items.every((row) => row.earnings.hra === '6000.00'));
+  assert.ok(draftPage.items.every((row) => typeof row.updatedAt === 'string'));
+  const emptyDraftPage = await http(`/payroll-drafts?period=${f.period}&page=2`);
+  assert.equal(emptyDraftPage.total, 3);
+  assert.deepEqual(emptyDraftPage.items, []);
   ok('Real authentication, strict DTO, CSRF, own-write denial and manual command replay');
   const monthlyId = f.employeeIds.monthly;
   const monthlyPath = `/employees/${monthlyId}`;

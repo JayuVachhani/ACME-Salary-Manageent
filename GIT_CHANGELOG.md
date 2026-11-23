@@ -1,3 +1,14 @@
+## Performance commit checkpoint — 23 November 2026
+
+User requested committing the reported 10k experiment and measured query fix. Scope: draft-list query, exact pagination regression, bounded isolated benchmark/command, aggregate results and consistent handoff. Local lint/types/build,27 units and7 financial HTTP/SQL groups passed; performance acceptance remains partial as documented. Required staged formatting/lint/indexed safety apply. No push,PR,CI,merge or deployment requested; unrelated handoff-document-prompt.md and runtime files excluded.
+
+## 10,000-employee performance experiment — 23 November 2026
+
+Isolated real HTTP/PostgreSQL baseline completed10,000 payroll employees in100 bounded runs: preparation89.38seconds and independent review/finalization635.05seconds,with zero unexpected HTTP errors and10,000 finalized allocations. Engineering qualification is partial: baseline draft-list and finalized-payslip p95 exceeded1second. A measured shared-eligibility draft query reduced p95 from1,030.42ms to486.07ms in a quiet read recheck; all quiet read gates passed. Concurrent-load salary search still showed a1,160.91ms p95 miss. Finalized-payslip baseline1,124.41ms remains unqualified. Do not infer production/10k simultaneous-user capacity.
+
+Backend lint/types/build,27 units and7 financial HTTP/SQL groups passed after the query change,including list count/value/empty-page checks. Original installed acme_app and data were untouched; random test databases were removed. No schema change. Exact workload,metrics,host limits and reproducible harness: acme-salary-app/docs/PERFORMANCE_10K.md and PERFORMANCE_10K_RESULTS.json. The user authorized a local commit after reviewing these partial results; source/report are on chore/payroll-10k-performance. No push performed. Earlier all-product/15k/soak gaps remain open.
+
+## Earlier checkpoint records
 ## Confirmed publication and PR #16 — 23 November 2026
 
 Normal atomic push succeeded for all five branches. git ls-remote confirmed exact equality: feature/payroll-input-import4f7a3683141d43e99ab0ce736ec785296d7fd222; feature/payroll-policy-calculationsa5e411bda7acfac0fdb7280af78964caeba5c1f8; feature/payroll-approval-lockingb311c7a2acfa62cbf5ea0dd0b367b09ce3ba6a2c; feature/payroll-payslips-payment-preparationf6b4e44463e870e2cf401528c0f37cf1950f2ad2; feature/payroll-integration1a69b4ae848725af46c93072472146452fadf6c4. Mandatory pre-push formatting/lint/types,15frontend+27backendunits,7migrationcases,nativebuilds,Reactarchitecture,QAtyping and450-file indexed path/credential scan passed. Hooks were not bypassed. Unit isolation7c0081e and regressionCI69f71ad are in the commit chain.

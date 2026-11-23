@@ -21,3 +21,7 @@ Migration integrity preserves stored hashes while accepting LF/CRLF-only checkou
 
 `npm test` supplies synthetic configuration through Vitest. Its database and SMTP endpoints use an unreachable local port, so unit imports do not require `.env` or contact developer services. Real PostgreSQL/HTTP scripts still require the explicitly configured isolated database environment; they do not use this unit configuration.
 
+## Isolated 10k benchmark
+
+`npm run test:performance:10k` creates and drops its own random database on the deliberately configured loopback test cluster at port55432. Supply the test migration-owner/runtime environment explicitly; this command does not load the installed application's `.env`. Build the backend first. `-- --reads-only` measures only read/calculation/lease scenarios. Full results, workload limits and the remaining payslip latency miss are in [the performance report](../acme-salary-app/docs/PERFORMANCE_10K.md). Never reset the installed application database to run a benchmark.
+
