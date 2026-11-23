@@ -1,4 +1,10 @@
-## Assessment publication preparation — 23 November 2026
+## Assessment publication and PR #18 — 23 November 2026
+
+Source/evidence commit 17f33243faf9a495425b5c76aa047bd2c52bf729 (`test(security): add adversarial checks and assessment evidence`) was normally pushed to origin/chore/assessment-documentation; git ls-remote confirmed the exact SHA. [PR #18](https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/18) is open targeting main. Required pre-commit and pre-push hooks passed without bypass: staged formatting, 456-file indexed safety, frontend/backend formatting/lint/types, 15 frontend and 27 backend units, seven checksum regressions, native builds, React architecture and QA typing. The earlier assessment's isolated financial/security/browser/database results remain linked in its report.
+
+GitHub MCP fetched the actual PR head/diff and security-script/CI source at 17f3324 for code-assisted review. No unresolved critical/high issue was identified in that change; this is not an independent approval. PR is unapproved and unmerged. Exact-head CI was pending when this publication record was prepared; do not interpret local passes as a GitHub result. This follow-up changes the ledger only. The unrelated handoff prompt remains untracked and excluded; working database/runtime credentials were not staged.
+
+## Assessment publication preparation — 23 November 2026 (historical)
 
 User requested committing and creating a PR targeting main. Branch chore/assessment-documentation is based on fetched origin/main e34102566250fd7653c5ea573a6a00798d11518c. Scope: assessment/reviewer documentation, preserved historical evidence, the nine-group synthetic security regression and CI invocation. Unrelated handoff-document-prompt.md is excluded. Commit, push, PR link, review and exact-head CI results will be recorded after each operation succeeds; no approval or merge is authorized by this request.
 
