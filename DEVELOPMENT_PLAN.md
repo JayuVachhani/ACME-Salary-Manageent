@@ -1,34 +1,38 @@
-## Finalized payslip and external-payment verification — 23 November 2026
+## Developed-scope verification — 23 November 2026
 
-This branch adds protected finalized payslips/HTML downloads, exact-net provider-neutral manifests, explicit Finance external-reference attestations, immutable audit/command receipts and no bank/provider execution. It follows verified payroll review/finalization.
+The user authorized testing, fixes, commits and normal pushes. Local checks passed: frontend format/lint/types,15 units,native build and154-file/28,075-check architecture; backend format/lint/types,27 units,7 migration checks,native build,real Nest DI/OpenAPI/module isolation and production-doc isolation; QA formatting/types;4 hook regressions and Git safety regression. Delivered Chromium:44 passed (12 foundation,23 existing,9 new salary/payroll), no skipped/flaky cases. New real PostgreSQL/Nest HTTP suite:7 groups passed, including monthly replay/corrections/backdating,exact proration/caps/statutory replacement,policy-family refresh,independent reviews,duplicate finalization,protected document exports,external-reference authorization/replay and immutable snapshots. Existing isolated identity11,retention/FX23,approvals38,country27,directory19,linkage17,team22,references23,FX23,employee workflow32,authentication,Prisma and health also passed.
 
-Native frontend format/lint/types,15 units,build and154-file/28,075-check architecture pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-doc isolation pass. Combined7-group real PostgreSQL/HTTP and44-case delivered Chromium suites include HTML/CSV escaping,role restrictions,replay,finalized immutability and the real external-report UI. Staged hooks/normal push/current-head CI remain publication steps; no production/10k qualification.
+Verification used random disposable databases on preserved test PostgreSQL55432; installed acme_app5432 and its demo/user data were untouched. Native gates also passed on each feature-specific working tree (frontend14/14/15/15 units; backend27 each). Source fixes addressed OpenAPI schema transforms that prevented startup,CSV formula guards,strict money/selection types and policy-cache invalidation. Unit configuration now uses synthetic unreachable database/SMTP values and does not need developer secrets. Initial sandbox realpath/junction EPERM,old test-cluster recovery/startup delay and premature health run were environment failures and later reruns passed. A new CSV test expectation incorrectly normalized CR and browser locators matched hidden duplicate controls; those tests were corrected without dropping assertions or extending timeouts. Existing employee assertions now check actual formatted salary/history behavior.
 
-## Earlier checkpoint records
-
-## Payroll review/finalization verification — 23 November 2026
-
-This branch adds explicit-policy run preparation, immutable source generations, assigned HR→Finance→conditional Director review, configured finalization, stale-source refresh and duplicate employee/month allocation guards. It follows the verified policy/calculation commit.
-
-Native frontend format/lint/types,15 units,build and146-file/25,594-check architecture pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-doc isolation pass. Combined integration evidence includes7 real PostgreSQL/HTTP groups and44 delivered Chromium cases. Native source is verified; staged hooks,normal push and exact published-head CI are separate pending publication steps. No production/10k acceptance claimed.
+Migrations022–026 remain unchanged after application. Full-product unmet/blocked historical checks are retained; these delivered-scope passes do not establish production or10k/15k capacity acceptance. TDS input remains manual; bank/provider transfers,partial payments,reversals and supplemental payroll remain outside delivered behavior. Source is being committed in logical dependency order with required hooks. No remote push or current-head CI pass is claimed until recorded below.
 
 ## Earlier checkpoint records
 
-## Payroll policy/calculation verification — 23 November 2026
+## Payroll implementation integration — 23 November 2026
 
-This branch adds immutable inactive India/INR policy versions, independent linked-HR activation and exact policy-based gross/deduction/net previews with calendar-day salary segments. Explicit rates/caps/eligibility/state/manualTDS/leave treatment and finalizer responsibilities are required; no statutory settings are inferred. It builds on the verified monthly salary/intake branch.
+Local source on feature/payroll-integration now combines approved-policy calculation/proration, staged payroll review/finalization, finalized payslips, provider-neutral preparation/manual external-payment tracking and create-only manual input CSV intake. Separate feature worktrees preserve the source. All remain uncommitted, unpublished and unverified; no test/testcase inspection, lint, typecheck, build, browser QA, safety scan or benchmark ran. Formatter writes, migrations024–026 and Prisma generation completed as implementation/setup only. Local acme_app now has26 migrations; existing records were preserved. Applied migrations are immutable.
 
-Native frontend format/lint/types,14 units,build and140-file/23,200-check architecture gate pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-document isolation pass. The same capability source was exercised in the combined7-group isolated HTTP/SQL and44-case delivered Chromium suites. Staged hooks/normal push and current-head CI remain publication steps, not inferred passes. No production/10k qualification.
+Policies have no hardcoded statutory rates and stay inactive until another linked HR approves explicit settings. TDS is supplied manually; automatic statutory compliance/tax assessment is not claimed. Runs use explicit policy families and immutable source generations; changed sources require review again. Finalized employee/month allocations cannot duplicate. Batches are bounded at100 employees and paged at25; 10k/15k capacity remains unqualified. Bank/provider transfers, supplemental/reversal payroll and full-product acceptance are not delivered. Historical unmet/blocked checks remain unchanged.
+
+Current contracts: PAYROLL_POLICY_CALCULATIONS.md, PAYROLL_RUNS_MODULE.md, PAYROLL_DELIVERY_MODULE.md and PAYROLL_DRAFTS_MODULE.md under acme-salary-app/docs. Root README contains current manual startup/workflow steps.
 
 ## Earlier checkpoint records
 
-## Monthly salary and draft intake — 23 November 2026
+## Salary workspace, bulk revisions and manual payroll drafts — 23 November 2026
 
-This feature adds salary search/current/scheduled views, effective-dated revisions/corrections, independent backdated approval, protected history and manual payroll drafts with create-only CSV intake. Fresh schemas use migrations022–023. Existing later database schemas must not be reset/downgraded to test an older feature snapshot; the combined integration checkout has the complete migration chain.
+Remote inspection confirms PR #15 merged to main at 63c4ed1. Current local branch feature/salary-workspace-bulk-drafts starts from that origin/main and preserves the ongoing monthly edits. New source adds a paginated salary workspace, bounded CSV revisions using existing per-row leases/preview/approval rules, and HR-only India/INR manual payroll drafts with retained revisions and watermarked draft payslips. No automatic totals, statutory calculation, proration, payroll approval/finalization or payment processing is delivered.
 
-Native checks pass (frontend14 units/backend27 units/seven migration cases/builds). The combined source passed44 delivered Chromium cases and7 isolated payroll/monthly integration groups; this is not full-product/10k acceptance. Policies/calculations/review/final delivery follow in dependent feature commits. See [salary contract](acme-salary-app/docs/SALARY_MODULE.md) and [manual draft contract](acme-salary-app/docs/PAYROLL_DRAFTS_MODULE.md).
+This increment remains uncommitted, unpublished and unverified. No tests/testcase inspection, lint, types, build, browser or safety check has run. Formatter writes and migration/client setup are implementation work, not acceptance results. Earlier passes apply only to their recorded heads. Contracts: SALARY_MODULE.md and PAYROLL_DRAFTS_MODULE.md under acme-salary-app/docs; manual startup/walkthrough: root README. Broader historical unmet/blocked cases remain open.
 
-## Earlier setup and checkpoint records
+## Earlier checkpoint records
+
+## Monthly salary implementation — 23 November 2026
+
+Published checkpoint: PR #15, head ae2376c81d63867dd6e7104641e49cc650dca1ce, GitHub Actions run 45067635080 passed. PR remains open for independent review, unmerged. The subsequent monthly increment is local, uncommitted and unpublished; no tests, lint, types, build, browser or safety verification has run for it. Earlier results below apply only to their recorded checkpoints.
+
+Monthly revisions, same-date correction chains, backdated requests, approval context and immutable salary history are implemented in source. Migration 022 was applied to installed local acme_app without resetting data; Prisma client generation and formatter writes are implementation actions, not test passes. Today/future entries retain the management-review badge and count once effective; past entries await independent linked HR approval. Initial salaries still require independent approval for every date. Reports, transfers, bands and full 10k capacity/product acceptance remain incomplete. See the [canonical salary module](acme-salary-app/docs/SALARY_MODULE.md) and root README for contracts/manual instructions.
+
+## Earlier checkpoint records
 
 ## Local publication verification — 23 November 2026
 
@@ -400,3 +404,13 @@ PR #7 merged at 0e0fb86d13bb01903b98df19acb6f2c3aba38223, verified through GitHu
 ## P5 employee development — 22 November2026
 
 PR #8 merged at2a3ee19cb6e5c360929e62444a5eca69d074d3ef; feature/employee-management starts from fetched origin/main. P5a delivers read-only directory/profile first,with literal search,country/department/status filters,whitelisted sorts,page25/max100 and strict non-salary projection. FR-EMP-04 salary bands remain deferred; no mutation or linkage claim. ADR-005 explicitly approves independent HR linkage/reason/confirmation/one active account/audit/revocation/unlinked-write denial and pending initial salary with independent approval. Next slices must atomically create employee plus pending initial request and update backdated-only request constraints via reviewed migrations,not insert an approved initial salary. Separate linkage/creation/lease/write workflows follow after this increment's reviewed merge. Local19 directory DB and34 scoped Chromium checks passed; PR review/current-head CI pending.
+
+## Branch-isolated payroll implementation — 23 November 2026
+
+The independent application packages remain unchanged. The current uncommitted salary foundation is preserved on feature/salary-workspace-bulk-drafts. Isolated local feature worktrees start at origin/main 63c4ed1 and receive an in-scope source overlay of that uncommitted foundation (no credentials, runtime files, dependencies or unrelated prompt). This overlay is a temporary development dependency, not a committed/reviewed merge or published branch artifact.
+
+- feature/payroll-policy-calculations — .worktrees/payroll-policy: explicit inactive policy configuration, independent linked-HR approval, exact gross/deductions/net preview and calendar-day/salary-period proration. Migration024 reserved.
+- feature/payroll-approval-locking — .worktrees/payroll-workflow: run source snapshots, HR/Finance/optional Director review, stale-source checks and finalized immutable records. Migration025 reserved.
+- feature/payroll-payslips-payment-preparation — .worktrees/payroll-payslips: finalized payslip display/download, provider-neutral preparation and manual external-payment reference tracking. Migration026 reserved. ACME does not transfer money.
+
+All increments remain local, uncommitted and unpublished while verification is deferred. No test/testcase inspection, lint, typecheck, build, browser QA, safety scan or benchmark is authorized for this phase. Required hooks are preserved; commits and publication wait for verification authorization. Subsequent verification/commits must establish the foundation dependency first and deliver logical changes separately; no bypass/force push is permitted. Statutory policies have no hardcoded rates and remain inactive until complete and approved. Current work does not establish 10k capacity acceptance.

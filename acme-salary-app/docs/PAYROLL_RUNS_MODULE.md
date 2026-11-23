@@ -1,6 +1,6 @@
-## Publication verification
+## Current verification scope
 
-This capability's implementation was exercised in the combined isolated SQL/HTTP and browser verification. Feature-branch native checks and publication are tracked in GIT_CHANGELOG.md. Earlier deferred-verification records below describe the development phase; they are not current test results.
+This capability was exercised in the developed-scope verification (44 delivered Chromium cases and7 new isolated HTTP/SQL groups overall, plus native checks). Exact per-suite results and limitations are in the current QA_EXECUTION_REPORT.md and Git ledger. Earlier deferred-verification implementation records below are historical. Full-product/10k/production acceptance is not claimed.
 
 ## Earlier implementation records
 
