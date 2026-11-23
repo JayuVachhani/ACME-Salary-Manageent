@@ -104,26 +104,28 @@ model employees {
   payroll_drafts                     payroll_drafts[]
   salary_commands                    salary_commands[]
   employee_creation_commands         employee_creation_commands[]
-  id                                 String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  employee_code                      String                       @unique(map: "employees_code_live_uq", where: raw("(removed_at IS NULL)"))
-  email                              String                       @unique(map: "employees_email_live_uq", where: raw("(removed_at IS NULL)")) @db.Citext
+  id                                 String                          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_code                      String                          @unique(map: "employees_code_live_uq", where: raw("(removed_at IS NULL)"))
+  email                              String                          @unique(map: "employees_email_live_uq", where: raw("(removed_at IS NULL)")) @db.Citext
   first_name                         String
   last_name                          String
-  joining_date                       DateTime                     @db.Date
-  removed_at                         DateTime?                    @db.Timestamptz(6)
-  version                            Int                          @default(1)
-  created_by                         String                       @db.Uuid
-  created_at                         DateTime                     @default(now()) @db.Timestamptz(6)
-  updated_at                         DateTime                     @default(now()) @db.Timestamptz(6)
+  joining_date                       DateTime                        @db.Date
+  removed_at                         DateTime?                       @db.Timestamptz(6)
+  version                            Int                             @default(1)
+  created_by                         String                          @db.Uuid
+  created_at                         DateTime                        @default(now()) @db.Timestamptz(6)
+  updated_at                         DateTime                        @default(now()) @db.Timestamptz(6)
   employee_assignments               employee_assignments[]
-  users_employees_created_byTousers  users                        @relation("employees_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_employees_created_byTousers  users                           @relation("employees_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   record_locks                       record_locks?
   report_snapshot_employees          report_snapshot_employees[]
   retention_holds                    retention_holds[]
   salary_change_requests             salary_change_requests[]
   salary_history_events              salary_history_events[]
   salary_records                     salary_records[]
-  users_users_employee_idToemployees users?                       @relation("users_employee_idToemployees")
+  users_users_employee_idToemployees users?                          @relation("users_employee_idToemployees")
+  payroll_run_lines                  payroll_run_lines[]
+  payroll_finalized_allocations      payroll_finalized_allocations[]
 
   @@index([employee_code(ops: raw("gin_trgm_ops"))], map: "employees_code_trgm", type: Gin)
 }
@@ -352,8 +354,14 @@ model users {
   employees_users_employee_idToemployees employees?                   @relation("users_employee_idToemployees", fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_employee_fk")
   users                                  users?                       @relation("usersTousers", fields: [invited_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   other_users                            users[]                      @relation("usersTousers")
+  payroll_runs_created                   payroll_runs[]               @relation("payroll_run_creator")
+  payroll_runs_hr                        payroll_runs[]               @relation("payroll_run_hr")
+  payroll_runs_finance                   payroll_runs[]               @relation("payroll_run_finance")
+  payroll_runs_director                  payroll_runs[]               @relation("payroll_run_director")
   payroll_policies                       payroll_policies[]
   payroll_policy_approvals               payroll_policy_approvals[]
+  payroll_run_events                     payroll_run_events[]
+  payroll_run_commands                   payroll_run_commands[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -508,4 +516,89 @@ model payroll_policy_approvals {
   approved_at      DateTime         @default(now()) @db.Timestamptz(6)
   payroll_policies payroll_policies @relation(fields: [policy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users            users            @relation(fields: [approved_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model payroll_runs {
+  id                   String                          @id @db.Uuid
+  period_month         DateTime                        @db.Date
+  status               String                          @default("DRAFT")
+  version              Int                             @default(1)
+  generation           Int                             @default(1)
+  policy_snapshot      Json
+  source_hash          String
+  employee_count       Int
+  created_by           String                          @db.Uuid
+  hr_reviewer_id       String                          @db.Uuid
+  finance_approver_id  String                          @db.Uuid
+  director_approver_id String?                         @db.Uuid
+  requires_director    Boolean
+  created_at           DateTime                        @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime                        @default(now()) @db.Timestamptz(6)
+  finalized_at         DateTime?                       @db.Timestamptz(6)
+  creator              users                           @relation("payroll_run_creator", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hr_reviewer          users                           @relation("payroll_run_hr", fields: [hr_reviewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  finance_approver     users                           @relation("payroll_run_finance", fields: [finance_approver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  director_approver    users?                          @relation("payroll_run_director", fields: [director_approver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  lines                payroll_run_lines[]
+  events               payroll_run_events[]
+  commands             payroll_run_commands[]
+  allocations          payroll_finalized_allocations[]
+
+  @@index([period_month(sort: Desc), created_at(sort: Desc), id], map: "payroll_runs_period_idx")
+}
+
+model payroll_run_lines {
+  id          String                         @id @db.Uuid
+  run_id      String                         @db.Uuid
+  generation  Int
+  employee_id String                         @db.Uuid
+  snapshot    Json
+  run         payroll_runs                   @relation(fields: [run_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employee    employees                      @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  allocation  payroll_finalized_allocations?
+
+  @@unique([run_id, generation, employee_id])
+}
+
+model payroll_run_events {
+  id          String       @id @db.Uuid
+  run_id      String       @db.Uuid
+  version     Int
+  generation  Int
+  action      String
+  from_status String?
+  to_status   String
+  actor_id    String       @db.Uuid
+  actor_name  String
+  reason      String
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  run         payroll_runs @relation(fields: [run_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  actor       users        @relation(fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([run_id, version])
+}
+
+model payroll_run_commands {
+  actor_id   String       @db.Uuid
+  command_id String       @db.Uuid
+  input_hash String
+  run_id     String       @db.Uuid
+  result     Json
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  actor      users        @relation(fields: [actor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  run        payroll_runs @relation(fields: [run_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([actor_id, command_id])
+}
+
+model payroll_finalized_allocations {
+  employee_id  String            @db.Uuid
+  period_month DateTime          @db.Date
+  run_id       String            @db.Uuid
+  line_id      String            @unique @db.Uuid
+  employee     employees         @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  run          payroll_runs      @relation(fields: [run_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  line         payroll_run_lines @relation(fields: [line_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([employee_id, period_month])
 }

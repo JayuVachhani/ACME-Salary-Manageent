@@ -1,3 +1,11 @@
+## Payroll review/finalization verification — 23 November 2026
+
+This branch adds explicit-policy run preparation, immutable source generations, assigned HR→Finance→conditional Director review, configured finalization, stale-source refresh and duplicate employee/month allocation guards. It follows the verified policy/calculation commit.
+
+Native frontend format/lint/types,15 units,build and146-file/25,594-check architecture pass. Backend format/lint/types,27 units,7 migration cases,build and actual Nest DI/OpenAPI/production-doc isolation pass. Combined integration evidence includes7 real PostgreSQL/HTTP groups and44 delivered Chromium cases. Native source is verified; staged hooks,normal push and exact published-head CI are separate pending publication steps. No production/10k acceptance claimed.
+
+## Earlier checkpoint records
+
 ## Payroll policy/calculation verification — 23 November 2026
 
 This branch adds immutable inactive India/INR policy versions, independent linked-HR activation and exact policy-based gross/deduction/net previews with calendar-day salary segments. Explicit rates/caps/eligibility/state/manualTDS/leave treatment and finalizer responsibilities are required; no statutory settings are inferred. It builds on the verified monthly salary/intake branch.

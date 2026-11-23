@@ -1,3 +1,6 @@
+import { payrollPolicyApi } from '../../features/payroll-policies/api';
+import { payrollCalculationsApi } from '../../features/payroll-calculations/api';
+import { payrollRunsApi } from '../../features/payroll-runs/api';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { store, sessionCleared } from '../state/store';
 import { baseApi } from './base-api';
@@ -15,6 +18,62 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe('protected API cache lifecycle', () => {
+  it('refreshes calculator and run policy options after independent policy activation', async () => {
+    let version = 1;
+    let policyReads = 0;
+    let setupReads = 0;
+    vi.stubGlobal('document', { cookie: 'acme_csrf=synthetic' });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (path: string) => {
+        if (path.startsWith('/api/v1/payroll-policies?')) {
+          policyReads++;
+          return new Response(
+            JSON.stringify({
+              items: [{ id: 'policy', version, status: 'ACTIVE' }],
+              total: 1,
+              page: 1,
+              pageSize: 25,
+            }),
+          );
+        }
+        if (path.startsWith('/api/v1/payroll-runs/setup?')) {
+          setupReads++;
+          return new Response(JSON.stringify({ policy: { version }, candidates: [] }));
+        }
+        version = 2;
+        return new Response(JSON.stringify({ id: 'policy', version, status: 'ACTIVE' }));
+      }),
+    );
+    const calculator = store.dispatch(
+      payrollCalculationsApi.endpoints.calculationPolicies.initiate(1),
+    );
+    const options = store.dispatch(payrollRunsApi.endpoints.runPolicyChoices.initiate(1));
+    const setup = store.dispatch(
+      payrollRunsApi.endpoints.runSetup.initiate({ period: '2026-04', policyId: 'policy' }),
+    );
+    subscriptions.push(calculator, options, setup);
+    await Promise.all([calculator.unwrap(), options.unwrap(), setup.unwrap()]);
+    expect(policyReads).toBe(2);
+    expect(setupReads).toBe(1);
+    await store
+      .dispatch(
+        payrollPolicyApi.endpoints.approvePayrollPolicy.initiate({
+          id: 'policy',
+          comment: 'Independent activation',
+          confirmed: true,
+        }),
+      )
+      .unwrap();
+    await vi.waitFor(() => {
+      expect(policyReads).toBe(4);
+      expect(setupReads).toBe(2);
+      expect(
+        payrollCalculationsApi.endpoints.calculationPolicies.select(1)(store.getState()).data
+          ?.items[0]?.version,
+      ).toBe(2);
+    });
+  });
   it('clears protected cache and identity after a direct lease request returns 401', async () => {
     vi.stubGlobal('document', { cookie: 'acme_csrf=synthetic' });
     vi.stubGlobal(

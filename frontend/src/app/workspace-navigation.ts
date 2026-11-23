@@ -50,6 +50,13 @@ export const workspacePages = [
     managerOnly: true,
   },
   {
+    id: 'payroll-runs',
+    label: 'Payroll review',
+    description: 'Prepare payroll, review each stage and finalize approved records.',
+    symbol: 'R',
+    managerOnly: false,
+  },
+  {
     id: 'payroll-drafts',
     label: 'Payroll drafts',
     description: 'Enter monthly components and prepare draft payslips.',
@@ -113,7 +120,7 @@ export const workspaceGroups = [
   },
   {
     label: 'Payroll',
-    pages: ['payroll-drafts', 'payroll-calculations'],
+    pages: ['payroll-drafts', 'payroll-calculations', 'payroll-runs'],
   },
   { label: 'Settings', pages: ['payroll-policies', 'organization', 'countries', 'team'] },
 ] as const;
