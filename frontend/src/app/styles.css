@@ -962,3 +962,442 @@ td {
 .team-panel fieldset {
   min-width: 0;
 }
+
+.salary-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.salary-section-heading h3 {
+  margin: 0.5rem 0;
+}
+.salary-current-card {
+  background: #f2f7f3;
+  border: 1px solid #dce8df;
+  border-radius: 12px;
+  padding: 1.4rem;
+  margin: 1rem 0 1.5rem;
+}
+.salary-current-card .salary-amount {
+  margin: 0.5rem 0;
+}
+.salary-status {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 0.35rem 0.55rem;
+  background: #edf2ef;
+  color: #405b49;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+.salary-status--review {
+  background: #fff3d8;
+  color: #73571d;
+}
+.salary-status--approved {
+  background: #e6f3e9;
+  color: #2b6140;
+}
+.salary-status--rejected {
+  background: #fbecea;
+  color: #883b32;
+}
+.salary-status--old {
+  background: #edf0ee;
+  color: #52675a;
+}
+.salary-scheduled {
+  padding: 1rem 1.2rem;
+  border: 1px solid #dce6de;
+  border-radius: 10px;
+  margin: 1rem 0 1.5rem;
+}
+.salary-scheduled h4 {
+  margin: 0 0 0.7rem;
+}
+.salary-scheduled ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.salary-scheduled li {
+  padding: 0.4rem 0;
+  line-height: 1.7;
+}
+.salary-scheduled .salary-status {
+  margin-left: 0.6rem;
+}
+.salary-history,
+.salary-requests {
+  border-top: 1px solid #dfe7e1;
+  padding-top: 1.2rem;
+  margin-top: 1.5rem;
+}
+.salary-view-switch {
+  display: flex;
+  gap: 0.4rem;
+}
+.salary-row--superseded {
+  color: #617266;
+}
+.salary-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 1.3rem 0;
+}
+.salary-timeline > li {
+  display: grid;
+  grid-template-columns: 115px minmax(0, 1fr);
+  gap: 1rem;
+}
+.salary-timeline-date {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #52675a;
+  padding-top: 1rem;
+}
+.salary-timeline-entry {
+  border-left: 2px solid #d8e6dc;
+  padding: 0.8rem 0 1.5rem 1.2rem;
+  position: relative;
+  min-width: 0;
+}
+.salary-timeline-entry::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3a7856;
+  position: absolute;
+  left: -5px;
+  top: 1.2rem;
+}
+.salary-timeline-entry h4 {
+  margin: 0.2rem 0 0.7rem;
+  font-size: 0.95rem;
+}
+.salary-timeline-entry p {
+  margin: 0.6rem 0;
+}
+.salary-request-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+.salary-request-card {
+  border: 1px solid #dfe7e1;
+  border-radius: 10px;
+  padding: 1.2rem;
+}
+.salary-request-card > p {
+  margin: 0.7rem 0;
+}
+.salary-decision-note {
+  background: #f5f7f5;
+  border-left: 3px solid #bfd3c5;
+  padding: 0.8rem 1rem;
+  font-size: 0.86rem;
+}
+.salary-decision-note p {
+  margin: 0.5rem 0;
+}
+.salary-editor {
+  border: 1px solid #b7d0bf;
+  border-radius: 12px;
+  padding: 1.3rem;
+  margin: 1rem 0 1.6rem;
+  background: #fbfdfb;
+}
+.salary-editor h3 {
+  margin-top: 0;
+}
+.salary-editor fieldset {
+  min-width: 0;
+  border: 1px solid #dbe5de;
+  border-radius: 8px;
+  padding: 1rem;
+}
+.salary-editor legend {
+  color: #3d5d49;
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+.salary-editor .form-actions {
+  margin-top: 0.5rem;
+}
+.salary-review-details {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1rem 0;
+}
+.salary-review-details dt {
+  color: #52675a;
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+.salary-review-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.salary-conversion {
+  margin: 0.8rem 0;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #52675a;
+  overflow-wrap: anywhere;
+}
+.salary-conversion summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.salary-conversion ul {
+  padding-left: 1.2rem;
+}
+.salary-conversion li {
+  margin: 0.6rem 0;
+}
+.salary-review::backdrop {
+  background: #102d3066;
+}
+@media (max-width: 760px) {
+  .salary-current-card,
+  .salary-request-card,
+  .salary-editor {
+    padding: 1rem;
+  }
+  .salary-timeline > li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .salary-timeline-date {
+    padding-left: 1.2rem;
+  }
+  .salary-scheduled .salary-status {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.3rem;
+  }
+}
+
+.money-change {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+.money-change > div {
+  background: #f4f7f4;
+  border: 1px solid #dfe7e1;
+  border-radius: 8px;
+  padding: 0.8rem;
+  min-width: 0;
+}
+.money-change dt {
+  color: #52675a;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.money-change dd {
+  margin: 0;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.money-change dd strong {
+  display: block;
+  color: #254934;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+.money-change dd span {
+  display: block;
+  color: #52675a;
+  font-size: 0.78rem;
+}
+.salary-entry-changes {
+  margin: 0.9rem 0;
+}
+.salary-entry-changes > summary {
+  color: #355e44;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.salary-entry-changes section {
+  margin-top: 1rem;
+}
+.salary-entry-changes h5 {
+  font-size: 0.85rem;
+  margin: 0.5rem 0;
+}
+.profile-refresh-error {
+  padding: 0.85rem 1rem;
+  background: #fff7e4;
+  color: #725c25;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+@media (max-width: 760px) {
+  .money-change {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.salary-pending-notices {
+  border: 1px solid #eadfc2;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 0 0 1.5rem;
+  background: #fffbf2;
+}
+.salary-pending-notices h4 {
+  margin-top: 0;
+}
+.salary-pending-notices ul {
+  padding-left: 1.2rem;
+  margin-bottom: 0;
+}
+.salary-pending-notices li {
+  margin: 0.8rem 0;
+  line-height: 1.8;
+}
+.salary-pending-notices .salary-status {
+  margin-left: 0.4rem;
+}
+@media print {
+  body:has(.draft-payslip) * {
+    visibility: hidden;
+  }
+  body:has(.draft-payslip) .draft-payslip,
+  body:has(.draft-payslip) .draft-payslip * {
+    visibility: visible;
+  }
+  .detail-modal:has(.draft-payslip) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    border: 0;
+    overflow: visible;
+    background: white;
+    color: black;
+  }
+  .detail-modal:has(.draft-payslip) .detail-modal-body {
+    overflow: visible;
+    max-height: none;
+  }
+  .draft-payslip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: white;
+    color: black;
+  }
+  .draft-payslip .team-table {
+    overflow: visible;
+  }
+  .draft-payslip table {
+    min-width: 0;
+    width: 100%;
+  }
+  .draft-payslip tr {
+    break-inside: avoid;
+  }
+}
+
+.policy-setting-list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1rem 0;
+}
+.policy-setting-list > div {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) 2fr;
+  gap: 1rem;
+  border-bottom: 1px solid #e0e7e4;
+  padding-bottom: 0.6rem;
+}
+.policy-setting-list dt {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.policy-setting-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .policy-setting-list > div {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+}
+
+.finalized-payslip {
+  padding: 1.4rem;
+  border: 1px solid #dfe7e1;
+  border-radius: 12px;
+  background: white;
+}
+.finalized-payslip > .eyebrow {
+  color: #24684e;
+  font-weight: 750;
+}
+.finalized-payslip section {
+  margin-top: 1.5rem;
+}
+.payroll-source-reference {
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  color: #687b70;
+}
+@media print {
+  body:has(.finalized-payslip) * {
+    visibility: hidden;
+  }
+  body:has(.finalized-payslip) .finalized-payslip,
+  body:has(.finalized-payslip) .finalized-payslip * {
+    visibility: visible;
+  }
+  .detail-modal:has(.finalized-payslip) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    border: 0;
+    background: white;
+  }
+  .detail-modal:has(.finalized-payslip) .detail-modal-body {
+    overflow: visible;
+    max-height: none;
+  }
+  .finalized-payslip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    border: 0;
+    background: white;
+    color: black;
+  }
+  .finalized-payslip .team-table {
+    overflow: visible;
+  }
+  .finalized-payslip table {
+    width: 100%;
+    min-width: 0;
+  }
+  .finalized-payslip tr {
+    break-inside: avoid;
+  }
+}

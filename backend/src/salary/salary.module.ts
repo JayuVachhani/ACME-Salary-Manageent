@@ -6,9 +6,18 @@ import { AuthModule } from '../auth/auth.module.js';
 import { HttpModule } from '../common/http/http.module.js';
 import { SalaryWorkflowService } from './salary-workflow.service.js';
 import { SalaryController } from './salary.controller.js';
+import { SalaryWriteService } from './salary-write.service.js';
+import { SalaryEmployeeController } from './salary-employee.controller.js';
+import { SalaryWorkspaceController } from './salary-workspace.controller.js';
+import { SalaryWorkspaceService } from './salary-workspace.service.js';
 @Module({
   imports: [ConfigModule, DatabaseModule, AuthModule, HttpModule],
-  controllers: [SalaryController],
-  providers: [SalaryApprovalService, SalaryWorkflowService],
+  controllers: [SalaryController, SalaryEmployeeController, SalaryWorkspaceController],
+  providers: [
+    SalaryApprovalService,
+    SalaryWorkflowService,
+    SalaryWriteService,
+    SalaryWorkspaceService,
+  ],
 })
 export class SalaryModule {}

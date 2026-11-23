@@ -16,3 +16,8 @@ No migration SQL or business rule is changed by the package separation. Independ
 ESLint uses native ESM .mjs config; Nest CLI and TypeScript use native JSON configs. Existing database .mjs operational scripts are Node ESM commands,not a custom framework build system.
 
 Migration integrity preserves stored hashes while accepting LF/CRLF-only checkout conversion. SQL edits and other whitespace changes still fail. Run `node --test scripts/migration-checksum.test.mjs` for the focused regression cases; never rewrite applied migration history to repair a line-ending mismatch.
+
+## Unit-test configuration
+
+`npm test` supplies synthetic configuration through Vitest. Its database and SMTP endpoints use an unreachable local port, so unit imports do not require `.env` or contact developer services. Real PostgreSQL/HTTP scripts still require the explicitly configured isolated database environment; they do not use this unit configuration.
+

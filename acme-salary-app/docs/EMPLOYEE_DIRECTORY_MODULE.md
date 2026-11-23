@@ -1,3 +1,17 @@
+## Current verification scope
+
+This capability was exercised in the developed-scope verification (44 delivered Chromium cases and7 new isolated HTTP/SQL groups overall, plus native checks). Exact per-suite results and limitations are in the current QA_EXECUTION_REPORT.md and Git ledger. Earlier deferred-verification implementation records below are historical. Full-product/10k/production acceptance is not claimed.
+
+## Earlier implementation records
+
+## Monthly salary implementation — 23 November 2026
+
+Published checkpoint: PR #15, head ae2376c81d63867dd6e7104641e49cc650dca1ce, GitHub Actions run 45067635080 passed. PR remains open for independent review, unmerged. The subsequent monthly increment is local, uncommitted and unpublished; no tests, lint, types, build, browser or safety verification has run for it. Earlier results below apply only to their recorded checkpoints.
+
+Monthly revisions, same-date correction chains, backdated requests, approval context and immutable salary history are implemented in source. Migration 022 was applied to installed local acme_app without resetting data; Prisma client generation and formatter writes are implementation actions, not test passes. Today/future entries retain the management-review badge and count once effective; past entries await independent linked HR approval. Initial salaries still require independent approval for every date. Reports, transfers, bands and full 10k capacity/product acceptance remain incomplete. See the [canonical salary module](SALARY_MODULE.md) and root README for contracts/manual instructions.
+
+## Earlier checkpoint records
+
 ## Local publication verification — 23 November 2026
 
 The push request authorizes verification. Backend gates and32 new employee SQL/HTTP checks passed; frontend9 units/lint/types/build/architecture and12 foundation Chromium cases passed. All23 delivered Chromium cases also passed across the final corrected groups. Publication hooks and exact-head GitHub CI remain pending. This supersedes earlier deferred-verification snapshots without claiming full-product or10k capacity acceptance. See [current QA report](../QA_EXECUTION_REPORT.md) and Git ledger for actual results; no push/CI success inferred.

@@ -1,0 +1,55 @@
+.salary-workspace .salary-workspace-filter-form {
+  max-width: none;
+  margin-top: 1.4rem;
+}
+.salary-workspace-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.salary-workspace-more-filters {
+  margin-top: 0.6rem;
+}
+.salary-workspace-more-filters summary {
+  color: #52675a;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.salary-workspace-more-filters .form-grid {
+  margin-top: 1rem;
+}
+.salary-workspace-result-count {
+  margin-top: 1.5rem;
+  color: #52675a;
+  font-size: 0.88rem;
+}
+.salary-workspace-cell-note {
+  display: block;
+  color: #52675a;
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+  line-height: 1.6;
+}
+.salary-workspace-money {
+  display: block;
+  white-space: nowrap;
+  color: #254934;
+}
+.salary-workspace-muted {
+  color: #52675a;
+  font-size: 0.82rem;
+}
+.salary-workspace .salary-status {
+  margin-top: 0.55rem;
+}
+.salary-workspace .team-table td {
+  min-width: 140px;
+}
+.salary-workspace .team-table td:first-child {
+  min-width: 185px;
+}
+@media (max-width: 760px) {
+  .salary-workspace-filter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

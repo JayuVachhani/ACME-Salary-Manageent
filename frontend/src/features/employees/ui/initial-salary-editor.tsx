@@ -5,9 +5,19 @@ import { ConfirmationDialog } from '../../../shared/ui/confirmation-dialog';
 import { RequestState } from '../../../shared/ui/request-state';
 import { errorMessage } from '../../../shared/api/client';
 import { useInitialSalaryEditor } from '../use-initial-salary-editor';
-export function InitialSalaryEditor({ employee }: { employee: Employee }) {
-  const { options, action, draft, setDraft, review, setReview, confirm } =
-    useInitialSalaryEditor(employee);
+export function InitialSalaryEditor({
+  employee,
+  onClose,
+  onSaved,
+}: {
+  employee: Employee;
+  onClose?: () => void;
+  onSaved?: () => void;
+}) {
+  const { options, action, draft, setDraft, review, setReview, confirm } = useInitialSalaryEditor(
+    employee,
+    onSaved,
+  );
   return (
     <section>
       <h3>Submit a corrected initial salary</h3>
@@ -70,6 +80,11 @@ export function InitialSalaryEditor({ employee }: { employee: Employee }) {
           </Form>
         )}
       </RequestState>
+      {onClose && (
+        <Button variant="secondary" disabled={action.busy} onClick={onClose}>
+          Cancel initial salary editing
+        </Button>
+      )}
       <ConfirmationDialog
         open={review}
         busy={action.busy}

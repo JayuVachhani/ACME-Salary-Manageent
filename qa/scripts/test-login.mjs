@@ -8,6 +8,7 @@ const groups = [
   ['country-currency.spec.ts'],
   ['fx-rates.spec.ts'],
   ['employees.spec.ts'],
+  ['payroll.spec.ts'],
 ];
 if (
   process.argv.length > 3 ||
@@ -36,15 +37,17 @@ try {
         MIGRATION_DATABASE_URL: ownerUrl.href,
         DATABASE_URL: runtimeUrl.href,
         QA_RUN:
-          suites[0] === 'employees.spec.ts'
-            ? 'employees'
-            : suites[0] === 'fx-rates.spec.ts'
-              ? 'fx'
-              : suites[0] === 'country-currency.spec.ts'
-                ? 'country-currency'
-                : suites.length === 1
-                  ? 'references'
-                  : 'login',
+          suites[0] === 'payroll.spec.ts'
+            ? 'payroll'
+            : suites[0] === 'employees.spec.ts'
+              ? 'employees'
+              : suites[0] === 'fx-rates.spec.ts'
+                ? 'fx'
+                : suites[0] === 'country-currency.spec.ts'
+                  ? 'country-currency'
+                  : suites.length === 1
+                    ? 'references'
+                    : 'login',
         ACME_AUTH_TEST_DATABASE: name,
       };
       for (const args of [

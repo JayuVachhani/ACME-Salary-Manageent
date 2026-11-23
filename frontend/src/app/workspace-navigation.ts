@@ -22,6 +22,56 @@ export const workspacePages = [
     managerOnly: false,
   },
   {
+    id: 'salaries',
+    label: 'Salary workspace',
+    description: 'Find current salaries, scheduled changes and requests in one place.',
+    symbol: '₹',
+    managerOnly: false,
+  },
+  {
+    id: 'salary-bulk',
+    label: 'Bulk salary revisions',
+    description: 'Upload exact salary revisions and review each employee before saving.',
+    symbol: 'B',
+    managerOnly: false,
+  },
+  {
+    id: 'payroll-policies',
+    label: 'Payroll policies',
+    description: 'Configure payroll rules and have another HR manager approve them.',
+    symbol: 'P',
+    managerOnly: true,
+  },
+  {
+    id: 'payroll-calculations',
+    label: 'Calculate payroll',
+    description: 'Preview monthly earnings, deductions and proration using an approved policy.',
+    symbol: 'C',
+    managerOnly: true,
+  },
+  {
+    id: 'payroll-runs',
+    label: 'Payroll review',
+    description: 'Prepare payroll, review each stage and finalize approved records.',
+    symbol: 'R',
+    managerOnly: false,
+  },
+  {
+    id: 'payroll-delivery',
+    label: 'Payslips & payments',
+    description:
+      'View finalized payslips, prepare manifests and record external payment references.',
+    symbol: '₹',
+    managerOnly: false,
+  },
+  {
+    id: 'payroll-drafts',
+    label: 'Payroll drafts',
+    description: 'Enter monthly components and prepare draft payslips.',
+    symbol: 'P',
+    managerOnly: true,
+  },
+  {
     id: 'salary-approvals',
     label: 'Salary approvals',
     description: 'Review initial salaries and requests awaiting an independent decision.',
@@ -73,6 +123,13 @@ export function useWorkspaceLocation() {
 export const workspaceGroups = [
   { label: 'Overview', pages: ['home'] },
   { label: 'People', pages: ['employees', 'add-employee'] },
-  { label: 'Salary', pages: ['salary-approvals', 'exchange-rates'] },
-  { label: 'Settings', pages: ['organization', 'countries', 'team'] },
+  {
+    label: 'Salary',
+    pages: ['salaries', 'salary-bulk', 'salary-approvals', 'exchange-rates'],
+  },
+  {
+    label: 'Payroll',
+    pages: ['payroll-drafts', 'payroll-calculations', 'payroll-runs', 'payroll-delivery'],
+  },
+  { label: 'Settings', pages: ['payroll-policies', 'organization', 'countries', 'team'] },
 ] as const;

@@ -1,5 +1,9 @@
 import { ResponseContractInterceptor } from './common/http/response-contract.interceptor.js';
 import { SalaryModule } from './salary/salary.module.js';
+import { PayrollPoliciesModule } from './payroll-policies/payroll-policies.module.js';
+import { PayrollCalculationsModule } from './payroll-calculations/payroll-calculations.module.js';
+import { PayrollRunsModule } from './payroll-runs/payroll-runs.module.js';
+import { PayrollDeliveryModule } from './payroll-delivery/payroll-delivery.module.js';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { RequestValidationPipe } from './common/pipes/request-validation.pipe.js';
@@ -18,6 +22,7 @@ import { CountryCurrencyModule } from './country-currency/country-currency.modul
 import { FxRatesModule } from './fx-rates/fx-rates.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { HealthModule } from './health/health.module.js';
+import { PayrollDraftsModule } from './payroll-drafts/payroll-drafts.module.js';
 @Module({
   imports: [
     HttpModule,
@@ -32,6 +37,11 @@ import { HealthModule } from './health/health.module.js';
     EmployeesModule,
     HealthModule,
     SalaryModule,
+    PayrollPoliciesModule,
+    PayrollCalculationsModule,
+    PayrollRunsModule,
+    PayrollDeliveryModule,
+    PayrollDraftsModule,
   ],
   providers: [
     ApplicationLifecycle,

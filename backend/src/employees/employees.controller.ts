@@ -181,6 +181,6 @@ export class EmployeesController {
     @Param() params: EmployeeParamsDto,
     @Query() query: EmployeeSalaryQueryDto,
   ) {
-    return this.service.salary(this.security.token(req), params.id, query.page);
+    return this.service.salary(this.security.token(req), params.id, query.page, query.requestsPage);
   }
 }

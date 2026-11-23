@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { requestDto } from '../../common/dto/request-dto.js';
+import { timestampText } from '../../common/dto/response-values.js';
 export class SalaryRequestParamsDto extends requestDto(
   z.object({ id: z.uuid() }).strict(),
   'Invalid salary request',
@@ -38,6 +39,24 @@ export const salaryRequestResponse = z.object({
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED']),
   decision_comment: z.string().nullable(),
   can_decide: z.boolean(),
+  correctsId: z.uuid().nullable(),
+  decimalPlaces: z.number().int(),
+  countryCode: z.string(),
+  defaultCurrency: z.string(),
+  before: z
+    .object({
+      id: z.uuid(),
+      amount: z.string(),
+      currency: z.string(),
+      countryCode: z.string(),
+      defaultCurrency: z.string(),
+      effectiveFrom: z.string(),
+      decimalPlaces: z.number().int(),
+    })
+    .nullable(),
+  isStale: z.boolean(),
+  decidedByName: z.string().nullable(),
+  decidedAt: timestampText.nullable(),
 });
 export const salaryRequestPageResponse = z.object({
   items: z.array(salaryRequestResponse),

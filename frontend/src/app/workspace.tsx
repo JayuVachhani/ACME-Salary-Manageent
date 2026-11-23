@@ -1,12 +1,35 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSession } from '../features/auth';
 import { Team } from '../features/team';
 import { OrganizationReferences } from '../features/organization-references';
 import { CountryCurrency } from '../features/country-currency';
-import { Employees, EmployeeCreate } from '../features/employees';
+import { Employees, EmployeeCreate, EmployeeProfile } from '../features/employees';
+import { SalaryWorkspace } from '../features/salary-workspace';
+import { SalaryBulk } from '../features/salary-bulk';
+import { PayrollDrafts } from '../features/payroll-drafts';
+import { PayrollPolicies } from '../features/payroll-policies';
+import { PayrollRuns } from '../features/payroll-runs';
+import { PayrollCalculations } from '../features/payroll-calculations';
+import { PayrollDelivery } from '../features/payroll-delivery';
 import { SalaryApprovals } from '../features/salary-approvals';
 import { FxRates } from '../features/fx-rates';
 import { useWorkspaceLocation, workspacePages, workspaceGroups } from './workspace-navigation';
+function SalaryWorkspacePage() {
+  const [employeeId, setEmployeeId] = useState('');
+  return (
+    <>
+      <SalaryWorkspace onOpenSalary={setEmployeeId} />
+      {employeeId && (
+        <EmployeeProfile
+          key={employeeId}
+          id={employeeId}
+          initialTab="salary"
+          onClose={() => setEmployeeId('')}
+        />
+      )}
+    </>
+  );
+}
 export function Workspace() {
   const session = useSession();
   const location = useWorkspaceLocation();
@@ -18,6 +41,10 @@ export function Workspace() {
   const identity = session.identity;
   if (!identity) return null;
   const canRead = identity.isHrManager || identity.permissions.includes('read');
+  const canViewSalary =
+    identity.isHrManager || (canRead && identity.permissions.includes('salary:view'));
+  const canEditSalary =
+    canViewSalary && (identity.isHrManager || identity.permissions.includes('edit'));
   const canCreate =
     identity.isHrManager ||
     ['read', 'write', 'salary:view'].every((permission) =>
@@ -26,7 +53,15 @@ export function Workspace() {
   const pages = workspacePages.filter(
     (page) =>
       page.id === 'home' ||
-      (page.id === 'add-employee' ? canCreate : page.managerOnly ? identity.isHrManager : canRead),
+      (page.id === 'salaries' || page.id === 'payroll-runs' || page.id === 'payroll-delivery'
+        ? canViewSalary
+        : page.id === 'salary-bulk'
+          ? canEditSalary
+          : page.id === 'add-employee'
+            ? canCreate
+            : page.managerOnly
+              ? identity.isHrManager
+              : canRead),
   );
   const current = pages.find((page) => location === '/' + page.id);
   return (
@@ -124,14 +159,20 @@ export function Workspace() {
                 Your account does not have access to these tools yet. Ask an HR manager for help.
               </p>
             )}
-            <p className="availability-note">
-              Monthly salary revisions, transfers and reports are not available yet.
-            </p>
           </>
         )}
         {current?.id === 'employees' && <Employees />}
         {current?.id === 'add-employee' && <EmployeeCreate />}
         {current?.id === 'salary-approvals' && <SalaryApprovals />}
+        {current?.id === 'salaries' && <SalaryWorkspacePage />}
+        {current?.id === 'salary-bulk' && <SalaryBulk />}
+        {current?.id === 'payroll-drafts' && <PayrollDrafts />}
+        {current?.id === 'payroll-policies' && <PayrollPolicies />}
+        {current?.id === 'payroll-runs' && <PayrollRuns isHrManager={identity.isHrManager} />}
+        {current?.id === 'payroll-calculations' && (
+          <PayrollCalculations isHrManager={identity.isHrManager} />
+        )}
+        {current?.id === 'payroll-delivery' && <PayrollDelivery />}
         {current?.id === 'organization' && <OrganizationReferences />}
         {current?.id === 'team' && (
           <Team

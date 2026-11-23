@@ -15,6 +15,8 @@ type Props = {
   cancelLabel: string;
   className?: string;
   confirmFirst?: boolean;
+  focusHeading?: boolean;
+  confirmDisabled?: boolean;
 };
 
 export function ConfirmationDialog({
@@ -30,18 +32,29 @@ export function ConfirmationDialog({
   cancelLabel,
   className,
   confirmFirst = false,
+  focusHeading = false,
+  confirmDisabled = false,
 }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const node = dialog.current;
-    if (open && !node?.open) node?.showModal();
-    else if (!open && node?.open) node.close();
+    if (open && !node?.open) {
+      node?.showModal();
+      if (focusHeading) heading.current?.focus();
+    } else if (!open && node?.open) node.close();
     return () => {
       if (node?.open) node.close();
     };
-  }, [open]);
+  }, [open, focusHeading]);
   const confirm = (
-    <Button autoFocus={confirmFirst} busy={busy} busyLabel={busyLabel} onClick={onConfirm}>
+    <Button
+      autoFocus={confirmFirst}
+      busy={busy}
+      disabled={confirmDisabled}
+      busyLabel={busyLabel}
+      onClick={onConfirm}
+    >
       {confirmLabel}
     </Button>
   );
@@ -60,7 +73,9 @@ export function ConfirmationDialog({
         if (!busy) onCancel();
       }}
     >
-      <h3 id={headingId}>{title}</h3>
+      <h3 id={headingId} ref={heading} tabIndex={focusHeading ? -1 : undefined}>
+        {title}
+      </h3>
       {children}
       {confirmFirst ? (
         <>

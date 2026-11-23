@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { baseApi } from '../../shared/api/base-api';
 import { useEmployeeProfile } from './use-employee-profile';
-export function useEmployeeDetails(id: string) {
+export function useEmployeeDetails(id: string, initialTab: 'details' | 'salary' = 'details') {
   const [editing, setEditing] = useState(false);
-  const [tab, setTab] = useState('details');
+  const [salaryEditing, setSalaryEditing] = useState(false);
+  const [tab, setTab] = useState<string>(initialTab);
   const session = baseApi.useSessionQuery(undefined, { refetchOnMountOrArgChange: false });
   const identity = session.currentData;
   const canViewSalary = Boolean(
@@ -15,5 +16,21 @@ export function useEmployeeDetails(id: string) {
     (identity?.permissions.includes('read') && identity?.permissions.includes('edit')),
   );
   const { data: selected, loading, error } = useEmployeeProfile(id);
-  return { editing, setEditing, tab, setTab, canViewSalary, canEdit, selected, loading, error };
+  function selectTab(next: string) {
+    if (editing || salaryEditing) return;
+    setTab(next);
+  }
+  return {
+    editing,
+    setEditing,
+    salaryEditing,
+    setSalaryEditing,
+    tab,
+    setTab: selectTab,
+    canViewSalary,
+    canEdit,
+    selected,
+    loading,
+    error,
+  };
 }

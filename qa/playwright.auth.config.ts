@@ -2,15 +2,17 @@ import base from './playwright.config';
 import { defineConfig } from '@playwright/test';
 // Separate server ports as well as databases; do not race a prior group's teardown.
 const group =
-  process.env.QA_RUN === 'employees'
-    ? 4
-    : process.env.QA_RUN === 'fx'
-      ? 3
-      : process.env.QA_RUN === 'references'
-        ? 1
-        : process.env.QA_RUN === 'country-currency'
-          ? 2
-          : 0;
+  process.env.QA_RUN === 'payroll'
+    ? 5
+    : process.env.QA_RUN === 'employees'
+      ? 4
+      : process.env.QA_RUN === 'fx'
+        ? 3
+        : process.env.QA_RUN === 'references'
+          ? 1
+          : process.env.QA_RUN === 'country-currency'
+            ? 2
+            : 0;
 const webPort = 4427 + 100 * group,
   apiPort = 4428 + 100 * group;
 const origin = `http://127.0.0.1:${webPort}`;
@@ -25,6 +27,7 @@ export default defineConfig({
     'country-currency.spec.ts',
     'fx-rates.spec.ts',
     'employees.spec.ts',
+    'payroll.spec.ts',
   ],
   webServer: [
     {
