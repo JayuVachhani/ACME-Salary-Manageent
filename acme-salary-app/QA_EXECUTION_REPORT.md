@@ -1,3 +1,10 @@
+## Performance branch publication and PR #17 — 23 November 2026
+
+User requested a PR after the local commit. Normal push succeeded to origin/chore/payroll-10k-performance at3d6d09c6a6010a3b6893339fbc8cf712fa3bd6e9; git ls-remote confirmed equality. Required pre-push formatting/lint/types,15 frontend+27 backend units,7 migration cases,native builds,React architecture,QA typing and453-file indexed safety passed. No hook bypass. Unrelated handoff-document-prompt.md remains untracked; runtime artifacts/credentials remain ignored.
+
+PR #17: https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/17 targets main72e6d2a492338f4d0a74d4cb1e2daa3202c20d3f. MCP confirmed the exact source head open,mergeable,unmerged and fetched actual changed query/harness code for bounded publication review. No unresolved critical/high finding in that bounded change; independent review remains separate. Benchmark misses are explicitly retained as partial engineering qualification. No self-approval,merge or deployment.
+
+GitHub Actions run45195138673 on3d6d09c is in progress,not passing. This metadata follow-up requires fresh current-head CI. Earlier commit-only/no-push statements below describe historical request boundaries and are superseded by this confirmed publication. Do not infer CI or production/10k simultaneous-user acceptance from local gates.
 ## 10,000-employee performance experiment — 23 November 2026
 
 Isolated real HTTP/PostgreSQL baseline completed10,000 payroll employees in100 bounded runs: preparation89.38seconds and independent review/finalization635.05seconds,with zero unexpected HTTP errors and10,000 finalized allocations. Engineering qualification is partial: baseline draft-list and finalized-payslip p95 exceeded1second. A measured shared-eligibility draft query reduced p95 from1,030.42ms to486.07ms in a quiet read recheck; all quiet read gates passed. Concurrent-load salary search still showed a1,160.91ms p95 miss. Finalized-payslip baseline1,124.41ms remains unqualified. Do not infer production/10k simultaneous-user capacity.

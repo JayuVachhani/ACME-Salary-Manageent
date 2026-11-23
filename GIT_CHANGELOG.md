@@ -1,3 +1,10 @@
+## Performance branch publication and PR #17 — 23 November 2026
+
+User requested a PR after the local commit. Normal push succeeded to origin/chore/payroll-10k-performance at3d6d09c6a6010a3b6893339fbc8cf712fa3bd6e9; git ls-remote confirmed equality. Required pre-push formatting/lint/types,15 frontend+27 backend units,7 migration cases,native builds,React architecture,QA typing and453-file indexed safety passed. No hook bypass. Unrelated handoff-document-prompt.md remains untracked; runtime artifacts/credentials remain ignored.
+
+PR #17: https://github.com/JayuVachhani/ACME-Salary-Manageent/pull/17 targets main72e6d2a492338f4d0a74d4cb1e2daa3202c20d3f. MCP confirmed the exact source head open,mergeable,unmerged and fetched actual changed query/harness code for bounded publication review. No unresolved critical/high finding in that bounded change; independent review remains separate. Benchmark misses are explicitly retained as partial engineering qualification. No self-approval,merge or deployment.
+
+GitHub Actions run45195138673 on3d6d09c is in progress,not passing. This metadata follow-up requires fresh current-head CI. Earlier commit-only/no-push statements below describe historical request boundaries and are superseded by this confirmed publication. Do not infer CI or production/10k simultaneous-user acceptance from local gates.
 ## Performance commit checkpoint — 23 November 2026
 
 User requested committing the reported 10k experiment and measured query fix. Scope: draft-list query, exact pagination regression, bounded isolated benchmark/command, aggregate results and consistent handoff. Local lint/types/build,27 units and7 financial HTTP/SQL groups passed; performance acceptance remains partial as documented. Required staged formatting/lint/indexed safety apply. No push,PR,CI,merge or deployment requested; unrelated handoff-document-prompt.md and runtime files excluded.
