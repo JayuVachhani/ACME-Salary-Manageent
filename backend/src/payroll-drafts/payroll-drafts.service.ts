@@ -14,7 +14,6 @@ import {
 
 type ListInput = { period?: string; search: string; page: number };
 const select = `d.id,r.id "revisionId",d.employee_id "employeeId",to_char(d.period_month,'YYYY-MM') period,d.period_month::text "periodStart",d.period_end::text "periodEnd",d.pay_date::text "payDate",d.country_code "countryCode",d.currency,'DRAFT'::text status,r.version,r.employee_snapshot employee,r.earnings,r.deductions,r.reason,r.created_by_name "updatedByName",r.created_at "updatedAt",false replayed`;
-const from = `FROM payroll_drafts d JOIN payroll_draft_revisions r ON r.draft_id=d.id AND r.version=d.version JOIN users u ON u.id=r.created_by JOIN employees employee ON employee.id=d.employee_id AND employee.removed_at IS NULL`;
 const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
 @Injectable()
@@ -116,17 +115,26 @@ export class PayrollDraftsService {
       await this.actor(client, token);
       const pattern = '%' + input.search.replace(/[\\%_]/g, '\\$&') + '%';
       const where = `WHERE ($1::text IS NULL OR d.period_month=($1||'-01')::date) AND ($2='' OR r.employee_snapshot->>'code' ILIKE $3 ESCAPE E'\\\\' OR r.employee_snapshot->>'name' ILIKE $3 ESCAPE E'\\\\' OR r.employee_snapshot->>'email' ILIKE $3 ESCAPE E'\\\\')`;
-      const params = [input.period ?? null, input.search, pattern];
-      const items = (
-        await client.query<PayrollDraftResponse>(
-          `SELECT ${select} ${from} ${where} ORDER BY d.period_month DESC,d.updated_at DESC,d.id LIMIT 25 OFFSET $4`,
-          [...params, (input.page - 1) * 25],
+      // Share eligibility/count work and fetch full immutable snapshots only for the page.
+      // Materializing live IDs prevents a broad JSON search from causing 10k employee probes.
+      const result = (
+        await client.query<{ items: PayrollDraftResponse[]; total: number }>(
+          `WITH live_employees AS MATERIALIZED(SELECT id FROM employees WHERE removed_at IS NULL),
+          eligible AS MATERIALIZED(
+            SELECT d.id,r.id revision_id,d.period_month,d.updated_at FROM payroll_drafts d
+            JOIN payroll_draft_revisions r ON r.draft_id=d.id AND r.version=d.version
+            JOIN live_employees employee ON employee.id=d.employee_id ${where}
+          ), page_rows AS MATERIALIZED(
+            SELECT * FROM eligible ORDER BY period_month DESC,updated_at DESC,id LIMIT 25 OFFSET $4
+          ), page_details AS(
+            SELECT ${select},d.updated_at page_updated_at,d.period_month page_month
+            FROM page_rows p JOIN payroll_drafts d ON d.id=p.id JOIN payroll_draft_revisions r ON r.id=p.revision_id
+          ) SELECT (SELECT count(*)::int FROM eligible) total,
+            coalesce((SELECT jsonb_agg(to_jsonb(row)-'page_updated_at'-'page_month' ORDER BY row.page_month DESC,row.page_updated_at DESC,row.id) FROM page_details row),'[]'::jsonb) items`,
+          [input.period ?? null, input.search, pattern, (input.page - 1) * 25],
         )
-      ).rows;
-      const total = (
-        await client.query<{ n: number }>(`SELECT count(*)::int n ${from} ${where}`, params)
-      ).rows[0]!.n;
-      return { items, total, page: input.page, pageSize: 25 };
+      ).rows[0]!;
+      return { ...result, page: input.page, pageSize: 25 };
     });
   }
   detail(token: string, id: string) {

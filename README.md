@@ -1,3 +1,7 @@
+## 10,000-employee performance experiment — 23 November 2026
+
+The isolated full lifecycle finalized10,000 synthetic employees without unexpected HTTP errors. Engineering qualification remains partial: the draft-list bottleneck was improved and the quiet read recheck passed,but the baseline finalized-payslip latency target remains missed. [Measured results and reproduction](acme-salary-app/docs/PERFORMANCE_10K.md). The installed acme_app and existing data were not changed. Performance changes are being committed locally on chore/payroll-10k-performance at user request; no push requested.
+
 ## Verification completed locally — 23 November 2026
 
 Developed-scope checks pass:15 frontend units,27 backend units,7 migration cases,7 real payroll/monthly HTTP/SQL groups,44 delivered Chromium cases and native quality/architecture gates. Feature branches also passed their scoped native gates. Publication/remote/exact-head CI evidence is in GIT_CHANGELOG.md; no production/10k acceptance is claimed. Unit tests use synthetic configuration; real database/browser tests used disposable PostgreSQL55432 databases and preserved installed acme_app5432.
